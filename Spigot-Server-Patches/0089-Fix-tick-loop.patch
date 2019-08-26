@@ -1,0 +1,35 @@
+From c1ea8b27f87ff2dec67e69b89d0936c7ade799a1 Mon Sep 17 00:00:00 2001
+From: sathonay <alexis.chamonix@gmail.com>
+Date: Mon, 26 Aug 2019 16:46:38 +0200
+Subject: [PATCH] Fix tick-loop
+
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index a9b7d5c4..78889ab8 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -512,17 +512,17 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
+                     if (wait > 0) {
+                         if (catchupTime < 2E6) {
+                             wait += Math.abs(catchupTime);
+-                        }
+-                        if (wait < catchupTime) {
++                        } else if (wait < catchupTime) {
+                             catchupTime -= wait;
+                             wait = 0;
+-                        } else if (catchupTime > 2E6) {
++                        } else {
+                             wait -= catchupTime;
+-                            catchupTime -= catchupTime;
++                            catchupTime = 0;
+                         }
+                     }
+                     if (wait > 0) {
+                         Thread.sleep(wait / 1000000);
++                        curTime = System.nanoTime();
+                         wait = TICK_TIME - (curTime - lastTick);
+                     }
+ 
+-- 
+2.20.1.windows.1
+
