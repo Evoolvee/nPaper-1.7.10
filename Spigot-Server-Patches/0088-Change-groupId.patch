@@ -1,0 +1,60 @@
+From 158f5df59eb98af8ee57a69c97899e38cf156062 Mon Sep 17 00:00:00 2001
+From: sathonay <alexis.chamonix@gmail.com>
+Date: Mon, 26 Aug 2019 16:27:23 +0200
+Subject: [PATCH] Change groupId
+
+
+diff --git a/pom.xml b/pom.xml
+index 01ba5adf..382aa862 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,7 +1,6 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+-  <groupId>org.github.paperspigot</groupId>
+   <artifactId>paperspigot</artifactId>
+   <packaging>jar</packaging>
+   <version>1.7.10-R0.1-SNAPSHOT</version>
+@@ -19,7 +18,7 @@
+   </properties>
+ 
+   <parent>
+-    <groupId>org.github.paperspigot</groupId>
++    <groupId>com.sathonay.paperspigot</groupId>
+     <artifactId>paperspigot-parent</artifactId>
+     <version>dev-SNAPSHOT</version>
+     <relativePath>../pom.xml</relativePath>
+@@ -41,14 +40,14 @@
+ 
+   <dependencies>
+     <dependency>
+-      <groupId>org.github.paperspigot</groupId>
++      <groupId>com.sathonay.paperspigot</groupId>
+       <artifactId>paperspigot-api</artifactId>
+       <version>${project.version}</version>
+       <type>jar</type>
+       <scope>compile</scope>
+     </dependency>
+     <dependency>
+-      <groupId>org.github.paperspigot</groupId>
++      <groupId>com.sathonay.paperspigot</groupId>
+       <artifactId>minecraft-server</artifactId>
+       <version>${minecraft.version}-SNAPSHOT</version>
+       <type>jar</type>
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index 3a4b1424..268c20aa 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/org.github.paperspigot/paperspigot-api/pom.properties");
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.sathonay.paperspigot/paperspigot-api/pom.properties");
+         Properties properties = new Properties();
+ 
+         if (stream != null) {
+-- 
+2.20.1.windows.1
+

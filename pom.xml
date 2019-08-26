@@ -9,7 +9,7 @@
         <version>7</version>
     </parent>
 
-    <groupId>org.github.paperspigot</groupId>
+    <groupId>com.sathonay.paperspigot</groupId>
     <artifactId>paperspigot-parent</artifactId>
     <version>dev-SNAPSHOT</version>
     <packaging>pom</packaging>

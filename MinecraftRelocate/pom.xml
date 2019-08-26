@@ -3,13 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.github.paperspigot</groupId>
+        <groupId>com.sathonay.paperspigot</groupId>
         <artifactId>paperspigot-parent</artifactId>
         <version>dev-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.github.paperspigot</groupId>
     <artifactId>minecraft-server-relocated</artifactId>
     <version>1.7.10-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -18,7 +17,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.github.paperspigot</groupId>
+            <groupId>com.sathonay.paperspigot</groupId>
             <artifactId>minecraft-server</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
