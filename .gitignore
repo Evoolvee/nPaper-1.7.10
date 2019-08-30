@@ -36,7 +36,5 @@ manifest.mf
 *~
 
 # other stuff
-Spigot-API
-Spigot-Server
-PaperSpigot-Server
-PaperSpigot-API
+nPaper-Server/target
+nPaper-API/target

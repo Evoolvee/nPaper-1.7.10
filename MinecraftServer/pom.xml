@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.sathonay.paperspigot</groupId>
-        <artifactId>paperspigot-parent</artifactId>
+        <groupId>com.sathonay.npaper</groupId>
+        <artifactId>npaper-parent</artifactId>
         <version>dev-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
