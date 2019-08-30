@@ -1,0 +1,58 @@
+From a88d1880e934b9732b0f1d10946edb43d2d5ec8c Mon Sep 17 00:00:00 2001
+From: sathonay <sathonaypro@gmail.com>
+Date: Fri, 30 Aug 2019 21:57:09 +0200
+Subject: [PATCH] Add antipearl glitch patch
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityEnderPearl.java b/src/main/java/net/minecraft/server/EntityEnderPearl.java
+index 718a63e7..6bbd387e 100644
+--- a/src/main/java/net/minecraft/server/EntityEnderPearl.java
++++ b/src/main/java/net/minecraft/server/EntityEnderPearl.java
+@@ -2,12 +2,16 @@ package net.minecraft.server;
+ 
+ // CraftBukkit start
+ import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+ import org.bukkit.event.player.PlayerTeleportEvent;
+ // CraftBukkit end
+ 
+ public class EntityEnderPearl extends EntityProjectile {
+ 
++    private Location lastValidLocation; // nPaper - antipearl glitch
++
+     public EntityEnderPearl(World world) {
+         super(world);
+         this.loadChunks = world.paperSpigotConfig.loadUnloadedEnderPearls; // PaperSpigot
+@@ -18,6 +22,16 @@ public class EntityEnderPearl extends EntityProjectile {
+         this.loadChunks = world.paperSpigotConfig.loadUnloadedEnderPearls; // PaperSpigot
+     }
+ 
++    // nPaper start - antipearl glitch
++    public void h() {
++        if (this.world.getCubes(this, this.boundingBox.grow(0.25D, 0.25D, 0.25D)).isEmpty()) {
++            this.lastValidLocation = getBukkitEntity().getLocation();
++        }
++        super.h();
++    }
++    // nPaper end
++
++
+     protected void a(MovingObjectPosition movingobjectposition) {
+         if (movingobjectposition.entity != null) {
+             movingobjectposition.entity.damageEntity(DamageSource.projectile(this, this.getShooter()), 0.0F);
+@@ -39,8 +53,8 @@ public class EntityEnderPearl extends EntityProjectile {
+ 
+                 if (entityplayer.playerConnection.b().isConnected() && entityplayer.world == this.world) {
+                     // CraftBukkit start - Fire PlayerTeleportEvent
+-                    org.bukkit.craftbukkit.entity.CraftPlayer player = entityplayer.getBukkitEntity();
+-                    org.bukkit.Location location = getBukkitEntity().getLocation();
++                    CraftPlayer player = entityplayer.getBukkitEntity();
++                    Location location = this.lastValidLocation.clone(); // snHose - antipearl glitch
+                     location.setPitch(player.getLocation().getPitch());
+                     location.setYaw(player.getLocation().getYaw());
+ 
+-- 
+2.20.1.windows.1
+
