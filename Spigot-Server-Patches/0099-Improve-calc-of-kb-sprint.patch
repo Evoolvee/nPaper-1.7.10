@@ -1,0 +1,33 @@
+From 556b70b4497686adcaa5f451767ae85f925d30fa Mon Sep 17 00:00:00 2001
+From: sathonay <sathonaypro@gmail.com>
+Date: Fri, 30 Aug 2019 22:04:09 +0200
+Subject: [PATCH] Improve calc of kb sprint
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 2dbd808b..7c3797d1 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -912,7 +912,7 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+         if (entity.av()) {
+             if (!entity.j(this)) {
+                 float f = (float) this.getAttributeInstance(GenericAttributes.e).getValue();
+-                int i = 0;
++                int i = (this.isSprinting() ? 1 : 0);
+                 float f1 = 0.0F;
+ 
+                 if (entity instanceof EntityLiving) {
+@@ -920,10 +920,6 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
+                     i += EnchantmentManager.getKnockbackEnchantmentLevel(this, (EntityLiving) entity);
+                 }
+ 
+-                if (this.isSprinting()) {
+-                    ++i;
+-                }
+-
+                 if (f > 0.0F || f1 > 0.0F) {
+                     boolean flag = !world.paperSpigotConfig.disablePlayerCrits && this.fallDistance > 0.0F && !this.onGround && !this.h_() && !this.M() && !this.hasEffect(MobEffectList.BLINDNESS) && this.vehicle == null && entity instanceof EntityLiving;
+ 
+-- 
+2.20.1.windows.1
+
