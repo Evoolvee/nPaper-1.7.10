@@ -1,0 +1,49 @@
+From 59a3e65af7aaacd377b46a5c4b5c5af6ae8b1d5c Mon Sep 17 00:00:00 2001
+From: sathonay <sathonaypro@gmail.com>
+Date: Fri, 30 Aug 2019 21:35:21 +0200
+Subject: [PATCH] Make, you can't see block break animation caused by a
+ vanished player
+
+
+diff --git a/src/main/java/net/minecraft/server/WorldManager.java b/src/main/java/net/minecraft/server/WorldManager.java
+index b3499024..2d7a6252 100644
+--- a/src/main/java/net/minecraft/server/WorldManager.java
++++ b/src/main/java/net/minecraft/server/WorldManager.java
+@@ -51,20 +51,24 @@ public class WorldManager implements IWorldAccess {
+         this.server.getPlayerList().sendAll(new PacketPlayOutWorldEvent(i, j, k, l, i1, true));
+     }
+ 
+-    public void b(int i, int j, int k, int l, int i1) {
+-        Iterator iterator = this.server.getPlayerList().players.iterator();
+ 
++    public void b(final int i, final int j, final int k, final int l, final int i1) {
++        final Iterator iterator = this.server.getPlayerList().players.iterator();
++        EntityHuman entityhuman = null;
++        final Entity entity = this.world.getEntity(i);
++        if (entity instanceof EntityHuman) {
++            entityhuman = (EntityHuman)entity;
++        }
+         while (iterator.hasNext()) {
+-            EntityPlayer entityplayer = (EntityPlayer) iterator.next();
+-
++            final EntityPlayer entityplayer = (EntityPlayer) iterator.next();
+             if (entityplayer != null && entityplayer.world == this.world && entityplayer.getId() != i) {
+-                double d0 = (double) j - entityplayer.locX;
+-                double d1 = (double) k - entityplayer.locY;
+-                double d2 = (double) l - entityplayer.locZ;
+-
+-                if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
+-                    entityplayer.playerConnection.sendPacket(new PacketPlayOutBlockBreakAnimation(i, j, k, l, i1));
++                final double d0 = j - entityplayer.locX;
++                final double d2 = k - entityplayer.locY;
++                final double d3 = l - entityplayer.locZ;
++                if ((entityhuman != null && entityhuman instanceof EntityPlayer && !entityplayer.getBukkitEntity().canSee(((EntityPlayer)entityhuman).getBukkitEntity())) || d0 * d0 + d2 * d2 + d3 * d3 >= 1024.0) {
++                    continue;
+                 }
++                entityplayer.playerConnection.sendPacket(new PacketPlayOutBlockBreakAnimation(i, j, k, l, i1));
+             }
+         }
+     }
+-- 
+2.20.1.windows.1
+
