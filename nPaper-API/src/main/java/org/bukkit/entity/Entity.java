@@ -18,6 +18,11 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 public interface Entity extends Metadatable {
 
     /**
+     * Sets the fireTicks at 0
+     */
+    public void extinguish();
+
+    /**
      * Gets the entity's current position
      *
      * @return a new copy of Location containing the position of this entity

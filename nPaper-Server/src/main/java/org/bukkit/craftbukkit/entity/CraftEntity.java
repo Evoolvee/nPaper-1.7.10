@@ -27,6 +27,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         this.entity = entity;
     }
 
+    @Override
+    public void extinguish() {
+        entity.extinguish();
+    }
+
     public static CraftEntity getEntity(CraftServer server, Entity entity) {
         /**
          * Order is *EXTREMELY* important -- keep it right! =D
