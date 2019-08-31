@@ -341,12 +341,10 @@ public class EntityTrackerEntry {
                     Packet packet = this.c();
 
                     // Spigot start - protocol patch
-                    if ( tracker instanceof EntityPlayer )
-                    {
-                        entityplayer.playerConnection.sendPacket( PacketPlayOutPlayerInfo.addPlayer( (EntityPlayer) tracker ) );
-                        if ( !entityplayer.getName().equals( entityplayer.listName ) && entityplayer.playerConnection.networkManager.getVersion() > 28 )
-                        {
-                            entityplayer.playerConnection.sendPacket( PacketPlayOutPlayerInfo.updateDisplayName( (EntityPlayer) tracker ) );
+                    if ( tracker instanceof EntityPlayer) {
+                        entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo((EntityPlayer) tracker, PacketPlayOutPlayerInfo.PlayerInfo.ADD_PLAYER));
+                        if (!entityplayer.getName().equals( entityplayer.listName ) && entityplayer.playerConnection.networkManager.getVersion() > 28) {
+                            entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo( (EntityPlayer) tracker, PacketPlayOutPlayerInfo.PlayerInfo.UPDATE_DISPLAY_NAME));
                         }
                     }
                     // Spigot end

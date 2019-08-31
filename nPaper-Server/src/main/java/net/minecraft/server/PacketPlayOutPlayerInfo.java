@@ -9,21 +9,13 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
 
 public class PacketPlayOutPlayerInfo extends Packet {
 
-    private static final int ADD_PLAYER = 0;
-    private static final int UPDATE_GAMEMODE = 1;
-    private static final int UPDATE_LATENCY = 2;
-    private static final int UPDATE_DISPLAY_NAME = 3;
-    private static final int REMOVE_PLAYER = 4;
-
-    private int action;
+    private PlayerInfo action;
     // private int length; We don't batch (yet)
     private GameProfile player;
 
     private int gamemode;
     private int ping;
     private String username;
-
-    public PacketPlayOutPlayerInfo() {}
 
     /* removed to force breaking
     public PacketPlayOutPlayerInfo(String s, boolean flag, int i) {
@@ -33,48 +25,23 @@ public class PacketPlayOutPlayerInfo extends Packet {
     }
     */
 
-    public static PacketPlayOutPlayerInfo addPlayer(EntityPlayer player) {
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
-        packet.action = ADD_PLAYER;
-        packet.username = player.listName;
-        packet.player = player.getProfile();
-        packet.ping = player.ping;
-        packet.gamemode = player.playerInteractManager.getGameMode().getId();
-        return packet;
-    }
-
-    public static PacketPlayOutPlayerInfo updatePing(EntityPlayer player) {
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
-        packet.action = UPDATE_LATENCY;
-        packet.username = player.listName;
-        packet.player = player.getProfile();
-        packet.ping = player.ping;
-        return packet;
-    }
-
-    public static PacketPlayOutPlayerInfo updateGamemode(EntityPlayer player) {
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
-        packet.action = UPDATE_GAMEMODE;
-        packet.username = player.listName;
-        packet.player = player.getProfile();
-        packet.gamemode = player.playerInteractManager.getGameMode().getId();
-        return packet;
-    }
-
-    public static PacketPlayOutPlayerInfo updateDisplayName(EntityPlayer player) {
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
-        packet.action = UPDATE_DISPLAY_NAME;
-        packet.username = player.listName;
-        packet.player = player.getProfile();
-        return packet;
-    }
-
-    public static PacketPlayOutPlayerInfo removePlayer(EntityPlayer player) {
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
-        packet.action = REMOVE_PLAYER;
-        packet.username = player.listName;
-        packet.player = player.getProfile();
-        return packet;
+    public PacketPlayOutPlayerInfo(EntityPlayer player, PlayerInfo action) {
+        this.action = action;
+        this.username = player.listName;
+        this.player = player.getProfile();
+        switch (action) {
+            case ADD_PLAYER:
+                this.ping = player.ping;
+                this.gamemode = player.playerInteractManager.getGameMode().getId();
+                break;
+            case UPDATE_LATENCY:
+                this.ping = player.ping;
+                break;
+            case UPDATE_GAMEMODE:
+                this.gamemode = player.playerInteractManager.getGameMode().getId();
+                break;
+            default:break;
+        }
     }
 
     public void a(PacketDataSerializer packetdataserializer) throws IOException {
@@ -84,13 +51,13 @@ public class PacketPlayOutPlayerInfo extends Packet {
     public void b(PacketDataSerializer packetdataserializer) throws IOException {
         // PaperSpigot start - Fix scoreboard prefix and suffix in tab list
         String username = this.username;
-        if (packetdataserializer.version >= 47 && action == ADD_PLAYER && username != null && username.equals(player.getName())) {
+        if (packetdataserializer.version >= 47 && action == PlayerInfo.ADD_PLAYER && username != null && username.equals(player.getName())) {
             username = null;
         }
         // PaperSpigot end
         if ( packetdataserializer.version >= 20 )
         {
-            packetdataserializer.b( action );
+            packetdataserializer.b(action.getValue());
             packetdataserializer.b( 1 );
             packetdataserializer.writeUUID( player.getId() );
             switch ( action )
@@ -136,7 +103,7 @@ public class PacketPlayOutPlayerInfo extends Packet {
             }
         } else {
             packetdataserializer.a( username );
-            packetdataserializer.writeBoolean( action != REMOVE_PLAYER );
+            packetdataserializer.writeBoolean( action != PlayerInfo.REMOVE_PLAYER );
             packetdataserializer.writeShort( ping );
         }
     }
@@ -147,6 +114,24 @@ public class PacketPlayOutPlayerInfo extends Packet {
 
     public void handle(PacketListener packetlistener) {
         this.a((PacketPlayOutListener) packetlistener);
+    }
+
+    public enum PlayerInfo {
+        ADD_PLAYER(0),
+        UPDATE_GAMEMODE(1),
+        UPDATE_LATENCY(2),
+        UPDATE_DISPLAY_NAME(3),
+        REMOVE_PLAYER(4);
+
+        private int value;
+
+        PlayerInfo(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
     }
 }
 // Spigot end
