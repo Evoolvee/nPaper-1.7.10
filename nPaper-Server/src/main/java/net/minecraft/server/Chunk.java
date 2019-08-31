@@ -917,7 +917,7 @@ public class Chunk {
         this.n = true;
     }
 
-    public void a(Entity entity, AxisAlignedBB axisalignedbb, List list, IEntitySelector ientityselector) {
+    public void a(Entity entity, AxisAlignedBB axisalignedbb, List<Entity> list, IEntitySelector ientityselector) {
         int i = MathHelper.floor((axisalignedbb.b - 2.0D) / 16.0D);
         int j = MathHelper.floor((axisalignedbb.e + 2.0D) / 16.0D);
 

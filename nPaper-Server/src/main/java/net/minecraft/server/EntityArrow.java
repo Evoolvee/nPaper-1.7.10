@@ -1,5 +1,6 @@
 package net.minecraft.server;
 
+import java.util.Iterator;
 import java.util.List;
 
 // CraftBukkit start
@@ -180,14 +181,16 @@ public class EntityArrow extends Entity implements IProjectile {
             }
 
             Entity entity = null;
-            List list = this.world.getEntities(this, this.boundingBox.a(this.motX, this.motY, this.motZ).grow(1.0D, 1.0D, 1.0D));
+            List<Entity> list = this.world.getEntities(this, this.boundingBox.a(this.motX, this.motY, this.motZ).grow(1.0D, 1.0D, 1.0D));
             double d0 = 0.0D;
 
             int j;
             float f1;
 
-            for (j = 0; j < list.size(); ++j) {
-                Entity entity1 = (Entity) list.get(j);
+            Iterator<Entity> iterator = list.iterator();
+
+            while (iterator.hasNext()) {
+                Entity entity1 = iterator.next();
 
                 if (entity1.R() && (entity1 != this.shooter || this.au >= 5)) {
                     f1 = 0.3F;
