@@ -257,6 +257,11 @@ public interface LivingEntity extends Entity, Damageable, ProjectileSource {
     public boolean hasPotionEffect(PotionEffectType type);
 
     /**
+     * Removes all potion effects of the entity.
+     */
+    public void clearPotionEffects();
+
+    /**
      * Removes any effects present of the given {@link PotionEffectType}.
      *
      * @param type the potion type to remove

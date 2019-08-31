@@ -279,6 +279,14 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         return getHandle().hasEffect(MobEffectList.byId[type.getId()]);
     }
 
+    @Override
+    public void clearPotionEffects() {
+        EntityLiving entity = this.getHandle();
+        if (!entity.hasEffect()) return;
+        entity.effects.clear();
+        entity.updateEffects = true;
+    }
+
     public void removePotionEffect(PotionEffectType type) {
         getHandle().removeEffect(type.getId());
     }
