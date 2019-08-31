@@ -528,18 +528,8 @@ public final class CraftServer implements Server {
         }
         // PaperSpigot end
         String lowerName = name.toLowerCase();
-        int delta = Integer.MAX_VALUE;
-        for (Player player : getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(lowerName)) {
-                int curDelta = player.getName().length() - lowerName.length();
-                if (curDelta < delta) {
-                    found = player;
-                    delta = curDelta;
-                }
-                if (curDelta == 0) break;
-            }
-        }
-        return found;
+        List<CraftPlayer> list = getOnlinePlayers();
+        return list.stream().filter(craftPlayer -> craftPlayer.getName().toLowerCase().startsWith(lowerName)).findFirst().orElse(null);
     }
 
     @Override
@@ -554,13 +544,8 @@ public final class CraftServer implements Server {
     // TODO: In 1.8+ this should use the server's UUID->EntityPlayer map
     @Override
     public Player getPlayer(UUID id) {
-        for (Player player : getOnlinePlayers()) {
-            if (player.getUniqueId().equals(id)) {
-                return player;
-            }
-        }
-
-        return null;
+        List<CraftPlayer> list = getOnlinePlayers();
+        return list.stream().filter(craftPlayer -> craftPlayer.getUniqueId().equals(id)).findFirst().orElse(null);
     }
 
     @Override
@@ -1124,12 +1109,7 @@ public final class CraftServer implements Server {
 
     @Override
     public World getWorld(UUID uid) {
-        for (World world : worlds.values()) {
-            if (world.getUID().equals(uid)) {
-                return world;
-            }
-        }
-        return null;
+        return worlds.values().stream().filter(world -> world.getUID().equals(uid)).findFirst().orElse(null);
     }
 
     public void addWorld(World world) {
