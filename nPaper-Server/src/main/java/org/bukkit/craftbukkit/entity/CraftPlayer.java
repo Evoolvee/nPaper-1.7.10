@@ -7,13 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,8 +60,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private long lastPlayed = 0;
     private boolean hasPlayedBefore = false;
     private final ConversationTracker conversationTracker = new ConversationTracker();
-    private final Set<String> channels = new HashSet<String>();
-    private final Set<UUID> hiddenPlayers = new HashSet<UUID>();
+    private final Set<String> channels = new HashSet<>();
+    private final Map<UUID, Boolean> hiddenPlayers = new HashMap<>();
     private int hash = 0;
     private double health = 20;
     private boolean scaledHealth = false;
@@ -927,8 +921,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         Validate.notNull(player, "hidden player cannot be null");
         if (getHandle().playerConnection == null) return;
         if (equals(player)) return;
-        if (hiddenPlayers.contains(player.getUniqueId())) return;
-        hiddenPlayers.add(player.getUniqueId());
+        if (hiddenPlayers.putIfAbsent(player.getUniqueId(), true) != null) return;
 
         //remove this player from the hidden player's EntityTrackerEntry
         EntityTracker tracker = ((WorldServer) entity.world).tracker;
@@ -946,8 +939,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         Validate.notNull(player, "shown player cannot be null");
         if (getHandle().playerConnection == null) return;
         if (equals(player)) return;
-        if (!hiddenPlayers.contains(player.getUniqueId())) return;
-        hiddenPlayers.remove(player.getUniqueId());
+        if (!hiddenPlayers.remove(player.getUniqueId(), true)) return;
 
         EntityTracker tracker = ((WorldServer) entity.world).tracker;
         EntityPlayer other = ((CraftPlayer) player).getHandle();
@@ -964,7 +956,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public boolean canSee(Player player) {
-        return !hiddenPlayers.contains(player.getUniqueId());
+        return !hiddenPlayers.containsKey(player.getUniqueId());
     }
 
     public Map<String, Object> serialize() {
@@ -1426,15 +1418,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
 
         @Override
-        public Set<Player> getHiddenPlayers()
-        {
+        public Set<Player> getHiddenPlayers() {
             Set<Player> ret = new HashSet<Player>();
-            for ( UUID u : hiddenPlayers )
-            {
-                ret.add( getServer().getPlayer( u ) );
+            for (UUID u : hiddenPlayers.keySet()) {
+                ret.add( getServer().getPlayer(u));
             }
 
-            return java.util.Collections.unmodifiableSet( ret );
+            return java.util.Collections.unmodifiableSet(ret);
         }
 
         /**
