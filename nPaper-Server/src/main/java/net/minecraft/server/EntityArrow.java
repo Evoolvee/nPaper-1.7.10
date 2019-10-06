@@ -27,12 +27,11 @@ public class EntityArrow extends Entity implements IProjectile {
 
     // Spigot Start
     @Override
-    public void inactiveTick()
-    {
-        if ( this.inGround )
-        {
+    public void inactiveTick() {
+        if (this.inGround) {
             this.at += 19; // Despawn counter. First int after shooter
         }
+
         super.inactiveTick();
     }
     // Spigot End
