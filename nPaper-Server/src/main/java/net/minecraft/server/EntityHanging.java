@@ -57,33 +57,21 @@ public abstract class EntityHanging extends Entity {
 
         if (i == 2) {
             f5 -= f6;
-        }
-
-        if (i == 1) {
-            f3 -= f6;
-        }
-
-        if (i == 0) {
-            f5 += f6;
-        }
-
-        if (i == 3) {
-            f3 += f6;
-        }
-
-        if (i == 2) {
             f3 -= this.c(this.f());
         }
 
         if (i == 1) {
+            f3 -= f6;
             f5 += this.c(this.f());
         }
 
         if (i == 0) {
+            f5 += f6;
             f3 += this.c(this.f());
         }
 
         if (i == 3) {
+            f3 += f6;
             f5 -= this.c(this.f());
         }
 
