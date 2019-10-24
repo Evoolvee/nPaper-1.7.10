@@ -1,14 +1,10 @@
 package net.minecraft.server;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // CraftBukkit start
-import java.util.ArrayList;
 import com.google.common.base.Function;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -24,7 +20,7 @@ public abstract class EntityLiving extends Entity {
     private static final AttributeModifier c = (new AttributeModifier(b, "Sprinting speed boost", 0.30000001192092896D, 2)).a(false);
     private AttributeMapBase d;
     public CombatTracker combatTracker = new CombatTracker(this); // CraftBukkit - private -> public, remove final
-    public final HashMap effects = new HashMap(); // CraftBukkit - protected -> public
+    public final Map<Integer, MobEffect> effects = new ConcurrentHashMap<>(); // CraftBukkit - protected -> public
     private final ItemStack[] g = new ItemStack[5];
     public boolean at;
     public int au;
@@ -216,8 +212,16 @@ public abstract class EntityLiving extends Entity {
             --this.hurtTicks;
         }
 
-        if (this.noDamageTicks > 0 && !(this instanceof EntityPlayer)) {
-            --this.noDamageTicks;
+        if (!this.noDamageTicks.isEmpty() && !(this instanceof EntityPlayer)) {
+            for (Map.Entry<String, Integer> entry : this.noDamageTicks.entrySet()) {
+                String key = entry.getKey();
+                AtomicInteger value = new AtomicInteger(entry.getValue());
+                if (value.intValue() > 0) {
+                    this.noDamageTicks.replace(key, value.get(), value.decrementAndGet());
+                    continue;
+                }
+                this.noDamageTicks.remove(key);
+            }
         }
 
         if (this.getHealth() <= 0.0F) {
@@ -670,27 +674,22 @@ public abstract class EntityLiving extends Entity {
                 this.aF = 1.5F;
                 boolean flag = true;
 
-                if ((float) this.noDamageTicks > (float) this.maxNoDamageTicks / 2.0F) {
-                    if (f <= this.lastDamage) {
-                        return false;
-                    }
+                if (this.noDamageTicks.putIfAbsent(damagesource.p(), maxNoDamageTicks) != null && this.noDamageTicks.get(damagesource.p()) > (float) this.maxNoDamageTicks / 2.0F) {
+                    if (f <= this.lastDamage) return false;
 
                     // CraftBukkit start
-                    if (!this.d(damagesource, f - this.lastDamage)) {
-                        return false;
-                    }
+                    if (!this.d(damagesource, f - this.lastDamage)) return false;
                     // CraftBukkit end
                     this.lastDamage = f;
                     flag = false;
                 } else {
                     // CraftBukkit start
                     float previousHealth = this.getHealth();
-                    if (!this.d(damagesource, f)) {
-                        return false;
-                    }
+                    if (!this.d(damagesource, f)) return false;
                     this.lastDamage = f;
                     this.aw = previousHealth;
-                    this.noDamageTicks = this.maxNoDamageTicks;
+                    this.noDamageTicks.put(damagesource.p(), maxNoDamageTicks);
+
                     // CraftBukkit end
                     this.hurtTicks = this.ay = 10;
                 }

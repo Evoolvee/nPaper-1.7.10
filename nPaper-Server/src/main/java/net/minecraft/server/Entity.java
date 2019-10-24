@@ -1,9 +1,8 @@
 package net.minecraft.server;
 
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 // CraftBukkit start
 import org.bukkit.Bukkit;
@@ -98,7 +97,7 @@ public abstract class Entity {
     public int maxFireTicks;
     public int fireTicks; // CraftBukkit - private -> public
     public boolean inWater; // Spigot - protected -> public
-    public int noDamageTicks;
+    public Map<String, Integer> noDamageTicks = new ConcurrentHashMap<>();;
     private boolean justCreated;
     protected boolean fireProof;
     protected DataWatcher datawatcher;

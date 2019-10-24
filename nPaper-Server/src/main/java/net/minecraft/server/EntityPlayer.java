@@ -1,13 +1,8 @@
 package net.minecraft.server;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.minecraft.util.com.google.common.collect.Sets;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
@@ -188,8 +183,17 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
 
         this.playerInteractManager.a();
         --this.invulnerableTicks;
-        if (this.noDamageTicks > 0) {
-            --this.noDamageTicks;
+
+        if (!this.noDamageTicks.isEmpty()) {
+            for (Map.Entry<String, Integer> entry : this.noDamageTicks.entrySet()) {
+                String key = entry.getKey();
+                AtomicInteger value = new AtomicInteger(entry.getValue());
+                if (value.intValue() > 0) {
+                    this.noDamageTicks.replace(key, value.get(), value.decrementAndGet());
+                    continue;
+                }
+                this.noDamageTicks.remove(key);
+            }
         }
 
         // PaperSpigot start - Configurable container update tick rate
