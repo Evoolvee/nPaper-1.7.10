@@ -17,33 +17,9 @@ public class PacketPlayOutEntityVelocity extends Packet {
         this.a = i;
         double d3 = 3.9D;
 
-        if (d0 < -d3) {
-            d0 = -d3;
-        }
-
-        if (d1 < -d3) {
-            d1 = -d3;
-        }
-
-        if (d2 < -d3) {
-            d2 = -d3;
-        }
-
-        if (d0 > d3) {
-            d0 = d3;
-        }
-
-        if (d1 > d3) {
-            d1 = d3;
-        }
-
-        if (d2 > d3) {
-            d2 = d3;
-        }
-
-        this.b = (int) (d0 * 8000.0D);
-        this.c = (int) (d1 * 8000.0D);
-        this.d = (int) (d2 * 8000.0D);
+        this.b = (int) (MathHelper.a(d0, -d3, d3) * 8000.0D);
+        this.c = (int) (MathHelper.a(d1, -d3, d3) * 8000.0D);
+        this.d = (int) (MathHelper.a(d2, -d3, d3) * 8000.0D);
     }
 
     public void a(PacketDataSerializer packetdataserializer) {
