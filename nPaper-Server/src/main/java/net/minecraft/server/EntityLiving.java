@@ -218,9 +218,7 @@ public abstract class EntityLiving extends Entity {
                 AtomicInteger value = new AtomicInteger(entry.getValue());
                 if (value.intValue() > 0) {
                     this.noDamageTicks.replace(key, value.get(), value.decrementAndGet());
-                    continue;
                 }
-                this.noDamageTicks.remove(key);
             }
         }
 
