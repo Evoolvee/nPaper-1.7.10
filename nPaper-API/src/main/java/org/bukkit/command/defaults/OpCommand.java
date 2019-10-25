@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
@@ -25,7 +26,10 @@ public class OpCommand extends VanillaCommand {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!testPermission(sender)) return true;
+        if (!(sender instanceof ConsoleCommandSender)) {
+            sender.sendMessage(ChatColor.RED + "This command is only executable by the console.");
+            return false;
+        }
         if (args.length != 1 || args[0].length() == 0)  {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
