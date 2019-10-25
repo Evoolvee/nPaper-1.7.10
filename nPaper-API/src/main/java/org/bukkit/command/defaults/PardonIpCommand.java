@@ -1,6 +1,7 @@
 package org.bukkit.command.defaults;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -18,6 +19,7 @@ public class PardonIpCommand extends VanillaCommand {
         this.description = "Allows the specified IP address to use this server";
         this.usageMessage = "/pardon-ip <address>";
         this.setPermission("bukkit.command.unban.ip");
+        this.setAliases(Arrays.asList("unban-ip", "unbanip"));
     }
 
     @Override
@@ -30,7 +32,7 @@ public class PardonIpCommand extends VanillaCommand {
 
         if (BanIpCommand.ipValidity.matcher(args[0]).matches()) {
             Bukkit.unbanIP(args[0]);
-            Command.broadcastCommandMessage(sender, "Pardoned ip " + args[0]);
+            Command.broadcastCommandMessage(sender, "Unbanned ip " + args[0]);
         } else {
             sender.sendMessage("Invalid ip");
         }

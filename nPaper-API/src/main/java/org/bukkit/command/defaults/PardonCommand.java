@@ -1,6 +1,7 @@
 package org.bukkit.command.defaults;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -20,6 +21,7 @@ public class PardonCommand extends VanillaCommand {
         this.description = "Allows the specified player to use this server";
         this.usageMessage = "/pardon <player>";
         this.setPermission("bukkit.command.unban.player");
+        this.setAliases(Collections.singletonList("unban"));
     }
 
     @Override
@@ -31,7 +33,7 @@ public class PardonCommand extends VanillaCommand {
         }
 
         Bukkit.getBanList(BanList.Type.NAME).pardon(args[0]);
-        Command.broadcastCommandMessage(sender, "Pardoned " + args[0]);
+        Command.broadcastCommandMessage(sender, "Unbanned " + args[0]);
         return true;
     }
 
