@@ -9,30 +9,7 @@ import java.util.Map;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 
-import net.minecraft.server.ChunkCoordinates;
-import net.minecraft.server.Container;
-import net.minecraft.server.DamageSource;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityArrow;
-import net.minecraft.server.EntityDamageSource;
-import net.minecraft.server.EntityDamageSourceIndirect;
-import net.minecraft.server.EntityEnderCrystal;
-import net.minecraft.server.EntityEnderDragon;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityInsentient;
-import net.minecraft.server.EntityItem;
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.EntityPotion;
-import net.minecraft.server.Explosion;
-import net.minecraft.server.InventoryCrafting;
-import net.minecraft.server.ItemStack;
-import net.minecraft.server.Items;
-import net.minecraft.server.PacketPlayInCloseWindow;
-import net.minecraft.server.PacketPlayOutSetSlot;
-import net.minecraft.server.Slot;
-import net.minecraft.server.World;
-import net.minecraft.server.WorldServer;
+import net.minecraft.server.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -383,7 +360,7 @@ public class CraftEventFactory {
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
             if (stack == null || stack.getType() == Material.AIR || stack.getAmount() == 0) continue;
 
-            world.dropItemNaturally(entity.getLocation(), stack);
+            world.dropItemNaturally(victim ,entity.getLocation(), stack);
         }
 
         return event;

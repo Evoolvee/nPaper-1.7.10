@@ -34,4 +34,8 @@ public interface Item extends Entity {
      * @param delay New delay
      */
     public void setPickupDelay(int delay);
+
+    public Entity getOwner();
+
+    public void setOwner(Entity newOwner);
 }

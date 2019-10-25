@@ -45,4 +45,14 @@ public class CraftItem extends CraftEntity implements Item {
     public EntityType getType() {
         return EntityType.DROPPED_ITEM;
     }
+
+    public org.bukkit.entity.Entity getOwner() {
+        Entity owner = item.owner;
+        if (owner == null) return null;
+        return owner.getBukkitEntity();
+    }
+
+    public void setOwner(org.bukkit.entity.Entity newOwner) {
+        item.owner = ((CraftEntity)newOwner).getHandle();
+    }
 }
