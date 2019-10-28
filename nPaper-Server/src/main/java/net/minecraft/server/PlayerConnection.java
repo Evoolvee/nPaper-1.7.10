@@ -1820,7 +1820,9 @@ public class PlayerConnection implements PacketPlayInListener {
                     }
 
                     if (itemstack.getItem() == Items.BOOK_AND_QUILL && itemstack.getItem() == itemstack1.getItem()) {
-                        CraftEventFactory.handleEditBookEvent(player, itemstack); // CraftBukkit
+                        itemstack1 = new ItemStack(Items.BOOK_AND_QUILL);
+                        itemstack1.a("pages", itemstack.getTag().getList("pages", 8));
+                        CraftEventFactory.handleEditBookEvent(player, itemstack1); // CraftBukkit
                     }
 
                     return;
@@ -1852,7 +1854,16 @@ public class PlayerConnection implements PacketPlayInListener {
                     }
 
                     if (itemstack.getItem() == Items.WRITTEN_BOOK && itemstack1.getItem() == Items.BOOK_AND_QUILL) {
-                        CraftEventFactory.handleEditBookEvent(player, itemstack); // CraftBukkit
+                        itemstack1 = new ItemStack(Items.WRITTEN_BOOK);
+                        itemstack1.a("author", (new NBTTagString(this.player.getName())));
+                        itemstack1.a("title", (new NBTTagString(itemstack.getTag().getString("title").replace("\u00A7", ""))));
+                        NBTTagList pages = new NBTTagList();
+                        for (int i = 0; i < itemstack.getTag().getList("pages", 8).size(); i++) {
+                            pages.add(new NBTTagString(itemstack.getTag().getList("pages", 8).getString(i).replace("\u00A7", "")));
+                        }
+                        itemstack1.a("pages", pages);
+                        itemstack1.setItem(Items.WRITTEN_BOOK);
+                        CraftEventFactory.handleEditBookEvent(player, itemstack1); // CraftBukkit
                     }
 
                     return;
