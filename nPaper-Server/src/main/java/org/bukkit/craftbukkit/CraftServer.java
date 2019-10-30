@@ -527,9 +527,8 @@ public final class CraftServer implements Server {
             return found;
         }
         // PaperSpigot end
-        String lowerName = name.toLowerCase();
         List<CraftPlayer> list = getOnlinePlayers();
-        return list.stream().filter(craftPlayer -> craftPlayer.getName().toLowerCase().startsWith(lowerName)).findFirst().orElse(null);
+        return list.stream().filter(craftPlayer -> StringUtil.startsWithIgnoreCase(craftPlayer.getName(), name)).findFirst().orElse(null);
     }
 
     @Override
