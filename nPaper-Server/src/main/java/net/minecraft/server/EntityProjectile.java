@@ -2,6 +2,7 @@ package net.minecraft.server;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class EntityProjectile extends Entity implements IProjectile {
 
@@ -13,6 +14,7 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
     public int shake;
     public EntityLiving shooter; // CraftBukkit - private -> public
     public String shooterName; // CraftBukkit - private -> public
+    private UUID shooterUuid; // nPaper - Fix name change pearl teleport
     private int i;
     private int at;
 
@@ -232,6 +234,7 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
         nbttagcompound.setByte("inGround", (byte) (this.inGround ? 1 : 0));
         if ((this.shooterName == null || this.shooterName.length() == 0) && this.shooter != null && this.shooter instanceof EntityHuman) {
             this.shooterName = this.shooter.getName();
+            this.shooterUuid = this.shooter.getUniqueID(); // nPaper - Fix name change pearl teleport
         }
 
         nbttagcompound.setString("ownerName", this.shooterName == null ? "" : this.shooterName);
@@ -251,9 +254,11 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
     }
 
     public EntityLiving getShooter() {
-        if (this.shooter == null && this.shooterName != null && this.shooterName.length() > 0) {
-            this.shooter = this.world.a(this.shooterName);
+        // nPaper start - Fix name change pearl teleport
+        if (this.shooter == null && this.shooterUuid != null) {
+            this.shooter = this.world.a(this.shooterUuid);
         }
+        // nPaper end
 
         return this.shooter;
     }
