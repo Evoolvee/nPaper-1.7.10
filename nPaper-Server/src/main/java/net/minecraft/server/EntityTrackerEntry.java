@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 import com.google.common.collect.Sets;
 import org.apache.logging.log4j.LogManager;
@@ -40,8 +41,8 @@ public class EntityTrackerEntry {
     private Entity w;
     private boolean x;
     public boolean n;
-    public Set trackedPlayers = new HashSet();
-    public Set<EntityPlayer> freshViewers = Sets.newHashSet(); // PaperSpigot
+    public final Map<EntityPlayer, Boolean> trackedPlayerMap = new java.util.HashMap<EntityPlayer, Boolean>();
+    public final Set<EntityPlayer> trackedPlayers = trackedPlayerMap.keySet();
 
     public EntityTrackerEntry(Entity entity, int i, int j, boolean flag) {
         this.tracker = entity;
@@ -174,19 +175,20 @@ public class EntityTrackerEntry {
                     if (object instanceof PacketPlayOutEntityTeleport) {
                         this.broadcast((Packet) object);
                     } else {
-                        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(this.tracker.getId(), i, j, k, (byte) l, (byte) i1, this.tracker.onGround, tracker instanceof EntityFallingBlock || tracker instanceof EntityTNTPrimed);
+                        PacketPlayOutEntityTeleport teleportPacket = null;
 
-                        for (EntityPlayer viewer : (Set<EntityPlayer>) this.trackedPlayers) {
-                            if (this.freshViewers.contains(viewer)) {
-                                viewer.playerConnection.sendPacket(teleportPacket);
+                        for(Map.Entry<EntityPlayer, Boolean> viewer : trackedPlayerMap.entrySet()) {
+                            if(viewer.getValue()) {
+                                viewer.setValue(false);
+                                if(teleportPacket == null) {
+                                    teleportPacket = new PacketPlayOutEntityTeleport(this.tracker);
+                                }
+                                this.sendPlayerPacket(viewer.getKey(), teleportPacket);
                             } else {
-                                viewer.playerConnection.sendPacket((Packet) object);
+                                this.sendPlayerPacket(viewer.getKey(), (Packet) object);
                             }
                         }
                     }
-
-                    this.freshViewers.clear();
-                    // PaperSpigot end
                 }
 
                 this.b();
@@ -336,8 +338,7 @@ public class EntityTrackerEntry {
                     entityplayer.removeQueue.remove(Integer.valueOf(this.tracker.getId()));
                     // CraftBukkit end
 
-                    this.freshViewers.add(entityplayer); // PaperSpigot
-                    this.trackedPlayers.add(entityplayer);
+                    this.trackedPlayerMap.put(entityplayer, true);
                     Packet packet = this.c();
 
                     // Spigot start - protocol patch
@@ -349,7 +350,10 @@ public class EntityTrackerEntry {
                     }
                     // Spigot end
 
-                    entityplayer.playerConnection.sendPacket(packet);
+                    if (packet != null) { // nPaper - don't use the method if packet equals null
+                        entityplayer.playerConnection.sendPacket(packet);
+                    }
+
                     if (!this.tracker.getDataWatcher().d()) {
                         entityplayer.playerConnection.sendPacket(new PacketPlayOutEntityMetadata(this.tracker.getId(), this.tracker.getDataWatcher(), true));
                     }
@@ -554,5 +558,9 @@ public class EntityTrackerEntry {
             this.trackedPlayers.remove(entityplayer);
             entityplayer.d(this.tracker);
         }
+    }
+
+    private void sendPlayerPacket(EntityPlayer player, Packet packet) {
+        player.playerConnection.sendPacket(packet);
     }
 }
