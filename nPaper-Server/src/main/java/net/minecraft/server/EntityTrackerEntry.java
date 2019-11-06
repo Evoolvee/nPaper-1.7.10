@@ -117,7 +117,7 @@ public class EntityTrackerEntry {
                 int j1 = i - this.xLoc;
                 int k1 = j - this.yLoc;
                 int l1 = k - this.zLoc;
-                Object object = null;
+                Packet packet = null;
                 boolean flag = Math.abs(j1) >= 4 || Math.abs(k1) >= 4 || Math.abs(l1) >= 4 || this.m % 60 == 0;
                 boolean flag1 = Math.abs(l - this.yRot) >= 4 || Math.abs(i1 - this.xRot) >= 4;
 
@@ -137,11 +137,11 @@ public class EntityTrackerEntry {
 
                     if (j1 >= -128 && j1 < 128 && k1 >= -128 && k1 < 128 && l1 >= -128 && l1 < 128 && this.v <= 400 && !this.x) {
                         if (flag && flag1) {
-                            object = new PacketPlayOutRelEntityMoveLook(this.tracker.getId(), (byte) j1, (byte) k1, (byte) l1, (byte) l, (byte) i1, tracker.onGround); // Spigot - protocol patch
+                            packet = new PacketPlayOutRelEntityMoveLook(this.tracker.getId(), (byte) j1, (byte) k1, (byte) l1, (byte) l, (byte) i1, tracker.onGround); // Spigot - protocol patch
                         } else if (flag) {
-                            object = new PacketPlayOutRelEntityMove(this.tracker.getId(), (byte) j1, (byte) k1, (byte) l1, tracker.onGround); // Spigot - protocol patch
+                            packet = new PacketPlayOutRelEntityMove(this.tracker.getId(), (byte) j1, (byte) k1, (byte) l1, tracker.onGround); // Spigot - protocol patch
                         } else if (flag1) {
-                            object = new PacketPlayOutEntityLook(this.tracker.getId(), (byte) l, (byte) i1, tracker.onGround); // Spigot - protocol patch
+                            packet = new PacketPlayOutEntityLook(this.tracker.getId(), (byte) l, (byte) i1, tracker.onGround); // Spigot - protocol patch
                         }
                     } else {
                         this.v = 0;
@@ -150,7 +150,7 @@ public class EntityTrackerEntry {
                             this.scanPlayers(new java.util.ArrayList(this.trackedPlayers));
                         }
                         // CraftBukkit end
-                        object = new PacketPlayOutEntityTeleport(this.tracker.getId(), i, j, k, (byte) l, (byte) i1, tracker.onGround, tracker instanceof EntityFallingBlock || tracker instanceof EntityTNTPrimed); // Spigot - protocol patch
+                        packet = new PacketPlayOutEntityTeleport(this.tracker.getId(), i, j, k, (byte) l, (byte) i1, tracker.onGround, tracker instanceof EntityFallingBlock || tracker instanceof EntityTNTPrimed); // Spigot - protocol patch
                     }
                 }
 
@@ -169,11 +169,11 @@ public class EntityTrackerEntry {
                     }
                 }
 
-                if (object != null) {
+                if (packet != null) {
                     // PaperSpigot start - ensure fresh viewers get an absolute position on their first update,
                     // since we can't be certain what position they received in the spawn packet.
-                    if (object instanceof PacketPlayOutEntityTeleport) {
-                        this.broadcast((Packet) object);
+                    if (packet instanceof PacketPlayOutEntityTeleport) {
+                        this.broadcast(packet);
                     } else {
                         PacketPlayOutEntityTeleport teleportPacket = null;
 
@@ -185,7 +185,7 @@ public class EntityTrackerEntry {
                                 }
                                 this.sendPlayerPacket(viewer.getKey(), teleportPacket);
                             } else {
-                                this.sendPlayerPacket(viewer.getKey(), (Packet) object);
+                                this.sendPlayerPacket(viewer.getKey(), packet);
                             }
                         }
                     }
