@@ -2,6 +2,7 @@ package org.bukkit.command.defaults;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -22,24 +23,17 @@ public class ListCommand extends VanillaCommand {
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (!testPermission(sender)) return true;
 
-        StringBuilder online = new StringBuilder();
+        StringJoiner playerJoiner = new StringJoiner(", ");
 
         final Collection<? extends Player> players = Bukkit.getOnlinePlayers();
 
         for (Player player : players) {
             // If a player is hidden from the sender don't show them in the list
-            if (sender instanceof Player && !((Player) sender).canSee(player))
-                continue;
-
-            if (online.length() > 0) {
-                online.append(", ");
-            }
-
-            online.append(player.getDisplayName());
+            if (sender instanceof Player && !((Player) sender).canSee(player)) continue;
+            playerJoiner.add(player.getDisplayName());
         }
 
-        sender.sendMessage("There are " + players.size() + "/" + Bukkit.getMaxPlayers() + " players online:\n" + online.toString());
-
+        sender.sendMessage("There are " + players.size() + "/" + Bukkit.getMaxPlayers() + " players online:\n" + playerJoiner.toString());
         return true;
     }
 
