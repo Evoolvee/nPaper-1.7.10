@@ -2,6 +2,7 @@ package org.bukkit.command.defaults;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -49,17 +50,13 @@ public class WhitelistCommand extends VanillaCommand {
             } else if (args[0].equalsIgnoreCase("list")) {
                 if (badPerm(sender, "list")) return true;
 
-                StringBuilder result = new StringBuilder();
+                StringJoiner playerJoiner = new StringJoiner(", ");
 
                 for (OfflinePlayer player : Bukkit.getWhitelistedPlayers()) {
-                    if (result.length() > 0) {
-                        result.append(", ");
-                    }
-
-                    result.append(player.getName());
+                    playerJoiner.add(player.getName());
                 }
 
-                sender.sendMessage("White-listed players: " + result.toString());
+                sender.sendMessage("White-listed players: " + playerJoiner.toString());
                 return true;
             }
         } else if (args.length == 2) {
