@@ -1,6 +1,7 @@
 package org.bukkit.command.defaults;
 
 import java.util.Arrays;
+import java.util.StringJoiner;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,20 +26,14 @@ public class PluginsCommand extends BukkitCommand {
     }
 
     private String getPluginList() {
-        StringBuilder pluginList = new StringBuilder();
+        StringJoiner pluginsJoiner = new StringJoiner(ChatColor.WHITE + ", ");
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
 
         for (Plugin plugin : plugins) {
-            if (pluginList.length() > 0) {
-                pluginList.append(ChatColor.WHITE);
-                pluginList.append(", ");
-            }
-
-            pluginList.append(plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED);
-            pluginList.append(plugin.getDescription().getName());
+            pluginsJoiner.add((plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED) + plugin.getDescription().getName());
         }
 
-        return "(" + plugins.length + "): " + pluginList.toString();
+        return "(" + plugins.length + "): " + pluginsJoiner.toString();
     }
 
     // Spigot Start
