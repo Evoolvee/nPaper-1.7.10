@@ -34,7 +34,7 @@ public abstract class Entity {
 
     // CraftBukkit start
     private static final int CURRENT_LEVEL = 2;
-    public static Random SHARED_RANDOM = new Random(); // nPaper
+    public static final Random SHARED_RANDOM = new Random(); // nPaper
     static boolean isLevelAtLeast(NBTTagCompound tag, int level) {
         return tag.hasKey("Bukkit.updateLevel") && tag.getInt("Bukkit.updateLevel") >= level;
     }
@@ -93,7 +93,7 @@ public abstract class Entity {
     public boolean X;
     public float Y;
     public float Z;
-    protected Random random;
+    protected final Random random;
     public int ticksLived;
     public int maxFireTicks;
     public int fireTicks; // CraftBukkit - private -> public
@@ -111,7 +111,7 @@ public abstract class Entity {
     public boolean ak;
     public boolean al;
     public int portalCooldown;
-    protected boolean an;
+    protected boolean an; public boolean inPortal() { return an; } // Paper - OBFHELPER
     protected int ao;
     public int dimension;
     protected int aq;
