@@ -360,8 +360,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
             // WorldServer[] aworldserver = this.worldServer;
             int i = this.worlds.size();
 
-            for (int j = 0; j < i; ++j) {
-                WorldServer worldserver = this.worlds.get(j);
+            for (WorldServer worldserver : this.worlds) {
 
                 if (worldserver != null) {
                     if (!flag) {
@@ -450,6 +449,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
     public final RollingAverage tps5 = new RollingAverage(60*5);
     public final RollingAverage tps15 = new RollingAverage(60*15);
     public double[] recentTps = new double[ 3 ]; // PaperSpigot - Fine have your darn compat with bad plugins
+    public static long START_TIME, LAST_TICK_TIME_NANO, LAST_TICK_TIME_MILLIS;
 
     public static class RollingAverage {
         private final int size;
@@ -505,6 +505,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
                 //long lastTick = System.nanoTime(), catchupTime = 0, curTime, wait, tickSection = lastTick;
                 long start = System.nanoTime(), lastTick = start - TICK_TIME, catchupTime = 0, curTime, wait, tickSection = start;
                 // PaperSpigot end
+                START_TIME = System.currentTimeMillis();
                 while (this.isRunning) {
                     curTime = System.nanoTime();
                     // PaperSpigot start - Further improve tick loop
@@ -545,6 +546,8 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
                         // PaperSpigot end
                     }
                     lastTick = curTime;
+                    this.LAST_TICK_TIME_NANO = System.nanoTime();
+                    this.LAST_TICK_TIME_MILLIS = System.currentTimeMillis();
 
                     this.u();
                     this.O = true;
@@ -789,7 +792,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
                 this.methodProfiler.b();
                 this.methodProfiler.a("tracker");
                 worldserver.timings.tracker.startTiming(); // Spigot
-                worldserver.getTracker().updatePlayers();
+                if (u.players.size() > 0) worldserver.getTracker().updatePlayers();
                 worldserver.timings.tracker.stopTiming(); // Spigot
                 this.methodProfiler.b();
                 this.methodProfiler.b();
@@ -1178,8 +1181,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
 
     public void a(EnumDifficulty enumdifficulty) {
         // CraftBukkit start - Use worlds list for iteration
-        for (int j = 0; j < this.worlds.size(); ++j) {
-            WorldServer worldserver = this.worlds.get(j);
+        for (WorldServer worldserver : this.worlds) {
             // CraftBukkit end
 
             if (worldserver != null) {
@@ -1222,8 +1224,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
         this.getConvertable().d();
 
         // CraftBukkit start
-        for (int i = 0; i < this.worlds.size(); ++i) {
-            WorldServer worldserver = this.worlds.get(i);
+        for (WorldServer worldserver : this.worlds) {
             // CraftBukkit end
 
             if (worldserver != null) {
@@ -1256,8 +1257,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
         int i = 0;
 
         // CraftBukkit start - use worlds list for iteration
-        for (int j = 0; j < this.worlds.size(); ++j) {
-            WorldServer worldserver = this.worlds.get(j);
+        for (WorldServer worldserver : this.worlds) {
             if (worldServer != null) {
                 // CraftBukkit end
                 WorldData worlddata = worldserver.getWorldData();
@@ -1362,8 +1362,8 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
 
     public void a(EnumGamemode enumgamemode) {
         // CraftBukkit start - use worlds list for iteration
-        for (int i = 0; i < this.worlds.size(); ++i) {
-            getServer().worlds.get(i).getWorldData().setGameType(enumgamemode);
+        for (World world : getServer().worlds) {
+            world.getWorldData().setGameType(enumgamemode);
             // CraftBukkit end
         }
     }
