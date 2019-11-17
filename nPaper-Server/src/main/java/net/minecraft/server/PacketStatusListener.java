@@ -131,7 +131,7 @@ public class PacketStatusListener implements PacketStatusInListener {
             profiles = profiles.subList( 0, Math.min( profiles.size(), org.spigotmc.SpigotConfig.playerSample ) ); // Cap the sample to n (or less) displayed players, ie: Vanilla behaviour
         }
         // Spigot End
-        playerSample.a(profiles.toArray(new GameProfile[profiles.size()]));
+        playerSample.a(profiles.toArray(new GameProfile[Math.min(profiles.size(), org.spigotmc.SpigotConfig.playerSample)])); // nPaper - limit for Array
 
         ServerPing ping = new ServerPing();
         ping.setFavicon(event.icon.value);
