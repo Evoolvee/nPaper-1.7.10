@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 // CraftBukkit start
+import com.sathonay.npaper.utils.LightRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -34,7 +35,7 @@ public abstract class Entity {
 
     // CraftBukkit start
     private static final int CURRENT_LEVEL = 2;
-    public static final Random SHARED_RANDOM = new Random(); // nPaper
+    public static final LightRandom SHARED_RANDOM = new LightRandom(); // nPaper (Random -> LightRandom)
     static boolean isLevelAtLeast(NBTTagCompound tag, int level) {
         return tag.hasKey("Bukkit.updateLevel") && tag.getInt("Bukkit.updateLevel") >= level;
     }
