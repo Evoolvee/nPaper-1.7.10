@@ -875,9 +875,6 @@ public abstract class Entity {
                     f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
                     f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
                     this.world.addParticle("bubble", this.locX + (double) f2, (double) (f1 + 1.0F), this.locZ + (double) f3, this.motX, this.motY - (double) (this.random.nextFloat() * 0.2F), this.motZ);
-                }
-
-                for (i = 0; (float) i < 1.0F + this.width * 20.0F; ++i) {
                     f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
                     f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
                     this.world.addParticle("splash", this.locX + (double) f2, (double) (f1 + 1.0F), this.locZ + (double) f3, this.motX, this.motY, this.motZ);
