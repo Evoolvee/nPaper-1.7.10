@@ -866,19 +866,15 @@ public abstract class Entity {
                 }
 
                 this.makeSound(this.O(), f, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
-                float f1 = (float) MathHelper.floor(this.boundingBox.b);
+                float f1 = (float) MathHelper.floor(this.boundingBox.b) + 1;
 
-                int i;
-                float f2;
-                float f3;
-
-                for (i = 0; (float) i < 1.0F + this.width * 20.0F; ++i) {
+                for (int i = 0; (float) i < 1.0F + this.width * 20.0F; ++i) {
+                    float f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
+                    float f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
+                    this.world.addParticle("bubble", this.locX + (double) f2, f1, this.locZ + (double) f3, this.motX, this.motY - (double) (this.random.nextFloat() * 0.2F), this.motZ);
                     f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
                     f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
-                    this.world.addParticle("bubble", this.locX + (double) f2, (double) (f1 + 1.0F), this.locZ + (double) f3, this.motX, this.motY - (double) (this.random.nextFloat() * 0.2F), this.motZ);
-                    f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
-                    f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
-                    this.world.addParticle("splash", this.locX + (double) f2, (double) (f1 + 1.0F), this.locZ + (double) f3, this.motX, this.motY, this.motZ);
+                    this.world.addParticle("splash", this.locX + (double) f2, f1, this.locZ + (double) f3, this.motX, this.motY, this.motZ);
                 }
             }
 
