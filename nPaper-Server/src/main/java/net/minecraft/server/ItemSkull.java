@@ -58,6 +58,8 @@ public class ItemSkull extends Item {
                 TileEntity tileentity = world.getTileEntity(i, j, k);
 
                 if (tileentity != null && tileentity instanceof TileEntitySkull) {
+                    TileEntitySkull tileEntitySkull = (TileEntitySkull) tileentity;
+
                     if (itemstack.getData() == 3) {
                         GameProfile gameprofile = null;
 
@@ -71,13 +73,17 @@ public class ItemSkull extends Item {
                             }
                         }
 
-                        ((TileEntitySkull) tileentity).setGameProfile(gameprofile);
+                        //((TileEntitySkull) tileentity).setGameProfile(gameprofile);
+                        tileEntitySkull.setGameProfile(gameprofile);
                     } else {
-                        ((TileEntitySkull) tileentity).setSkullType(itemstack.getData());
+                        //((TileEntitySkull) tileentity).setSkullType(itemstack.getData());
+                        tileEntitySkull.setSkullType(itemstack.getData());
                     }
 
-                    ((TileEntitySkull) tileentity).setRotation(i1);
-                    ((BlockSkull) Blocks.SKULL).a(world, i, j, k, (TileEntitySkull) tileentity);
+                    //((TileEntitySkull) tileentity).setRotation(i1);
+                    //((BlockSkull) Blocks.SKULL).a(world, i, j, k, (TileEntitySkull) tileentity);
+                    tileEntitySkull.setRotation(i1);
+                    ((BlockSkull) Blocks.SKULL).a(world, i, j, k, tileEntitySkull);
                 }
 
                 --itemstack.count;
