@@ -125,6 +125,7 @@ public class EntityPigZombie extends EntityZombie {
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
+        /*
         int j = this.random.nextInt(2 + i);
 
         int k;
@@ -132,12 +133,17 @@ public class EntityPigZombie extends EntityZombie {
         for (k = 0; k < j; ++k) {
             this.a(Items.ROTTEN_FLESH, 1);
         }
+         */
+        this.a(Items.ROTTEN_FLESH, this.random.nextInt(2 + i));
 
+        /*
         j = this.random.nextInt(2 + i);
 
         for (k = 0; k < j; ++k) {
             this.a(Items.GOLD_NUGGET, 1);
         }
+         */
+        this.a(Items.GOLD_NUGGET, this.random.nextInt(2 + i));
     }
 
     public boolean a(EntityHuman entityhuman) {

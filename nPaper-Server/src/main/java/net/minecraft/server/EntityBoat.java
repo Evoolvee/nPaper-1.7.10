@@ -138,9 +138,8 @@ public class EntityBoat extends Entity {
             }
 
             return true;
-        } else {
-            return true;
         }
+        return true;
     }
 
     public boolean R() {
@@ -489,6 +488,7 @@ public class EntityBoat extends Entity {
         if (this.world.paperSpigotConfig.boatsDropBoats) {
             this.a(Items.BOAT, 1, 0.0F);
         } else {
+            /*
             for (int k = 0; k < 3; ++k) {
                 this.a(Item.getItemOf(Blocks.WOOD), 1, 0.0F);
             }
@@ -496,6 +496,9 @@ public class EntityBoat extends Entity {
             for (int k = 0; k < 2; ++k) {
                 this.a(Items.STICK, 1, 0.0F);
             }
+             */
+            this.a(Item.getItemOf(Blocks.WOOD), 3, 0.0F);
+            this.a(Items.STICK, 2, 0.0F);
         }
     }
 }

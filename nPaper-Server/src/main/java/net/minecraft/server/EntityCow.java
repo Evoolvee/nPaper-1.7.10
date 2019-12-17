@@ -56,6 +56,7 @@ public class EntityCow extends EntityAnimal {
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
+        /*
         int j = this.random.nextInt(3) + this.random.nextInt(1 + i);
 
         int k;
@@ -63,7 +64,10 @@ public class EntityCow extends EntityAnimal {
         for (k = 0; k < j; ++k) {
             this.a(Items.LEATHER, 1);
         }
+         */
+        this.a(Items.LEATHER, this.random.nextInt(3) + this.random.nextInt(1 + i));
 
+        /*
         j = this.random.nextInt(3) + 1 + this.random.nextInt(1 + i);
 
         for (k = 0; k < j; ++k) {
@@ -73,6 +77,8 @@ public class EntityCow extends EntityAnimal {
                 this.a(Items.RAW_BEEF, 1);
             }
         }
+         */
+        this.a((this.isBurning() ? Items.COOKED_BEEF : Items.RAW_BEEF), this.random.nextInt(3) + 1 + this.random.nextInt(1 + i));
     }
 
     public boolean a(EntityHuman entityhuman) {

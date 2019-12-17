@@ -68,11 +68,14 @@ public class EntitySnowman extends EntityGolem implements IRangedEntity {
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
+        /*
         int j = this.random.nextInt(16);
 
         for (int k = 0; k < j; ++k) {
             this.a(Items.SNOW_BALL, 1);
         }
+         */
+        this.a(Items.SNOW_BALL, this.random.nextInt(16));
     }
 
     public void a(EntityLiving entityliving, float f) {

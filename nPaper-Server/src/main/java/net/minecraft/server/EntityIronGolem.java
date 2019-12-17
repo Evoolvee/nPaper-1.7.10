@@ -147,6 +147,7 @@ public class EntityIronGolem extends EntityGolem {
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
+        /*
         int j = this.random.nextInt(3);
 
         int k;
@@ -154,12 +155,17 @@ public class EntityIronGolem extends EntityGolem {
         for (k = 0; k < j; ++k) {
             this.a(Item.getItemOf(Blocks.RED_ROSE), 1, 0.0F);
         }
+         */
+        this.a(Item.getItemOf(Blocks.RED_ROSE), this.random.nextInt(3), 0.0F);
 
+        /*
         k = 3 + this.random.nextInt(3);
 
         for (int l = 0; l < k; ++l) {
             this.a(Items.IRON_INGOT, 1);
         }
+         */
+        this.a(Items.IRON_INGOT, this.random.nextInt(3));
     }
 
     public int cb() {

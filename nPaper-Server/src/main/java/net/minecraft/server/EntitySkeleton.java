@@ -137,28 +137,39 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
+        /*
         int j;
         int k;
+         */
 
         if (this.getSkeletonType() == 1) {
+            /*
             j = this.random.nextInt(3 + i) - 1;
 
             for (k = 0; k < j; ++k) {
                 this.a(Items.COAL, 1);
             }
+             */
+            this.a(Items.COAL, this.random.nextInt(3 + i) - 1);
         } else {
+            /*
             j = this.random.nextInt(3 + i);
 
             for (k = 0; k < j; ++k) {
                 this.a(Items.ARROW, 1);
             }
+             */
+            this.a(Items.ARROW, this.random.nextInt(3 + i));
         }
 
+        /*
         j = this.random.nextInt(3 + i);
 
         for (k = 0; k < j; ++k) {
             this.a(Items.BONE, 1);
         }
+         */
+        this.a(Items.BONE, this.random.nextInt(3 + i));
     }
 
     protected void getRareDrop(int i) {

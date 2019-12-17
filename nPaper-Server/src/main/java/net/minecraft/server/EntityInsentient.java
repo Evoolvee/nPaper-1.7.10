@@ -180,6 +180,7 @@ public abstract class EntityInsentient extends EntityLiving {
         Item item = this.getLoot();
 
         if (item != null) {
+            /*
             int j = this.random.nextInt(3);
 
             if (i > 0) {
@@ -189,6 +190,8 @@ public abstract class EntityInsentient extends EntityLiving {
             for (int k = 0; k < j; ++k) {
                 this.a(item, 1);
             }
+             */
+            this.a(item, (i > 0 ? (this.random.nextInt(3) + this.random.nextInt(i + 1)) : ( this.random.nextInt(3))));
         }
     }
 

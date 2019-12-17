@@ -44,22 +44,14 @@ public class EntityChicken extends EntityAnimal {
         this.bs = this.bp;
         this.br = this.bq;
         this.bq = (float) ((double) this.bq + (double) (this.onGround ? -1 : 4) * 0.3D);
-        if (this.bq < 0.0F) {
-            this.bq = 0.0F;
-        }
+        if (this.bq < 0.0F) this.bq = 0.0F;
 
-        if (this.bq > 1.0F) {
-            this.bq = 1.0F;
-        }
+        if (this.bq > 1.0F) this.bq = 1.0F;
 
-        if (!this.onGround && this.bt < 1.0F) {
-            this.bt = 1.0F;
-        }
+        if (!this.onGround && this.bt < 1.0F) this.bt = 1.0F;
 
         this.bt = (float) ((double) this.bt * 0.9D);
-        if (!this.onGround && this.motY < 0.0D) {
-            this.motY *= 0.6D;
-        }
+        if (!this.onGround && this.motY < 0.0D) this.motY *= 0.6D;
 
         this.bp += this.bt * 2.0F;
         if (!this.world.isStatic && !this.isBaby() && !this.isChickenJockey() && --this.bu <= 0) {
@@ -92,17 +84,25 @@ public class EntityChicken extends EntityAnimal {
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
+        /*
         int j = this.random.nextInt(3) + this.random.nextInt(1 + i);
+
 
         for (int k = 0; k < j; ++k) {
             this.a(Items.FEATHER, 1);
         }
+         */
+        this.a(Items.FEATHER, this.random.nextInt(3) + this.random.nextInt(1 + i));
 
+
+        /*
         if (this.isBurning()) {
             this.a(Items.COOKED_CHICKEN, 1);
         } else {
             this.a(Items.RAW_CHICKEN, 1);
         }
+         */
+        this.a((this.isBurning() ? Items.COOKED_CHICKEN : Items.RAW_CHICKEN), 1);
     }
 
     public EntityChicken b(EntityAgeable entityageable) {

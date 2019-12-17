@@ -161,11 +161,15 @@ public class Explosion {
         float volume = source instanceof EntityTNTPrimed ? world.paperSpigotConfig.tntExplosionVolume : 4.0F;
         this.world.makeSound(this.posX, this.posY, this.posZ, "random.explode", volume, (1.0F + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2F) * 0.7F);
         // PaperSpigot end
+        /*
         if (this.size >= 2.0F && this.b) {
             this.world.addParticle("hugeexplosion", this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D);
         } else {
             this.world.addParticle("largeexplode", this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D);
         }
+         */
+
+        this.world.addParticle((this.size >= 2.0F && this.b ? "hugeexplosion" : "largeexplode"), this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D);
 
         Iterator iterator;
         ChunkPosition chunkposition;

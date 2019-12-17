@@ -197,6 +197,7 @@ public class EntityGhast extends EntityFlying implements IMonster {
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
+        /*
         int j = this.random.nextInt(2) + this.random.nextInt(1 + i);
 
         int k;
@@ -204,12 +205,17 @@ public class EntityGhast extends EntityFlying implements IMonster {
         for (k = 0; k < j; ++k) {
             this.a(Items.GHAST_TEAR, 1);
         }
+        */
+        this.a(Items.GHAST_TEAR, this.random.nextInt(2) + this.random.nextInt(1 + i));
 
+        /*
         j = this.random.nextInt(3) + this.random.nextInt(1 + i);
 
         for (k = 0; k < j; ++k) {
             this.a(Items.SULPHUR, 1);
         }
+         */
+        this.a(Items.SULPHUR, this.random.nextInt(3) + this.random.nextInt(1 + i));
     }
 
     protected float bf() {

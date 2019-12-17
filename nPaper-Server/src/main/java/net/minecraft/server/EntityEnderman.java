@@ -307,11 +307,14 @@ public class EntityEnderman extends EntityMonster {
         Item item = this.getLoot();
 
         if (item != null) {
+            /*
             int j = this.random.nextInt(2 + i);
 
             for (int k = 0; k < j; ++k) {
                 this.a(item, 1);
             }
+             */
+            this.a(item, this.random.nextInt(2 + i));
         }
 
         Item carriedItem = Item.getItemOf(getCarried());

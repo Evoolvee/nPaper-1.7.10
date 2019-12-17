@@ -89,6 +89,7 @@ public class EntityPig extends EntityAnimal {
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
+        /*
         int j = this.random.nextInt(3) + 1 + this.random.nextInt(1 + i);
 
         for (int k = 0; k < j; ++k) {
@@ -98,6 +99,8 @@ public class EntityPig extends EntityAnimal {
                 this.a(Items.PORK, 1);
             }
         }
+         */
+        this.a((this.isBurning() ? Items.GRILLED_PORK : Items.PORK), this.random.nextInt(3) + 1 + this.random.nextInt(1 + i));
 
         if (this.hasSaddle()) {
             this.a(Items.SADDLE, 1);
@@ -109,11 +112,14 @@ public class EntityPig extends EntityAnimal {
     }
 
     public void setSaddle(boolean flag) {
+        /*
         if (flag) {
             this.datawatcher.watch(16, Byte.valueOf((byte) 1));
         } else {
             this.datawatcher.watch(16, Byte.valueOf((byte) 0));
         }
+         */
+        this.datawatcher.watch(16, Byte.valueOf((byte) (flag ? 1 : 0)));
     }
 
     public void a(EntityLightning entitylightning) {
