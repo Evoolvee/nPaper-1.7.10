@@ -263,11 +263,7 @@ public class BlockPiston extends Block {
                 }
 
                 if (block.h() == 1) {
-                    if (!flag) {
-                        return false;
-                    }
-
-                    return true;
+                    return flag;
                 }
             } else if (c(world.getData(i, j, k))) {
                 return false;
