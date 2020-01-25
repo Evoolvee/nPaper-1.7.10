@@ -1,5 +1,6 @@
 package net.minecraft.server;
 
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent; // CraftBukkit
 
 public class EntityWitherSkull extends EntityFireball {
@@ -57,7 +58,7 @@ public class EntityWitherSkull extends EntityFireball {
                     }
 
                     if (b0 > 0) {
-                        ((EntityLiving) movingobjectposition.entity).addEffect(new MobEffect(MobEffectList.WITHER.id, 20 * b0, 1));
+                        ((EntityLiving) movingobjectposition.entity).addEffect(new MobEffect(MobEffectList.WITHER.id, 20 * b0, 1), EntityPotionEffectEvent.Cause.ATTACK);
                     }
                 }
             }

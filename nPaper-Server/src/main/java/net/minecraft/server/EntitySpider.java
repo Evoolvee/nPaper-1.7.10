@@ -1,5 +1,6 @@
 package net.minecraft.server;
 
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityTargetEvent; // CraftBukkit
 
 public class EntitySpider extends EntityMonster {
@@ -153,7 +154,7 @@ public class EntitySpider extends EntityMonster {
             int i = ((GroupDataSpider) object).a;
 
             if (i > 0 && MobEffectList.byId[i] != null) {
-                this.addEffect(new MobEffect(i, Integer.MAX_VALUE));
+                this.addEffect(new MobEffect(i, Integer.MAX_VALUE), EntityPotionEffectEvent.Cause.SPIDER_SPAWN);
             }
         }
 

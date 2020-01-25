@@ -11,6 +11,7 @@ import org.bukkit.entity.HumanEntity;
 // PaperSpigot start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.github.paperspigot.event.block.BeaconEffectEvent;
@@ -102,7 +103,7 @@ public class TileEntityBeacon extends TileEntity implements IInventory {
                     if (CraftEventFactory.callEvent(event).isCancelled()) continue;
 
                     PotionEffect effect = event.getEffect();
-                    entityhuman.addEffect(new MobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient()));
+                    entityhuman.addEffect(new MobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient()), EntityPotionEffectEvent.Cause.BEACON);
                     // PaperSpigot end
                 }
             }

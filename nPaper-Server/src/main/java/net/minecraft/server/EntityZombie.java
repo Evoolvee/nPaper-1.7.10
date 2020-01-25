@@ -7,10 +7,7 @@ import java.util.UUID;
 
 //CraftBukkit start
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.*;
 //CraftBukkit end
 
 public class EntityZombie extends EntityMonster {
@@ -450,8 +447,8 @@ public class EntityZombie extends EntityMonster {
     protected void a(int i) {
         this.bt = i;
         this.getDataWatcher().watch(14, Byte.valueOf((byte) 1));
-        this.removeEffect(MobEffectList.WEAKNESS.id);
-        this.addEffect(new MobEffect(MobEffectList.INCREASE_DAMAGE.id, i, Math.min(this.world.difficulty.a() - 1, 0)));
+        this.removeEffect(MobEffectList.WEAKNESS.id, EntityPotionEffectEvent.Cause.CONVERSION);
+        this.addEffect(new MobEffect(MobEffectList.INCREASE_DAMAGE.id, i, Math.min(this.world.difficulty.a() - 1, 0)), EntityPotionEffectEvent.Cause.CONVERSION);
         this.world.broadcastEntityEffect(this, (byte) 16);
     }
 
@@ -475,7 +472,7 @@ public class EntityZombie extends EntityMonster {
 
         this.world.kill(this);
         this.world.addEntity(entityvillager, CreatureSpawnEvent.SpawnReason.CURED); // CraftBukkit - add SpawnReason
-        entityvillager.addEffect(new MobEffect(MobEffectList.CONFUSION.id, 200, 0));
+        entityvillager.addEffect(new MobEffect(MobEffectList.CONFUSION.id, 200, 0), EntityPotionEffectEvent.Cause.CONVERSION);
         this.world.a((EntityHuman) null, 1017, (int) this.locX, (int) this.locY, (int) this.locZ, 0);
     }
 

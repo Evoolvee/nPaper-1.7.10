@@ -3,6 +3,7 @@ package net.minecraft.server;
 import java.util.Calendar;
 
 import org.bukkit.event.entity.EntityCombustEvent; // CraftBukkit
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 
 public class EntitySkeleton extends EntityMonster implements IRangedEntity {
 
@@ -57,7 +58,7 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
     public boolean n(Entity entity) {
         if (super.n(entity)) {
             if (this.getSkeletonType() == 1 && entity instanceof EntityLiving) {
-                ((EntityLiving) entity).addEffect(new MobEffect(MobEffectList.WITHER.id, 200));
+                ((EntityLiving) entity).addEffect(new MobEffect(MobEffectList.WITHER.id, 200), EntityPotionEffectEvent.Cause.ATTACK);
             }
 
             return true;

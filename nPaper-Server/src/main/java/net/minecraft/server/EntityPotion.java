@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 // CraftBukkit end
 
 public class EntityPotion extends EntityProjectile {
@@ -121,7 +122,7 @@ public class EntityPotion extends EntityProjectile {
                                     int j = (int) (d1 * (double) mobeffect.getDuration() + 0.5D);
 
                                     if (j > 20) {
-                                        entityliving.addEffect(new MobEffect(i, j, mobeffect.getAmplifier()));
+                                        entityliving.addEffect(new MobEffect(i, j, mobeffect.getAmplifier()), EntityPotionEffectEvent.Cause.POTION_SPLASH);
                                     }
                                 }
                             }

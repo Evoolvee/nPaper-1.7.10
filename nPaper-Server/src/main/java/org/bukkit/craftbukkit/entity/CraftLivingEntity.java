@@ -14,8 +14,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftEntityEquipment;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.potion.CraftPotionUtil;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
@@ -32,6 +34,7 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.WitherSkull;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -243,7 +246,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             }
             removePotionEffect(effect.getType());
         }
-        getHandle().addEffect(new MobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient()));
+        getHandle().addEffect(CraftPotionUtil.fromBukkit(effect), EntityPotionEffectEvent.Cause.PLUGIN);
         return true;
     }
 
@@ -262,13 +265,16 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void clearPotionEffects() {
         EntityLiving entity = this.getHandle();
+
+        CraftEventFactory.callEntityPotionEffectChangeEvent(entity, null, null, EntityPotionEffectEvent.Cause.PLUGIN, EntityPotionEffectEvent.Action.CLEARED);
+
         if (!entity.hasEffect()) return;
         entity.effects.clear();
         entity.updateEffects = true;
     }
 
     public void removePotionEffect(PotionEffectType type) {
-        getHandle().removeEffect(type.getId());
+        getHandle().removeEffect(type.getId(), EntityPotionEffectEvent.Cause.PLUGIN);
     }
 
     public Collection<PotionEffect> getActivePotionEffects() {
@@ -277,7 +283,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             if (!(raw instanceof MobEffect))
                 continue;
             MobEffect handle = (MobEffect) raw;
-            effects.add(new PotionEffect(PotionEffectType.getById(handle.getEffectId()), handle.getDuration(), handle.getAmplifier(), handle.isAmbient()));
+            effects.add(CraftPotionUtil.toBukkit(handle));
         }
         return effects;
     }

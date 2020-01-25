@@ -1,5 +1,6 @@
 package net.minecraft.server;
 
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.github.paperspigot.PaperSpigotConfig; // PaperSpigot
 
 public class ItemMilkBucket extends Item {
@@ -21,7 +22,7 @@ public class ItemMilkBucket extends Item {
         }
 
         if (!world.isStatic) {
-            entityhuman.removeAllEffects();
+            entityhuman.removeAllEffects(EntityPotionEffectEvent.Cause.MILK);
         }
 
         // PaperSpigot start - Stackable Buckets

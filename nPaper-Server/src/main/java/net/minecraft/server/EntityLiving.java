@@ -9,6 +9,7 @@ import com.google.common.base.Function;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 // CraftBukkit end
 
@@ -457,6 +458,12 @@ public abstract class EntityLiving extends Entity {
 
             if (!mobeffect.tick(this)) {
                 if (!this.world.isStatic) {
+
+                    EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffect, null, EntityPotionEffectEvent.Cause.EXPIRATION);
+                    if (event.isCancelled()) {
+                        continue;
+                    }
+
                     iterator.remove();
                     this.b(mobeffect);
                 }
@@ -511,15 +518,22 @@ public abstract class EntityLiving extends Entity {
     }
 
     public void removeAllEffects() {
-        Iterator iterator = this.effects.keySet().iterator();
+        removeAllEffects(EntityPotionEffectEvent.Cause.UNKNOWN);
+    }
 
-        while (iterator.hasNext()) {
-            Integer integer = (Integer) iterator.next();
-            MobEffect mobeffect = (MobEffect) this.effects.get(integer);
+    public void removeAllEffects(EntityPotionEffectEvent.Cause cause) {
+        if (this.world.isStatic) {
+            return;
+        }
 
-            if (!this.world.isStatic) {
+        Iterator<MobEffect> iterator = this.effects.values().iterator();
+        for (boolean flag = false; iterator.hasNext(); flag = true) {
+
+            MobEffect effect = (MobEffect)iterator.next();
+            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause, EntityPotionEffectEvent.Action.CLEARED);
+            if (!event.isCancelled()) {
+                b(effect);
                 iterator.remove();
-                this.b(mobeffect);
             }
         }
     }
@@ -547,14 +561,34 @@ public abstract class EntityLiving extends Entity {
     }
 
     public void addEffect(MobEffect mobeffect) {
-        if (this.d(mobeffect)) {
-            if (this.effects.containsKey(Integer.valueOf(mobeffect.getEffectId()))) {
-                ((MobEffect) this.effects.get(Integer.valueOf(mobeffect.getEffectId()))).a(mobeffect);
-                this.a((MobEffect) this.effects.get(Integer.valueOf(mobeffect.getEffectId())), true);
-            } else {
-                this.effects.put(Integer.valueOf(mobeffect.getEffectId()), mobeffect);
-                this.a(mobeffect);
-            }
+        addEffect(mobeffect, EntityPotionEffectEvent.Cause.UNKNOWN);
+    }
+
+    public void addEffect(MobEffect mobeffect, EntityPotionEffectEvent.Cause cause) {
+
+        if (!this.d(mobeffect)) {
+            return;
+        }
+
+
+
+        MobEffect mobeffect1 = this.effects.get(mobeffect.getEffectId());
+        boolean override = mobeffect1 != null;
+
+        EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffect1, mobeffect, cause, override);
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (mobeffect1 == null) {
+            this.effects.put(mobeffect.getEffectId(), mobeffect);
+            a(mobeffect);
+            return;
+        }
+
+        if (event.isOverride()) {
+            mobeffect1.a(mobeffect);
+            this.a((MobEffect) mobeffect1, true);
         }
     }
 
@@ -575,11 +609,29 @@ public abstract class EntityLiving extends Entity {
     }
 
     public void removeEffect(int i) {
-        MobEffect mobeffect = (MobEffect) this.effects.remove(Integer.valueOf(i));
+        removeEffect(i, EntityPotionEffectEvent.Cause.UNKNOWN);
+    }
+
+    public void removeEffect(int i, EntityPotionEffectEvent.Cause cause) {
+        MobEffect mobeffect = this.effects.remove(Integer.valueOf(i));
 
         if (mobeffect != null) {
             this.b(mobeffect);
         }
+    }
+
+    public MobEffect c(int i, EntityPotionEffectEvent.Cause cause) {
+        MobEffect effect = this.effects.get(i);
+        if (effect == null) {
+            return null;
+        }
+
+        EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause);
+        if (event.isCancelled()) {
+            return null;
+        }
+
+        return this.effects.remove(i);
     }
 
     protected void a(MobEffect mobeffect) {
