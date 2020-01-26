@@ -6,14 +6,17 @@ import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.util.com.google.common.base.Charsets;
+import net.minecraft.util.com.google.common.base.Objects;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 
 // CraftBukkit start
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.inventory.EquipmentSetEvent;
 import org.bukkit.event.player.*;
 // CraftBukkit end
 import org.bukkit.util.Vector;
@@ -1593,7 +1596,14 @@ public abstract class EntityHuman extends EntityLiving implements ICommandListen
     }
 
     public void setEquipment(int i, ItemStack itemstack) {
-        this.inventory.armor[i] = itemstack;
+        ItemStack previous = this.inventory.armor[i];
+        if (!Objects.equal(itemstack, previous)) {
+            if (previous != null && EquipmentSetEvent.getHandlerList().getRegisteredListeners().length > 0) {
+                previous = previous.cloneItemStack();
+            }
+            this.inventory.armor[i] = itemstack;
+            Bukkit.getPluginManager().callEvent(new EquipmentSetEvent(getBukkitEntity(), i, CraftItemStack.asBukkitCopy(itemstack), CraftItemStack.asBukkitCopy(previous)));
+        }
     }
 
     public ItemStack[] getEquipment() {
