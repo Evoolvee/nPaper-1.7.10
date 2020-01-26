@@ -7,7 +7,11 @@ import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.event.inventory.PrepareAnvilRepairEvent;
 
 public class ContainerAnvil extends Container {
 
@@ -295,6 +299,17 @@ public class ContainerAnvil extends Container {
                 i1 += 2;
                 itemstack1.setRepairCost(i1);
                 EnchantmentManager.a(map, itemstack1);
+                if (itemstack1 != null) {
+
+                    PrepareAnvilRepairEvent prepareAnvilRepairEvent = new PrepareAnvilRepairEvent(this.o.getBukkitEntity(), getBukkitView(), this.o.world.getWorld().getBlockAt(this.j, this.k, this.l), CraftItemStack.asBukkitCopy(itemstack), CraftItemStack.asBukkitCopy(itemstack2), CraftItemStack.asBukkitCopy(itemstack1));
+                    Bukkit.getPluginManager().callEvent(prepareAnvilRepairEvent);
+
+                    if (prepareAnvilRepairEvent.isCancelled() || prepareAnvilRepairEvent.getResult().getType() == Material.AIR) {
+                        return;
+                    }
+
+                    itemstack1 = CraftItemStack.asNMSCopy(prepareAnvilRepairEvent.getResult());
+                }
             }
 
             this.g.setItem(0, itemstack1);
