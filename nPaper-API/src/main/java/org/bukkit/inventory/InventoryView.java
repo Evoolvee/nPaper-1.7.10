@@ -116,7 +116,7 @@ public abstract class InventoryView {
                 getBottomInventory().setItem(convertSlot(slot),item);
             }
         } else {
-            getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), item);
+            getPlayer().getWorld().dropItemNaturally(getPlayer(), getPlayer().getLocation(), item);
         }
     }
 

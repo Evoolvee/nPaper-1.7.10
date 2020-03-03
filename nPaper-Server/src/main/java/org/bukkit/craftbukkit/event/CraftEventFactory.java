@@ -365,7 +365,7 @@ public class CraftEventFactory {
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
             if (stack == null || stack.getType() == Material.AIR || stack.getAmount() == 0) continue;
 
-            world.dropItemNaturally(victim ,entity.getLocation(), stack);
+            world.dropItemNaturally(victim, entity.getLocation(), stack);
         }
 
         return event;
@@ -391,7 +391,7 @@ public class CraftEventFactory {
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
             if (stack == null || stack.getType() == Material.AIR) continue;
 
-            world.dropItemNaturally(entity.getLocation(), stack);
+            world.dropItemNaturally(entity, entity.getLocation(), stack);
         }
 
         return event;
