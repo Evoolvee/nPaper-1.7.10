@@ -3,13 +3,7 @@ package net.minecraft.server;
 import java.io.File;
 import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.Map.Entry;
 
 import net.minecraft.util.com.google.common.base.Charsets;
@@ -1124,12 +1118,13 @@ public abstract class PlayerList {
         this.sendPacketNearby((EntityHuman) null, d0, d1, d2, d3, i, packet);
     }
 
-    public void sendPacketNearby(EntityHuman entityhuman, double d0, double d1, double d2, double d3, int i, Packet packet) {
-        for (int j = 0; j < this.players.size(); ++j) {
-            EntityPlayer entityplayer = (EntityPlayer) this.players.get(j);
+    public void sendPacketNearby(final EntityHuman entityhuman, double d0, double d1, double d2, double d3, int i, Packet packet) {
+        final boolean entityHumanNull = entityhuman == null;
+        final Collection<EntityPlayer> playersList = (entityHumanNull ? this.players : entityhuman.world.players);
+        for (EntityPlayer entityplayer : playersList) {
 
             // CraftBukkit start - Test if player receiving packet can see the source of the packet
-            if (entityhuman != null && entityhuman instanceof EntityPlayer && !entityplayer.getBukkitEntity().canSee(((EntityPlayer) entityhuman).getBukkitEntity())) continue;
+            if (!entityHumanNull && entityhuman instanceof EntityPlayer && !entityplayer.getBukkitEntity().canSee(((EntityPlayer) entityhuman).getBukkitEntity())) continue;
             // CraftBukkit end
 
             if (entityplayer != entityhuman && entityplayer.dimension == i) {
