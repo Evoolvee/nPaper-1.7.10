@@ -158,6 +158,10 @@ public class EntityPotionEffectEvent extends EntityEvent implements Cancellable 
     public enum Cause {
 
         /**
+         * When the method LivingEntity#clearPotionEffects() is called
+         */
+        CLEAR,
+        /**
          * When the entity is inflicted with a potion effect due to an entity
          * attack (e.g. a cave spider or a witch).
          */

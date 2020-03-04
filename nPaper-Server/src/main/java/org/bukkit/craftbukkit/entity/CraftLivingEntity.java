@@ -34,6 +34,8 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.WitherSkull;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -266,9 +268,9 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public void clearPotionEffects() {
         EntityLiving entity = this.getHandle();
 
-        CraftEventFactory.callEntityPotionEffectChangeEvent(entity, null, null, EntityPotionEffectEvent.Cause.PLUGIN, EntityPotionEffectEvent.Action.CLEARED);
-
         if (!entity.hasEffect()) return;
+        EntityPotionEffectEvent event =  CraftEventFactory.callEntityPotionEffectChangeEvent(entity, null, null, EntityPotionEffectEvent.Cause.CLEAR, EntityPotionEffectEvent.Action.CLEARED);
+        if (event.isCancelled()) return;
         entity.effects.clear();
         entity.updateEffects = true;
     }
