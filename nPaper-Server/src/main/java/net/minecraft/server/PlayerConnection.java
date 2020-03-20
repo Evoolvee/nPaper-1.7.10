@@ -1696,7 +1696,7 @@ public class PlayerConnection implements PacketPlayInListener {
             if (tileentity instanceof TileEntitySign) {
                 TileEntitySign tileentitysign = (TileEntitySign) tileentity;
 
-                if (!tileentitysign.a() || tileentitysign.b() != this.player) {
+                if (!tileentitysign.a() || tileentitysign.b() != this.player || tileentitysign.signEditor == null || !tileentitysign.signEditor.equals(this.player.getUniqueID())) { // Paper
                     this.minecraftServer.warning("Player " + this.player.getName() + " just tried to change non-editable sign");
                     this.sendPacket(new PacketPlayOutUpdateSign(packetplayinupdatesign.c(), packetplayinupdatesign.d(), packetplayinupdatesign.e(), tileentitysign.lines)); // CraftBukkit
                     return;

@@ -6,6 +6,7 @@ public class TileEntitySign extends TileEntity {
     public int i = -1;
     public boolean isEditable = true; // CraftBukkit - private -> public
     private EntityHuman k;
+    public java.util.UUID signEditor;
 
     public TileEntitySign() {}
 
@@ -40,7 +41,10 @@ public class TileEntitySign extends TileEntity {
     }
 
     public void a(EntityHuman entityhuman) {
-        this.k = entityhuman;
+        // Paper start
+        //this.k = entityhuman;
+        signEditor = entityhuman != null ? entityhuman.getUniqueID() : null;
+        // Paper end
     }
 
     public EntityHuman b() {
