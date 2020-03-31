@@ -1159,6 +1159,13 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         this.deathTicks = 0;
         this.removeAllEffects(EntityPotionEffectEvent.Cause.DEATH);
         this.updateEffects = true;
+        // Clear potion metadata now, because new effects might get added
+        // before the update in the tick has a chance to run, and if they
+        // match the old effects, the metadata will never be marked dirty
+        // and will go out of sync with the client.
+        this.datawatcher.watch(8, Byte.valueOf((byte) 0));
+        this.datawatcher.watch(7, Integer.valueOf(0));
+        this.setInvisible(false);
         this.activeContainer = this.defaultContainer;
         this.killer = null;
         this.lastDamager = null;
