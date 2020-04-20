@@ -35,5 +35,19 @@ public interface Furnace extends BlockState, ContainerBlock {
      */
     public void setCookTime(short cookTime);
 
+    /**
+     * Get cook speed multiplier.
+     *
+     * @return cook speed multiplier
+     */
+    public double getCookSpeedMultiplier();
+
+    /**
+     *  Set cook speed multiplier.
+     *
+     * @param cookSpeedMultiplier cook speed multiplier
+     */
+    public void setCookSpeedMultiplier(double cookSpeedMultiplier);
+
     public FurnaceInventory getInventory();
 }

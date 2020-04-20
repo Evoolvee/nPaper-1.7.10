@@ -19,6 +19,7 @@ public class TileEntityFurnace extends TileEntity implements IWorldInventory {
     public int burnTime;
     public int ticksForCurrentFuel;
     public int cookTime;
+    public double cookSpeedMultiplier = 1.0; // PaperSpigot - cook speed multiplier API
     private String o;
 
     // CraftBukkit start - add fields and methods
@@ -129,12 +130,19 @@ public class TileEntityFurnace extends TileEntity implements IWorldInventory {
         if (nbttagcompound.hasKeyOfType("CustomName", 8)) {
             this.o = nbttagcompound.getString("CustomName");
         }
+
+        // PaperSpigot start - cook speed multiplier API
+        if (nbttagcompound.hasKey("CookSpeedMultiplier")) {
+            this.cookSpeedMultiplier = nbttagcompound.getDouble("CookSpeedMultiplier");
+        }
+        // PaperSpigot end - cook speed multiplier API
     }
 
     public void b(NBTTagCompound nbttagcompound) {
         super.b(nbttagcompound);
         nbttagcompound.setShort("BurnTime", (short) this.burnTime);
         nbttagcompound.setShort("CookTime", (short) this.cookTime);
+        nbttagcompound.setDouble("CookSpeedMultiplier", this.cookSpeedMultiplier); // PaperSpigot - cook speed multiplier API
         NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.items.length; ++i) {
@@ -171,7 +179,7 @@ public class TileEntityFurnace extends TileEntity implements IWorldInventory {
 
         // CraftBukkit - moved from below
         if (this.isBurning() && this.canBurn()) {
-            this.cookTime += elapsedTicks;
+            this.cookTime += (elapsedTicks * cookSpeedMultiplier); // PaperSpigot - cook speed multiplier API
             if (this.cookTime >= 200) {
                 this.cookTime %= 200;
                 this.burn();

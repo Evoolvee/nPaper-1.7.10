@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.server.TileEntityFurnace;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
@@ -46,4 +47,18 @@ public class CraftFurnace extends CraftBlockState implements Furnace {
     public void setCookTime(short cookTime) {
         furnace.cookTime = cookTime;
     }
+
+    // PaperSpigot start - furnace cook speed multiplier
+    @Override
+    public double getCookSpeedMultiplier() {
+        return furnace.cookSpeedMultiplier;
+    }
+
+    @Override
+    public void setCookSpeedMultiplier(double cookSpeedMultiplier) {
+        Preconditions.checkArgument(cookSpeedMultiplier >= 0, "Furnace speed multiplier cannot be negative");
+        Preconditions.checkArgument(cookSpeedMultiplier <= 100, "Furnace speed multiplier cannot more than 100");
+        furnace.cookSpeedMultiplier = cookSpeedMultiplier;
+    }
+    // PaperSpigot end
 }
