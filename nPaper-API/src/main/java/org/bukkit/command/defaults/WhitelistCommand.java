@@ -1,6 +1,7 @@
 package org.bukkit.command.defaults;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -22,6 +23,7 @@ public class WhitelistCommand extends VanillaCommand {
         this.description = "Manages the list of players allowed to use this server";
         this.usageMessage = "/whitelist (add|remove) <player>\n/whitelist (on|off|list|reload)";
         this.setPermission("bukkit.command.whitelist.reload;bukkit.command.whitelist.enable;bukkit.command.whitelist.disable;bukkit.command.whitelist.list;bukkit.command.whitelist.add;bukkit.command.whitelist.remove");
+        this.setAliases(Collections.singletonList("wl"));
     }
 
     @Override
