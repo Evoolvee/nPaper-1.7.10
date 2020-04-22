@@ -1,12 +1,6 @@
 package net.minecraft.server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
@@ -47,7 +41,7 @@ public class Explosion {
         // CraftBukkit end
 
         float f = this.size;
-        HashSet hashset = new HashSet();
+        Set<ChunkPosition> hashset = new HashSet<>();
 
         int i;
         int j;
@@ -87,7 +81,7 @@ public class Explosion {
                             }
 
                             if (f1 > 0.0F && (this.source == null || this.source.a(this, this.world, l, i1, j1, block, f1)) && i1 < 256 && i1 >= 0) { // CraftBukkit - don't wrap explosions
-                                hashset.add(new ChunkPosition(l, i1, j1));
+                                if (block != Blocks.PISTON_MOVING) hashset.add(new ChunkPosition(l, i1, j1));
                             }
 
                             d0 += d3 * (double) f2;
