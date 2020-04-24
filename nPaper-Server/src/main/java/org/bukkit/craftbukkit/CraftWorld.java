@@ -337,7 +337,7 @@ public class CraftWorld implements World {
     }
 
     public org.bukkit.entity.Item dropItemNaturally(Entity owner, Location loc, ItemStack item) {
-        return dropItemNaturally((net.minecraft.server.Entity )owner, loc, item);
+        return dropItemNaturally(((CraftEntity) owner).getHandle(), loc, item);
     }
 
     public org.bukkit.entity.Item dropItemNaturally(net.minecraft.server.Entity owner, Location loc, ItemStack item) {
