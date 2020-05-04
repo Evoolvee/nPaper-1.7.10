@@ -613,7 +613,7 @@ public abstract class EntityLiving extends Entity {
     }
 
     public void removeEffect(int i, EntityPotionEffectEvent.Cause cause) {
-        MobEffect mobeffect = this.effects.remove(Integer.valueOf(i));
+        MobEffect mobeffect = c(i, cause);
 
         if (mobeffect != null) {
             this.b(mobeffect);
