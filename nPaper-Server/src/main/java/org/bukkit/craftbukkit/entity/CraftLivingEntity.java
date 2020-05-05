@@ -267,12 +267,8 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void clearPotionEffects() {
         EntityLiving entity = this.getHandle();
-
         if (!entity.hasEffect()) return;
-        EntityPotionEffectEvent event =  CraftEventFactory.callEntityPotionEffectChangeEvent(entity, null, null, EntityPotionEffectEvent.Cause.CLEAR, EntityPotionEffectEvent.Action.CLEARED);
-        if (event.isCancelled()) return;
-        entity.effects.clear();
-        entity.updateEffects = true;
+        entity.removeAllEffects(EntityPotionEffectEvent.Cause.CLEAR);
     }
 
     public void removePotionEffect(PotionEffectType type) {

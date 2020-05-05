@@ -889,7 +889,7 @@ public class CraftEventFactory {
         PotionEffect bukkitOldEffect = (oldEffect == null) ? null : CraftPotionUtil.toBukkit(oldEffect);
         PotionEffect bukkitNewEffect = (newEffect == null) ? null : CraftPotionUtil.toBukkit(newEffect);
 
-        if (cause != EntityPotionEffectEvent.Cause.CLEAR && bukkitOldEffect == null && bukkitNewEffect == null) {
+        if (bukkitOldEffect == null && bukkitNewEffect == null) {
             throw new IllegalStateException("Old and new potion effect are both null");
         }
 
