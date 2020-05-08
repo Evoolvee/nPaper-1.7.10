@@ -130,7 +130,7 @@ public class EntityTrackerEntry {
                     }
 
                     if (flag1) {
-                        this.yRot = 1;
+                        this.yRot = l;
                         this.xRot = i1;
                     }
                     // CraftBukkit end
