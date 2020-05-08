@@ -36,13 +36,10 @@ public class RegionFile {
             int i;
 
             if (this.c.length() < 4096L) {
-                for (i = 0; i < 1024; ++i) {
-                    this.c.writeInt(0);
-                }
 
-                for (i = 0; i < 1024; ++i) {
-                    this.c.writeInt(0);
-                }
+                // nPaper - More efficient chunk zero'ing
+                this.c.write(RegionFile.a);
+                this.c.write(RegionFile.a);
 
                 this.g += 8192;
             }
