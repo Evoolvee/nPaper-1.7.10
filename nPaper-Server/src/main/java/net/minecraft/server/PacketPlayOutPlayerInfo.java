@@ -25,6 +25,8 @@ public class PacketPlayOutPlayerInfo extends Packet {
     }
     */
 
+    public PacketPlayOutPlayerInfo() {}
+
     public PacketPlayOutPlayerInfo(EntityPlayer player, PlayerInfo action) {
         this.action = action;
         this.username = player.listName;
