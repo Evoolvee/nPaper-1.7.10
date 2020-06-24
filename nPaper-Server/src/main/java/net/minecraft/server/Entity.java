@@ -810,6 +810,36 @@ public abstract class Entity {
     }
 
     public void makeSound(String s, float f, float f1) {
+
+        if (this instanceof EntityProjectile) {
+            EntityLiving entityLiving = (((EntityProjectile) this).shooter);
+            if (entityLiving instanceof EntityHuman) {
+                this.world.makeSound((EntityHuman) entityLiving, this, s, f, f1);
+                return;
+            }
+        }
+
+        if (this instanceof EntityItem) {
+            Entity entity = (((EntityItem) this).owner);
+            if (entity instanceof EntityHuman) {
+                this.world.makeSound((EntityHuman) entity, this, s, f, f1);
+                return;
+            }
+        }
+
+        if (this instanceof EntityFishingHook) {
+            this.world.makeSound(((EntityFishingHook) this).owner, this, s, f, f1);
+            return;
+        }
+
+        if (this instanceof EntityFireball) {
+            EntityLiving entityLiving = (((EntityFireball) this).shooter);
+            if (entityLiving instanceof EntityHuman) {
+                this.world.makeSound((EntityHuman) entityLiving, this, s, f, f1);
+                return;
+            }
+        }
+
         this.world.makeSound(this, s, f, f1);
     }
 
@@ -1844,7 +1874,7 @@ public abstract class Entity {
     }
 
     public void teleportTo(Location exit, boolean portal) {
-        if (true) {
+        if (!this.dead) { // Paper - Don't teleport dead entities
             WorldServer worldserver = ((CraftWorld) this.getBukkitEntity().getLocation().getWorld()).getHandle();
             WorldServer worldserver1 = ((CraftWorld) exit.getWorld()).getHandle();
             int i = worldserver1.dimension;
