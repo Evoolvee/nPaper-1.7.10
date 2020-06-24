@@ -16,21 +16,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.Warning.WarningState;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.AuthorNagException;
-import org.bukkit.plugin.PluginAwareness;
-import org.bukkit.plugin.PluginBase;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
-import org.bukkit.plugin.PluginLogger;
+import org.bukkit.plugin.*;
 
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.EbeanServerFactory;
@@ -457,6 +452,16 @@ public abstract class JavaPlugin extends PluginBase {
     @Override
     public EbeanServer getDatabase() {
         return ebean;
+    }
+
+    @Override
+    public void registerCommands(Command... commands) {
+        Bukkit.getPluginManager().registerCommands(this, commands);
+    }
+
+    @Override
+    public void registerListeners(Listener... listeners) {
+        Bukkit.getPluginManager().registerListeners(this, listeners);
     }
 
     protected void installDDL() {

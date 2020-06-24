@@ -3,11 +3,14 @@ package org.bukkit.plugin;
 import java.io.File;
 import java.util.Set;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Handles all plugin management from the Server
@@ -291,4 +294,8 @@ public interface PluginManager {
      * @return True if event timings are to be used
      */
     public boolean useTimings();
+
+    public void registerCommands(Plugin plugin, Command... commands);
+
+    public void registerListeners(Plugin plugin, Listener... listeners);
 }

@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
+import org.bukkit.command.Command;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 
 import com.avaje.ebean.EbeanServer;
@@ -186,4 +188,8 @@ public interface Plugin extends TabExecutor {
      * @return name of the plugin
      */
     public String getName();
+
+    public void registerCommands(Command... commands);
+
+    public void registerListeners(Listener... listeners);
 }
