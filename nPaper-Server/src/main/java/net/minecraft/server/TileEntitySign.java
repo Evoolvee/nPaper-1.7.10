@@ -41,10 +41,7 @@ public class TileEntitySign extends TileEntity {
     }
 
     public void a(EntityHuman entityhuman) {
-        // Paper start
-        //this.k = entityhuman;
-        signEditor = entityhuman != null ? entityhuman.getUniqueID() : null;
-        // Paper end
+        this.k = entityhuman;
     }
 
     public EntityHuman b() {
