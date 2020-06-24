@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.server.WhitelistChangeEvent;
 import org.bukkit.permissions.ServerOperator;
 
 public interface OfflinePlayer extends ServerOperator, AnimalTamer, ConfigurationSerializable {
@@ -65,6 +66,14 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
      * @param value true if whitelisted
      */
     public void setWhitelisted(boolean value);
+
+    /**
+     * Sets if this player is whitelisted or not
+     *
+     * @param value true if whitelisted
+     * @param cause the cause command/plugin
+     */
+    public void setWhitelisted(boolean value, WhitelistChangeEvent.Cause cause);
 
     /**
      * Gets a {@link Player} object that this represents, if there is one

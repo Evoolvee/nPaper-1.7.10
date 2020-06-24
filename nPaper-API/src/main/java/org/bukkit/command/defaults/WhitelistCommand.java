@@ -11,6 +11,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.server.WhitelistChangeEvent;
+import org.bukkit.event.server.WhitelistToggleEvent;
 import org.bukkit.util.StringUtil;
 
 import com.google.common.collect.ImmutableList;
@@ -40,11 +42,19 @@ public class WhitelistCommand extends VanillaCommand {
             } else if (args[0].equalsIgnoreCase("on")) {
                 if (badPerm(sender, "enable")) return true;
 
+                WhitelistToggleEvent event = new WhitelistToggleEvent(sender, true, WhitelistToggleEvent.Cause.COMMAND);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled() || !event.willBeEnable()) return true;
+
                 Bukkit.setWhitelist(true);
                 Command.broadcastCommandMessage(sender, "Turned on white-listing");
                 return true;
             } else if (args[0].equalsIgnoreCase("off")) {
                 if (badPerm(sender, "disable")) return true;
+
+                WhitelistToggleEvent event = new WhitelistToggleEvent(sender, false, WhitelistToggleEvent.Cause.COMMAND);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled() || event.willBeEnable()) return true;
 
                 Bukkit.setWhitelist(false);
                 Command.broadcastCommandMessage(sender, "Turned off white-listing");
@@ -65,14 +75,26 @@ public class WhitelistCommand extends VanillaCommand {
             if (args[0].equalsIgnoreCase("add")) {
                 if (badPerm(sender, "add")) return true;
 
-                Bukkit.getOfflinePlayer(args[1]).setWhitelisted(true);
+                String target = args[1];
+                WhitelistChangeEvent event = new WhitelistChangeEvent(sender, target, WhitelistChangeEvent.Cause.COMMAND, WhitelistChangeEvent.Action.ADD);
+                Bukkit.getPluginManager().callEvent(event);
+
+                if (event.isCancelled()) return false;
+
+                Bukkit.getOfflinePlayer(target).setWhitelisted(true, WhitelistChangeEvent.Cause.POST_COMMAND);
 
                 Command.broadcastCommandMessage(sender, "Added " + args[1] + " to white-list");
                 return true;
             } else if (args[0].equalsIgnoreCase("remove")) {
                 if (badPerm(sender, "remove")) return true;
 
-                Bukkit.getOfflinePlayer(args[1]).setWhitelisted(false);
+                String target = args[1];
+                WhitelistChangeEvent event = new WhitelistChangeEvent(sender, target, WhitelistChangeEvent.Cause.COMMAND, WhitelistChangeEvent.Action.REMOVE);
+                Bukkit.getPluginManager().callEvent(event);
+
+                if (event.isCancelled()) return false;
+
+                Bukkit.getOfflinePlayer(target).setWhitelisted(false, WhitelistChangeEvent.Cause.POST_COMMAND);
 
                 Command.broadcastCommandMessage(sender, "Removed " + args[1] + " from white-list");
                 return true;

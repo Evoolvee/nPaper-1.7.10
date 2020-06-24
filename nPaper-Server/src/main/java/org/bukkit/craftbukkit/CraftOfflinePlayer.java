@@ -19,6 +19,7 @@ import org.bukkit.Server;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
+import org.bukkit.event.server.WhitelistChangeEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
@@ -114,6 +115,19 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     public void setWhitelisted(boolean value) {
+        setWhitelisted(value, WhitelistChangeEvent.Cause.PLUGIN);
+    }
+
+    public void setWhitelisted(boolean value, WhitelistChangeEvent.Cause cause) {
+
+        if (cause != WhitelistChangeEvent.Cause.POST_COMMAND) {
+            String target = getName();
+            WhitelistChangeEvent event = new WhitelistChangeEvent(null, target, cause, (value ? WhitelistChangeEvent.Action.ADD : WhitelistChangeEvent.Action.REMOVE));
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) return;
+        }
+
         if (value) {
             server.getHandle().addWhitelist(profile);
         } else {
