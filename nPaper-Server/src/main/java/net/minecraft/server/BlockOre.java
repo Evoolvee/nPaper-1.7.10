@@ -56,21 +56,16 @@ public class BlockOre extends Block {
 
     public int getExpDrop(World world, int l, int i1) {
         if (this.getDropType(l, world.random, i1) != Item.getItemOf(this)) {
-            int j1 = 0;
 
             if (this == Blocks.COAL_ORE) {
-                j1 = MathHelper.nextInt(world.random, 0, 2);
-            } else if (this == Blocks.DIAMOND_ORE) {
-                j1 = MathHelper.nextInt(world.random, 3, 7);
-            } else if (this == Blocks.EMERALD_ORE) {
-                j1 = MathHelper.nextInt(world.random, 3, 7);
-            } else if (this == Blocks.LAPIS_ORE) {
-                j1 = MathHelper.nextInt(world.random, 2, 5);
-            } else if (this == Blocks.QUARTZ_ORE) {
-                j1 = MathHelper.nextInt(world.random, 2, 5);
+                return MathHelper.nextInt(world.random, 0, 2);
+            } else if (this == Blocks.DIAMOND_ORE
+                    || this == Blocks.EMERALD_ORE) {
+                return MathHelper.nextInt(world.random, 3, 7);
+            } else if (this == Blocks.LAPIS_ORE
+                    || this == Blocks.QUARTZ_ORE) {
+                return MathHelper.nextInt(world.random, 2, 5);
             }
-
-            return j1;
         }
 
         return 0;
