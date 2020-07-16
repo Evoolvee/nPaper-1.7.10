@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.sathonay.npaper.NPaper;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.minecraft.server.MinecraftServer;
@@ -153,9 +155,15 @@ public class Main {
                 } catch (InterruptedException ex) {
                 }
             }
+            System.out.println("          ____                       \n" +
+                    "   ____  / __ \\____ _____  ___  _____\n" +
+                    "  / __ \\/ /_/ / __ `/ __ \\/ _ \\/ ___/\n" +
+                    " / / / / ____/ /_/ / /_/ /  __/ /    \n" +
+                    "/_/ /_/_/    \\__,_/ .___/\\___/_/     \n" +
+                    "                 /_/                 \n");
             System.err.println( "This PaperSpigot build only supports Minecraft 1.7.x and 1.8.x clients!\n"
                     + "*** It is imperative that backups be taken before running this build on your server! ***\n"
-                    + "Please report issues directly to Paper, and always ensure you're up-to-date!\n"
+                    + "Please report issues directly to @sathonayOffi on twitter, and always ensure you're up-to-date!\n"
                     + "*** Any bug reports not running the very latest version of the software will be ignored ***\n\n" );
             // Spigot End
             try {
@@ -196,6 +204,7 @@ public class Main {
                     System.out.println( "Please see http://www.spigotmc.org/wiki/changing-permgen-size/ for more details and more in-depth instructions." );
                 }
                 // Spigot End
+                new NPaper();
                 MinecraftServer.main(options);
             } catch (Throwable t) {
                 t.printStackTrace();
