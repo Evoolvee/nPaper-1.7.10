@@ -804,12 +804,24 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void setWhitelisted(boolean value) {
+    public void setWhitelisted(boolean value, WhitelistChangeEvent.Cause cause) {
+
+        String target = getName();
+        WhitelistChangeEvent event = new WhitelistChangeEvent(null, target, cause, (value ? WhitelistChangeEvent.Action.ADD : WhitelistChangeEvent.Action.REMOVE));
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) return;
+
         if (value) {
             server.getHandle().addWhitelist(getProfile());
         } else {
             server.getHandle().removeWhitelist(getProfile());
         }
+    }
+
+    @Override
+    public void setWhitelisted(boolean value) {
+        setWhitelisted(value, WhitelistChangeEvent.Cause.PLUGIN);
     }
 
     @Override
