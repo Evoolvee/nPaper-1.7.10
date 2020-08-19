@@ -77,15 +77,15 @@ public class BlockTripwireHook extends Block {
                     flag = true;
                 }
 
-                if (!world.getType(i + 1, j, k).r() && i1 == 1) {
+                if (!flag && !world.getType(i + 1, j, k).r() && i1 == 1) {
                     flag = true;
                 }
 
-                if (!world.getType(i, j, k - 1).r() && i1 == 0) {
+                if (!flag && !world.getType(i, j, k - 1).r() && i1 == 0) {
                     flag = true;
                 }
 
-                if (!world.getType(i, j, k + 1).r() && i1 == 2) {
+                if (!flag && !world.getType(i, j, k + 1).r() && i1 == 2) {
                     flag = true;
                 }
 
