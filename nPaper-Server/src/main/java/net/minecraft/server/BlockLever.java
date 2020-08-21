@@ -119,31 +119,31 @@ public class BlockLever extends Block {
                 flag = true;
             }
 
-            if (!world.getType(i + 1, j, k).r() && l == 2) {
+            if (!flag && !world.getType(i + 1, j, k).r() && l == 2) {
                 flag = true;
             }
 
-            if (!world.getType(i, j, k - 1).r() && l == 3) {
+            if (!flag && !world.getType(i, j, k - 1).r() && l == 3) {
                 flag = true;
             }
 
-            if (!world.getType(i, j, k + 1).r() && l == 4) {
+            if (!flag && !world.getType(i, j, k + 1).r() && l == 4) {
                 flag = true;
             }
 
-            if (!World.a((IBlockAccess) world, i, j - 1, k) && l == 5) {
+            if (!flag && !World.a((IBlockAccess) world, i, j - 1, k) && l == 5) {
                 flag = true;
             }
 
-            if (!World.a((IBlockAccess) world, i, j - 1, k) && l == 6) {
+            if (!flag && !World.a((IBlockAccess) world, i, j - 1, k) && l == 6) {
                 flag = true;
             }
 
-            if (!world.getType(i, j + 1, k).r() && l == 0) {
+            if (!flag && !world.getType(i, j + 1, k).r() && l == 0) {
                 flag = true;
             }
 
-            if (!world.getType(i, j + 1, k).r() && l == 7) {
+            if (!flag && !world.getType(i, j + 1, k).r() && l == 7) {
                 flag = true;
             }
 
