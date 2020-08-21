@@ -76,15 +76,15 @@ public abstract class BlockButtonAbstract extends Block {
                 flag = true;
             }
 
-            if (!world.getType(i + 1, j, k).r() && l == 2) {
+            if (!flag && !world.getType(i + 1, j, k).r() && l == 2) {
                 flag = true;
             }
 
-            if (!world.getType(i, j, k - 1).r() && l == 3) {
+            if (!flag && !world.getType(i, j, k - 1).r() && l == 3) {
                 flag = true;
             }
 
-            if (!world.getType(i, j, k + 1).r() && l == 4) {
+            if (!flag && !world.getType(i, j, k + 1).r() && l == 4) {
                 flag = true;
             }
 
