@@ -886,33 +886,40 @@ public abstract class Entity {
         return this.inWater;
     }
 
+    private int lastWaterCheck = Integer.MIN_VALUE;
+
     public boolean N() {
-        if (this.world.a(this.boundingBox.grow(0.0D, -0.4000000059604645D, 0.0D).shrink(0.001D, 0.001D, 0.001D), Material.WATER, this)) {
-            if (!this.inWater && !this.justCreated) {
-                float f = MathHelper.sqrt(this.motX * this.motX * 0.20000000298023224D + this.motY * this.motY + this.motZ * this.motZ * 0.20000000298023224D) * 0.2F;
+        int currentTick = MinecraftServer.currentTick;
+        if (this.lastWaterCheck != currentTick) {
+            this.lastWaterCheck = currentTick;
+            if (this instanceof EntityPlayer) System.out.println(((EntityPlayer) this).getBukkitEntity().getName() + "/" + MinecraftServer.currentTick);
+            if (this.world.a(this.boundingBox.grow(0.0D, -0.4000000059604645D, 0.0D).shrink(0.001D, 0.001D, 0.001D), Material.WATER, this)) {
+                if (!this.inWater && !this.justCreated) {
+                    float f = MathHelper.sqrt(this.motX * this.motX * 0.20000000298023224D + this.motY * this.motY + this.motZ * this.motZ * 0.20000000298023224D) * 0.2F;
 
-                if (f > 1.0F) {
-                    f = 1.0F;
+                    if (f > 1.0F) {
+                        f = 1.0F;
+                    }
+
+                    this.makeSound(this.O(), f, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
+                    float f1 = (float) MathHelper.floor(this.boundingBox.b) + 1;
+
+                    for (int i = 0; (float) i < 1.0F + this.width * 20.0F; ++i) {
+                        float f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
+                        float f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
+                        this.world.addParticle("bubble", this.locX + (double) f2, f1, this.locZ + (double) f3, this.motX, this.motY - (double) (this.random.nextFloat() * 0.2F), this.motZ);
+                        f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
+                        f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
+                        this.world.addParticle("splash", this.locX + (double) f2, f1, this.locZ + (double) f3, this.motX, this.motY, this.motZ);
+                    }
                 }
 
-                this.makeSound(this.O(), f, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
-                float f1 = (float) MathHelper.floor(this.boundingBox.b) + 1;
-
-                for (int i = 0; (float) i < 1.0F + this.width * 20.0F; ++i) {
-                    float f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
-                    float f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
-                    this.world.addParticle("bubble", this.locX + (double) f2, f1, this.locZ + (double) f3, this.motX, this.motY - (double) (this.random.nextFloat() * 0.2F), this.motZ);
-                    f2 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
-                    f3 = (this.random.nextFloat() * 2.0F - 1.0F) * this.width;
-                    this.world.addParticle("splash", this.locX + (double) f2, f1, this.locZ + (double) f3, this.motX, this.motY, this.motZ);
-                }
+                this.fallDistance = 0.0F;
+                this.inWater = true;
+                this.fireTicks = 0;
+            } else {
+                this.inWater = false;
             }
-
-            this.fallDistance = 0.0F;
-            this.inWater = true;
-            this.fireTicks = 0;
-        } else {
-            this.inWater = false;
         }
 
         return this.inWater;
