@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
+import com.sathonay.npaper.NPaper;
 import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.CommandAchievement;
 import net.minecraft.server.CommandBan;
@@ -527,8 +528,19 @@ public final class CraftServer implements Server {
             return found;
         }
         // PaperSpigot end
-        List<CraftPlayer> list = getOnlinePlayers();
-        return list.stream().filter(craftPlayer -> StringUtil.startsWithIgnoreCase(craftPlayer.getName(), name)).findFirst().orElse(null);
+        String lowerName = name.toLowerCase();
+        int delta = Integer.MAX_VALUE;
+        for (Player player : getOnlinePlayers()) {
+            if (player.getName().toLowerCase().startsWith(lowerName)) {
+                int curDelta = player.getName().length() - lowerName.length();
+                if (curDelta < delta) {
+                    found = player;
+                    delta = curDelta;
+                }
+                if (curDelta == 0) break;
+            }
+        }
+        return found;
     }
 
     @Override
