@@ -556,7 +556,7 @@ public final class CraftServer implements Server {
     @Override
     public Player getPlayer(UUID id) {
         List<CraftPlayer> list = getOnlinePlayers();
-        return list.stream().filter(craftPlayer -> craftPlayer.getUniqueId().equals(id)).findFirst().orElse(null);
+        return list.parallelStream().filter(craftPlayer -> craftPlayer.getUniqueId().equals(id)).findFirst().orElse(null);
     }
 
     @Override
