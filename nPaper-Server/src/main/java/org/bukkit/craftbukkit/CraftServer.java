@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
-import com.sathonay.npaper.NPaper;
 import net.minecraft.server.ChunkCoordinates;
 import net.minecraft.server.CommandAchievement;
 import net.minecraft.server.CommandBan;
@@ -552,11 +551,11 @@ public final class CraftServer implements Server {
         // PaperSpigot end
     }
 
-    // TODO: In 1.8+ this should use the server's UUID->EntityPlayer map
     @Override
     public Player getPlayer(UUID id) {
-        List<CraftPlayer> list = getOnlinePlayers();
-        return list.parallelStream().filter(craftPlayer -> craftPlayer.getUniqueId().equals(id)).findFirst().orElse(null);
+        EntityPlayer entityPlayer = playerList.getEntityPlayer(id);
+        if (entityPlayer != null) return entityPlayer.getBukkitEntity();
+        return null;
     }
 
     @Override
