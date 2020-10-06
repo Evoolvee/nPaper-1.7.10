@@ -1318,6 +1318,6 @@ public abstract class PlayerList {
     }
 
     public EntityPlayer getEntityPlayer(UUID uuid) {
-        return uuidMap.get(uuid);
+        return this.uuidMap.get(uuid);
     }
 }
