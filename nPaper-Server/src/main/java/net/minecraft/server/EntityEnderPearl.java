@@ -20,6 +20,7 @@ public class EntityEnderPearl extends EntityProjectile {
     public EntityEnderPearl(World world, EntityLiving entityliving) {
         super(world, entityliving);
         this.loadChunks = world.paperSpigotConfig.loadUnloadedEnderPearls; // PaperSpigot
+        this.lastValidLocation = entityliving.getBukkitEntity().getLocation(); // nPaper - antipearl glitch - fix nullpointer
     }
 
     // nPaper start - antipearl glitch
