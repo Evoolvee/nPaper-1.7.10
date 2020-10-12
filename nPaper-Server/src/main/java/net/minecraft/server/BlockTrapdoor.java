@@ -81,7 +81,7 @@ public class BlockTrapdoor extends Block {
             int i1 = world.getData(i, j, k);
 
             world.setData(i, j, k, i1 ^ 4, 2);
-            world.a(entityhuman, 1003, i, j, k, 0);
+            world.a(entityhuman, 2001, i, j, k, 0);
             return true;
         }
     }
