@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sathonay.npaper.NPaper;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.minecraft.server.MinecraftServer;
@@ -204,7 +203,6 @@ public class Main {
                     System.out.println( "Please see http://www.spigotmc.org/wiki/changing-permgen-size/ for more details and more in-depth instructions." );
                 }
                 // Spigot End
-                new NPaper();
                 MinecraftServer.main(options);
             } catch (Throwable t) {
                 t.printStackTrace();
