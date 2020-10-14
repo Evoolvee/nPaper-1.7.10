@@ -10,6 +10,7 @@ import java.net.SocketAddress;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.server.*;
@@ -1433,12 +1434,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         @Override
         public Set<Player> getHiddenPlayers() {
-            Set<Player> ret = new HashSet<Player>();
+            return java.util.Collections.unmodifiableSet(hiddenPlayers.keySet().stream().map(uuid -> getServer().getPlayer(uuid)).collect(Collectors.toSet()));
+            /*
+            Set<Player> ret = new HashSet<>();
+
             for (UUID u : hiddenPlayers.keySet()) {
-                ret.add( getServer().getPlayer(u));
+                ret.add(getServer().getPlayer(u));
             }
 
             return java.util.Collections.unmodifiableSet(ret);
+             */
         }
 
         /**
