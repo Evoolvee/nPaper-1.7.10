@@ -1,6 +1,6 @@
 # nPaper <!--[![Build Status](https://travis-ci.org/sathonay/nPaper.png?branch=master)](https://travis-ci.org/sathonay/nPaper)-->
 
-A fork of Paper 1.7 with changes for the Stratus Network using Magnet's build system.
+A fork of Paper 1.7 with changes.
 
 Requirements
 ------------
