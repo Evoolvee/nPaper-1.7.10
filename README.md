@@ -1,6 +1,6 @@
 # nPaper <!--[![Build Status](https://travis-ci.org/sathonay/nPaper.png?branch=master)](https://travis-ci.org/sathonay/nPaper)-->
 
-A fork of Paper 1.7 with changes.
+A fork of Paper 1.7 with changes (optimizations & features).
 
 Requirements
 ------------
