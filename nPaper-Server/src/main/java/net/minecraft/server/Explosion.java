@@ -1,6 +1,7 @@
 package net.minecraft.server;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 // CraftBukkit start
 import org.bukkit.craftbukkit.event.CraftEventFactory;
@@ -20,8 +21,8 @@ public class Explosion {
     public double posZ;
     public Entity source;
     public float size;
-    public List blocks = new ArrayList();
-    private Map l = new HashMap();
+    public List<ChunkPosition> blocks = new ArrayList<>();
+    private Map<EntityHuman, Vec3D> l = new HashMap<>();
     public boolean wasCanceled = false; // CraftBukkit - add field
 
     public Explosion(World world, Entity entity, double d0, double d1, double d2, float f) {
@@ -81,7 +82,7 @@ public class Explosion {
                             }
 
                             if (f1 > 0.0F && (this.source == null || this.source.a(this, this.world, l, i1, j1, block, f1)) && i1 < 256 && i1 >= 0) { // CraftBukkit - don't wrap explosions
-                                if (block != Blocks.PISTON_MOVING) hashset.add(new ChunkPosition(l, i1, j1));
+                                if (block != Blocks.PISTON_MOVING) this.blocks.add(new ChunkPosition(l, i1, j1));
                             }
 
                             d0 += d3 * (double) f2;
@@ -93,7 +94,7 @@ public class Explosion {
             }
         }
 
-        this.blocks.addAll(hashset);
+        //this.blocks.addAll(hashset);
         this.size *= 2.0F;
         i = MathHelper.floor(this.posX - (double) this.size - 1.0D);
         j = MathHelper.floor(this.posX + (double) this.size + 1.0D);
@@ -102,7 +103,7 @@ public class Explosion {
         int l1 = MathHelper.floor(this.posZ - (double) this.size - 1.0D);
         int i2 = MathHelper.floor(this.posZ + (double) this.size + 1.0D);
         // PaperSpigot start - Fix lag from explosions processing dead entities
-        List list = this.world.getEntities(this.source, AxisAlignedBB.a((double) i, (double) k, (double) l1, (double) j, (double) k1, (double) i2), new IEntitySelector() {
+        List<Entity> list = this.world.getEntities(this.source, AxisAlignedBB.a((double) i, (double) k, (double) l1, (double) j, (double) k1, (double) i2), new IEntitySelector() {
             @Override
             public boolean a(Entity entity) {
                 return !entity.dead;
@@ -111,8 +112,7 @@ public class Explosion {
         // PaperSpigot end
         Vec3D vec3d = Vec3D.a(this.posX, this.posY, this.posZ);
 
-        for (int j2 = 0; j2 < list.size(); ++j2) {
-            Entity entity = (Entity) list.get(j2);
+        for (Entity entity : list) {
             double d7 = entity.f(this.posX, this.posY, this.posZ) / (double) this.size;
 
             if (d7 <= 1.0D) {
@@ -174,33 +174,26 @@ public class Explosion {
 
         if (this.b) {
             // CraftBukkit start
-            org.bukkit.World bworld = this.world.getWorld();
+            org.bukkit.World bukkitWorld = this.world.getWorld();
             org.bukkit.entity.Entity explode = this.source == null ? null : this.source.getBukkitEntity();
-            Location location = new Location(bworld, this.posX, this.posY, this.posZ);
+            Location location = new Location(bukkitWorld, this.posX, this.posY, this.posZ);
 
-            List<org.bukkit.block.Block> blockList = new ArrayList<org.bukkit.block.Block>();
-            for (int i1 = this.blocks.size() - 1; i1 >= 0; i1--) {
-                ChunkPosition cpos = (ChunkPosition) this.blocks.get(i1);
-                org.bukkit.block.Block bblock = bworld.getBlockAt(cpos.x, cpos.y, cpos.z);
-                if (bblock.getType() != org.bukkit.Material.AIR) {
-                    blockList.add(bblock);
-                }
-            }
+            List<org.bukkit.block.Block> blockList = this.blocks.stream().map(pos ->
+                    bukkitWorld.getBlockAt(pos.x, pos.y, pos.z)).filter(bukkitBlock -> bukkitBlock.getType() != org.bukkit.Material.AIR
+            ).collect(Collectors.toList());
 
             EntityExplodeEvent event = new EntityExplodeEvent(explode, location, blockList, 0.3F);
             this.world.getServer().getPluginManager().callEvent(event);
-
-            this.blocks.clear();
-
-            for (org.bukkit.block.Block bblock : event.blockList()) {
-                ChunkPosition coords = new ChunkPosition(bblock.getX(), bblock.getY(), bblock.getZ());
-                blocks.add(coords);
-            }
 
             if (event.isCancelled()) {
                 this.wasCanceled = true;
                 return;
             }
+
+            //Convert to chunkPosition if the vent is not cancel
+            this.blocks = event.blockList().stream().map(bukkitBlock ->
+                    new ChunkPosition(bukkitBlock.getX(), bukkitBlock.getY(), bukkitBlock.getZ())
+            ).collect(Collectors.toList());
             // CraftBukkit end
 
             iterator = this.blocks.iterator();
