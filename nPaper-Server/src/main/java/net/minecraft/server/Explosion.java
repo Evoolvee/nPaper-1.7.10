@@ -190,7 +190,7 @@ public class Explosion {
                 return;
             }
 
-            //Convert to chunkPosition if the vent is not cancel
+            //Convert to chunkPosition if the event is not cancel
             this.blocks = event.blockList().stream().map(bukkitBlock ->
                     new ChunkPosition(bukkitBlock.getX(), bukkitBlock.getY(), bukkitBlock.getZ())
             ).collect(Collectors.toList());
