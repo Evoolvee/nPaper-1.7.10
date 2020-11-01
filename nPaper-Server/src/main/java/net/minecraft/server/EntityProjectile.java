@@ -1,5 +1,7 @@
 package net.minecraft.server;
 
+import org.apache.logging.log4j.core.helpers.UUIDUtil;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -232,12 +234,17 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
         nbttagcompound.setByte("inTile", (byte) Block.getId(this.inBlockId));
         nbttagcompound.setByte("shake", (byte) this.shake);
         nbttagcompound.setByte("inGround", (byte) (this.inGround ? 1 : 0));
+
         if ((this.shooterName == null || this.shooterName.length() == 0) && this.shooter != null && this.shooter instanceof EntityHuman) {
             this.shooterName = this.shooter.getName();
-            this.shooterUuid = this.shooter.getUniqueID(); // nPaper - Fix name change pearl teleport
+        }
+
+        if (this.shooterUuid == null && this.shooter != null && this.shooter instanceof EntityHuman) {
+            this.shooterUuid = this.shooter.getUniqueID();
         }
 
         nbttagcompound.setString("ownerName", this.shooterName == null ? "" : this.shooterName);
+        nbttagcompound.setString("ownerUuid", this.shooterUuid == null ? "" : this.shooterUuid.toString());
     }
 
     public void a(NBTTagCompound nbttagcompound) {
@@ -250,6 +257,15 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
         this.shooterName = nbttagcompound.getString("ownerName");
         if (this.shooterName != null && this.shooterName.length() == 0) {
             this.shooterName = null;
+        }
+
+        String uuidString = nbttagcompound.getString("ownerUuid");
+        if (uuidString != null && uuidString.length() > 0) {
+            try {
+                this.shooterUuid = UUID.fromString(uuidString);
+            } catch (IllegalArgumentException exception){
+                this.shooterUuid = null;
+            }
         }
     }
 
