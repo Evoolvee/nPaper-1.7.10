@@ -274,6 +274,11 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
         if (this.shooter == null && this.shooterUuid != null) {
             this.shooter = this.world.a(this.shooterUuid);
         }
+
+        // nPapert - Use shooterName if shooter is not found by uuid
+        if (this.shooter == null && this.shooterName != null) {
+            this.shooter = this.world.a(shooterName);
+        }
         // nPaper end
 
         return this.shooter;
