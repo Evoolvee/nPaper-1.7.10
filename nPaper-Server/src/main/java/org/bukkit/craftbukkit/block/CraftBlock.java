@@ -375,29 +375,22 @@ public class CraftBlock implements Block {
     }
 
     public boolean breakNaturally() {
-        // Order matters here, need to drop before setting to air so skulls can get their data
-        net.minecraft.server.Block block = this.getNMSBlock();
-        byte data = getData();
-        boolean result = false;
-
-        if (block != null && block != Blocks.AIR) {
-            block.dropNaturally(chunk.getHandle().world, x, y, z, data, 1.0F, 0);
-            result = true;
-        }
-
-        setTypeId(Material.AIR.getId());
-        return result;
+        return breakNaturally(0, 0);
     }
 
-    //nPaper - take fortune in count for drops
+    //nPaper - take fortune & silkTouch in count for drops
     private boolean breakNaturallyWithItem(ItemStack item) {
         // Order matters here, need to drop before setting to air so skulls can get their data
+        return breakNaturally(item.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS), item.getEnchantmentLevel(Enchantment.SILK_TOUCH));
+    }
+
+    private boolean breakNaturally(int fortune, int silkTouch) {
         net.minecraft.server.Block block = this.getNMSBlock();
         byte data = getData();
         boolean result = false;
 
         if (block != null && block != Blocks.AIR) {
-            block.dropNaturally(chunk.getHandle().world, x, y, z, data, 1.0F, item.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS));
+            block.dropNaturally(chunk.getHandle().world, x, y, z, data, 1.0F, fortune, silkTouch);
             result = true;
         }
 
@@ -414,7 +407,7 @@ public class CraftBlock implements Block {
     }
 
     public Collection<ItemStack> getDrops() {
-        List<ItemStack> drops = new ArrayList<ItemStack>();
+        List<ItemStack> drops = new ArrayList<>();
 
         net.minecraft.server.Block block = this.getNMSBlock();
         if (block != Blocks.AIR) {

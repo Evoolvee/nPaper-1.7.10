@@ -460,13 +460,28 @@ public class Block {
     }
 
     public void dropNaturally(World world, int i, int j, int k, int l, float f, int i1) {
+        this.dropNaturally(world, i, j, k, l, f, i1, 0);
+    }
+
+    public void dropNaturally(World world, int i, int j, int k, int l, float f, int fortune, int silkTouch) {
         if (!world.isStatic) {
-            int j1 = this.getDropCount(i1, world.random);
+
+            if (silkTouch > 0) {
+                ItemStack itemstack = this.j(l);
+
+                if (itemstack != null) {
+                    this.a(world, i, j, k, itemstack);
+                }
+                return;
+            }
+
+            int j1 = this.getDropCount(fortune, world.random);
 
             for (int k1 = 0; k1 < j1; ++k1) {
                 // CraftBukkit - <= to < to allow for plugins to completely disable block drops from explosions
                 if (world.random.nextFloat() < f) {
-                    Item item = this.getDropType(l, world.random, i1);
+
+                    Item item = this.getDropType(l, world.random, fortune);
 
                     if (item != null) {
                         this.a(world, i, j, k, new ItemStack(item, 1, this.getDropData(l)));
