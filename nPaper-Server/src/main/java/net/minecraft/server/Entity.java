@@ -919,7 +919,7 @@ public abstract class Entity {
         return 0.0F;
     }
 
-    private boolean isInLava;
+    public boolean isInLava;
     private int lastLavaCheck = Integer.MIN_VALUE;
 
     public boolean P() {

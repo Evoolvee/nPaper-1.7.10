@@ -18,6 +18,21 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 public interface Entity extends Metadatable {
 
     /**
+     * @return if entity is in water
+     */
+    public boolean isInWater();
+
+    /**
+     * @return if entity is in lava
+     */
+    public boolean isInLava();
+
+    /**
+     * @return if entity is in water or lava
+     */
+    public boolean isInFluid();
+
+    /**
      * Sets the fireTicks at 0
      */
     public void extinguish();

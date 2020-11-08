@@ -415,6 +415,21 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return getHandle().vehicle.getBukkitEntity();
     }
 
+    @Override
+    public boolean isInWater() {
+        return getHandle().inWater;
+    }
+
+    @Override
+    public boolean isInLava() {
+        return getHandle().isInLava;
+    }
+
+    @Override
+    public boolean isInFluid() {
+        return isInWater() || isInLava();
+    }
+
     // Spigot start
     private final Spigot spigot = new Spigot()
     {
