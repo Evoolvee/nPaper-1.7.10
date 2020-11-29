@@ -1,9 +1,6 @@
 package net.minecraft.server;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +10,7 @@ public class EntityTracker {
 
     private static final Logger a = LogManager.getLogger();
     private final WorldServer world;
-    private Set c = new HashSet();
+    private Set<EntityTrackerEntry> c = new HashSet<>();
     public IntHashMap trackedEntities = new IntHashMap(); // CraftBukkit - private -> public
     private int e;
 
@@ -148,28 +145,24 @@ public class EntityTracker {
     }
 
     public void updatePlayers() {
-        ArrayList arraylist = new ArrayList();
-        Iterator iterator = this.c.iterator();
-
+        List<EntityPlayer> playerTrackers = new ArrayList<>();
+        Iterator<EntityTrackerEntry> iterator = this.c.iterator();
         while (iterator.hasNext()) {
-            EntityTrackerEntry entitytrackerentry = (EntityTrackerEntry) iterator.next();
+            EntityTrackerEntry entitytrackerentry = iterator.next();
 
             entitytrackerentry.track(this.world.players);
             if (entitytrackerentry.n && entitytrackerentry.tracker instanceof EntityPlayer) {
-                arraylist.add((EntityPlayer) entitytrackerentry.tracker);
+                playerTrackers.add((EntityPlayer) entitytrackerentry.tracker);
             }
         }
 
-        for (int i = 0; i < arraylist.size(); ++i) {
-            EntityPlayer entityplayer = (EntityPlayer) arraylist.get(i);
-            Iterator iterator1 = this.c.iterator();
+        for (EntityPlayer entityplayer : playerTrackers) {
+            Iterator<EntityTrackerEntry> iterator1 = this.c.iterator();
 
             while (iterator1.hasNext()) {
-                EntityTrackerEntry entitytrackerentry1 = (EntityTrackerEntry) iterator1.next();
+                EntityTrackerEntry entitytrackerentry1 = iterator1.next();
 
-                if (entitytrackerentry1.tracker != entityplayer) {
-                    entitytrackerentry1.updatePlayer(entityplayer);
-                }
+                if (entitytrackerentry1.tracker != entityplayer) entitytrackerentry1.updatePlayer(entityplayer);
             }
         }
     }
