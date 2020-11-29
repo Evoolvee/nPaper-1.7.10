@@ -147,7 +147,7 @@ public class EntityTrackerEntry {
                         this.v = 0;
                         // CraftBukkit start - Refresh list of who can see a player before sending teleport packet
                         if (this.tracker instanceof EntityPlayer) {
-                            this.scanPlayers(new java.util.ArrayList(((EntityPlayer) this.tracker).getWorld().players)); // scan all players of the world (that's fix invisibility after teleportation)
+                            this.scanPlayers(new java.util.ArrayList(this.tracker.world.players)); // scan all players of the world (that's fix invisibility after teleportation)
                         }
                         // CraftBukkit end
                         packet = new PacketPlayOutEntityTeleport(this.tracker.getId(), i, j, k, (byte) l, (byte) i1, tracker.onGround, tracker instanceof EntityFallingBlock || tracker instanceof EntityTNTPrimed); // Spigot - protocol patch
