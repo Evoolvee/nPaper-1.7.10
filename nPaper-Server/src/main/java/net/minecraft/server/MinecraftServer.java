@@ -511,9 +511,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
                     // PaperSpigot start - Further improve tick loop
                     wait = TICK_TIME - (curTime - lastTick);
                     if (wait > 0) {
-                        if (catchupTime < 2E6) {
-                            wait += Math.abs(catchupTime);
-                        } else if (wait < catchupTime) {
+                        if (wait < catchupTime) {
                             catchupTime -= wait;
                             wait = 0;
                         } else {
