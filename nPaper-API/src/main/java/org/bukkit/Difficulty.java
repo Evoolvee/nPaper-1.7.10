@@ -34,7 +34,7 @@ public enum Difficulty {
     HARD(3);
 
     private final int value;
-    private final static Map<Integer, Difficulty> BY_ID = Maps.newHashMap();
+    private static final Difficulty[] DIFFICULTIES = new Difficulty[values().length];
 
     private Difficulty(final int value) {
         this.value = value;
@@ -61,12 +61,11 @@ public enum Difficulty {
      */
     @Deprecated
     public static Difficulty getByValue(final int value) {
-        return BY_ID.get(value);
+        if (value > DIFFICULTIES.length) return null;
+        return DIFFICULTIES[value];
     }
 
     static {
-        for (Difficulty diff : values()) {
-            BY_ID.put(diff.value, diff);
-        }
+        for (Difficulty value : values()) DIFFICULTIES[value.ordinal()] = value;
     }
 }

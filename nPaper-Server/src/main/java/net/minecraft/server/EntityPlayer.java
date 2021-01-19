@@ -1028,6 +1028,9 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
     }
 
     public void a(PacketPlayInSettings packetplayinsettings) {
+
+        CraftEventFactory.handlePlayerSettingsChangeEvent(this.getBukkitEntity(), packetplayinsettings);
+
         this.locale = packetplayinsettings.c();
         int i = 256 >> packetplayinsettings.d();
 

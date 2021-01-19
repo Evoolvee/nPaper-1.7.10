@@ -9,6 +9,7 @@ import java.util.Map;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 
+import com.sathonay.npaper.event.player.PlayerSettingsChangeEvent;
 import net.minecraft.server.*;
 
 import org.bukkit.Bukkit;
@@ -937,5 +938,11 @@ public class CraftEventFactory {
         }
         entityHuman.world.getServer().getPluginManager().callEvent(event);
         return (Cancellable) event;
+    }
+
+    public static PlayerSettingsChangeEvent handlePlayerSettingsChangeEvent(Player player, PacketPlayInSettings settings) {
+        PlayerSettingsChangeEvent event = new PlayerSettingsChangeEvent(player, settings.c(), settings.d(), CraftEnum.getChatVisibility(settings.e()), settings.f(), CraftEnum.getDifficulty(settings.g()), settings.h(), settings.flags);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 }
