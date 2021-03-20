@@ -63,7 +63,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private boolean hasPlayedBefore = false;
     private final ConversationTracker conversationTracker = new ConversationTracker();
     private final Set<String> channels = new HashSet<>();
-    private final Map<UUID, Boolean> hiddenPlayers = new HashMap<>();
+    private final Set<UUID> hiddenPlayers = new HashSet<>();
     private int hash = 0;
     private double health = 20;
     private boolean scaledHealth = false;
@@ -940,7 +940,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         Validate.notNull(player, "hidden player cannot be null");
         if (getHandle().playerConnection == null) return;
         if (equals(player)) return;
-        if (hiddenPlayers.putIfAbsent(player.getUniqueId(), true) != null) return;
+        if (!hiddenPlayers.add(player.getUniqueId())) return;
 
         //remove this player from the hidden player's EntityTrackerEntry
         EntityTracker tracker = ((WorldServer) entity.world).tracker;
@@ -958,7 +958,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         Validate.notNull(player, "shown player cannot be null");
         if (getHandle().playerConnection == null) return;
         if (equals(player)) return;
-        if (!hiddenPlayers.remove(player.getUniqueId(), true)) return;
+        if (!hiddenPlayers.remove(player.getUniqueId())) return;
 
         EntityTracker tracker = ((WorldServer) entity.world).tracker;
         EntityPlayer other = ((CraftPlayer) player).getHandle();
@@ -975,7 +975,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public boolean canSee(Player player) {
-        return !hiddenPlayers.containsKey(player.getUniqueId());
+        return !hiddenPlayers.contains(player.getUniqueId());
     }
 
     public Map<String, Object> serialize() {
@@ -1434,7 +1434,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         @Override
         public Set<Player> getHiddenPlayers() {
-            return java.util.Collections.unmodifiableSet(hiddenPlayers.keySet().stream().map(uuid -> getServer().getPlayer(uuid)).collect(Collectors.toSet()));
+            return java.util.Collections.unmodifiableSet(hiddenPlayers.stream().map(uuid -> getServer().getPlayer(uuid)).collect(Collectors.toSet()));
             /*
             Set<Player> ret = new HashSet<>();
 
