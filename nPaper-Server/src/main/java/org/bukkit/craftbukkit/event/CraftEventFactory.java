@@ -65,6 +65,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
 
+import com.sathonay.npaper.utils.CraftEnum;
+
 public class CraftEventFactory {
     public static final DamageSource MELTING = CraftDamageSource.copyOf(DamageSource.BURN);
     public static final DamageSource POISON = CraftDamageSource.copyOf(DamageSource.MAGIC);
