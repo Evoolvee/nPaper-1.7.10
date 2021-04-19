@@ -14,5 +14,5 @@ To build nPaper, the following will need to be installed and available from your
 Utils
 ------------
 ### setup-minecraft-server.sh ###
-download and add minecraft-server in your local repositories
+if online repositories doesn't work use this script, it will download and add minecraft-server in your local repositories
 your can run it by using `sh setup-minecraft-server.sh`
