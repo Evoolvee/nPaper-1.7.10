@@ -1,5 +1,4 @@
-# nPaper <!--[![Build Status](https://travis-ci.org/sathonay/nPaper.png?branch=master)](https://travis-ci.org/sathonay/nPaper)-->
-
+# nPaper [![Build Status](https://travis-ci.com/sathonay/nPaper.svg?branch=master)](https://travis-ci.com/sathonay/nPaper)
 A fork of Paper 1.7 with changes (optimizations & features).
 
 Requirements
