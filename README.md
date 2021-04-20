@@ -1,5 +1,14 @@
-# nPaper [![Build Status](https://img.shields.io/travis/com/sathonay/nPaper?style=flat-square)](https://travis-ci.com/sathonay/nPaper)
+# nPaper
+<p align="center">
 A fork of Paper 1.7 with changes (optimizations & features).
+  <br>
+  <a href="https://travis-ci.com/sathonay/nPaper">
+    <img src="https://img.shields.io/travis/com/sathonay/nPaper?style=flat-square&logo=travis&label=Build">
+  </a>
+  <a href="https://discord.gg/sjUdv7G9C8">
+    <img src="https://img.shields.io/discord/772215646959960085.svg?style=flat-square&logo=discord&logoColor=fff&label=Discord&color=7389d8">
+  </a>
+</p>
 
 Requirements
 ------------
