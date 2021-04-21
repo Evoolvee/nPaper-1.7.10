@@ -412,12 +412,17 @@ public class EntityTrackerEntry {
                     }
 
                     // nPaper start - fix head packet spam
-                    if (this.tracker instanceof EntityLiving) {
-                        // CraftBukkit start - Fix for nonsensical head yaw
-                        this.i = MathHelper.d(this.tracker.getHeadRotation() * 256.0F / 360.0F);
-                        this.broadcast(new PacketPlayOutEntityHeadRotation(this.tracker, (byte) i));
-                        // CraftBukkit end
-                    }
+                    if(this.tracker instanceof EntityLiving) { // SportPaper - avoid processing entities that can't change head rotation
+                         this.i = MathHelper.d(this.tracker.getHeadRotation() * 256.0F / 360.0F);
+                         this.broadcast(new PacketPlayOutEntityHeadRotation(this.tracker, (byte) i));
+                         // SportPaper start
+                         // This was originally introduced by CraftBukkit, though the implementation is wrong since it's broadcasting
+                         // the packet again in a method that is already called for each player. This would create a very serious performance issue
+                         // with high player and entity counts (each sendPacket call involves waking up the event loop and flushing the network stream).
+                         // this.broadcast(new PacketPlayOutEntityHeadRotation(this.tracker, (byte) i));
+                         entityplayer.playerConnection.sendPacket(new PacketPlayOutEntityHeadRotation(this.tracker, (byte) i));
+                         // SportPaper end
+                     }
                     // nPaper end
 
                     if (this.tracker instanceof EntityLiving) {
