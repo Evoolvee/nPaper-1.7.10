@@ -414,7 +414,6 @@ public class EntityTrackerEntry {
                     // nPaper start - fix head packet spam
                     if(this.tracker instanceof EntityLiving) { // SportPaper - avoid processing entities that can't change head rotation
                          this.i = MathHelper.d(this.tracker.getHeadRotation() * 256.0F / 360.0F);
-                         this.broadcast(new PacketPlayOutEntityHeadRotation(this.tracker, (byte) i));
                          // SportPaper start
                          // This was originally introduced by CraftBukkit, though the implementation is wrong since it's broadcasting
                          // the packet again in a method that is already called for each player. This would create a very serious performance issue
