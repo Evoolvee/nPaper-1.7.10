@@ -61,6 +61,9 @@ public class WorldManager implements IWorldAccess {
         if (entity instanceof EntityHuman) {
             entityhuman = (EntityHuman)entity;
         }
+
+        PacketPlayOutBlockBreakAnimation packet = null;
+
         while (iterator.hasNext()) {
             final EntityPlayer entityplayer = (EntityPlayer) iterator.next();
             if (entityplayer != null && entityplayer.world == this.world && entityplayer.getId() != i) {
@@ -70,7 +73,8 @@ public class WorldManager implements IWorldAccess {
                 if ((entityhuman != null && entityhuman instanceof EntityPlayer && !entityplayer.getBukkitEntity().canSee(((EntityPlayer)entityhuman).getBukkitEntity())) || d0 * d0 + d2 * d2 + d3 * d3 >= 1024.0) {
                     continue;
                 }
-                entityplayer.playerConnection.sendPacket(new PacketPlayOutBlockBreakAnimation(i, j, k, l, i1));
+                if (packet == null) packet = new PacketPlayOutBlockBreakAnimation(i, j, k, l, i1);
+                entityplayer.playerConnection.sendPacket(packet);
             }
         }
     }
