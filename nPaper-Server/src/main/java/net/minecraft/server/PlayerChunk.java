@@ -168,13 +168,12 @@ class PlayerChunk {
                     //this.sendAll(new PacketPlayOutMapChunk(PlayerChunkMap.a(this.playerChunkMap).getChunkAt(this.location.x, this.location.z), (this.f == 0xFFFF), this.f)); // CraftBukkit - send everything (including biome) if all sections flagged
 
                     Chunk chunk = PlayerChunkMap.a( this.playerChunkMap ).getChunkAt( this.location.x, this.location.z );
-                    PacketPlayOutMapChunk playOutMapChunk = null;
+                    
                     for (int idx = 0; idx < this.b.size(); ++idx) {
                         EntityPlayer entityplayer = (EntityPlayer) this.b.get(idx);
 
                         if (!entityplayer.chunkCoordIntPairQueue.contains(this.location)) {
-                            if (playOutMapChunk == null) playOutMapChunk =  new PacketPlayOutMapChunk( chunk, (this.f == 0xFFFF), this.f, entityplayer.playerConnection.networkManager.getVersion());
-                            entityplayer.playerConnection.sendPacket(playOutMapChunk);
+                            entityplayer.playerConnection.sendPacket(new PacketPlayOutMapChunk( chunk, (this.f == 0xFFFF), this.f, entityplayer.playerConnection.networkManager.getVersion()););
                         }
                     }
 
