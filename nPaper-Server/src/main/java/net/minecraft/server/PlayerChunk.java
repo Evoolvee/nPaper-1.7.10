@@ -173,7 +173,7 @@ class PlayerChunk {
                         EntityPlayer entityplayer = (EntityPlayer) this.b.get(idx);
 
                         if (!entityplayer.chunkCoordIntPairQueue.contains(this.location)) {
-                            entityplayer.playerConnection.sendPacket(new PacketPlayOutMapChunk( chunk, (this.f == 0xFFFF), this.f, entityplayer.playerConnection.networkManager.getVersion()););
+                            entityplayer.playerConnection.sendPacket(new PacketPlayOutMapChunk( chunk, (this.f == 0xFFFF), this.f, entityplayer.playerConnection.networkManager.getVersion()));
                         }
                     }
 
