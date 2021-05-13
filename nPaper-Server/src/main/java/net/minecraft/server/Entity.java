@@ -1332,7 +1332,7 @@ public abstract class Entity {
     }
 
     public EntityItem a(ItemStack itemstack, float f) {
-        if (itemstack.count != 0 && itemstack.getItem() != null) {
+        if (itemstack.count > 0 && itemstack.getItem() != null) {
             // CraftBukkit start - Capture drops for death event
             if (this instanceof EntityLiving && ((EntityLiving) this).drops != null) {
                 ((EntityLiving) this).drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack));
