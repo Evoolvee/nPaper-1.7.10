@@ -856,12 +856,8 @@ public abstract class Entity {
         return this.inWater;
     }
 
-    private int lastWaterCheck = Integer.MIN_VALUE;
-
     public boolean N() {
         int currentTick = MinecraftServer.currentTick;
-        if (this.lastWaterCheck != currentTick) {
-            this.lastWaterCheck = currentTick;
             if (this.world.a(this.boundingBox.grow(0.0D, -0.4000000059604645D, 0.0D).shrink(0.001D, 0.001D, 0.001D), Material.WATER, this)) {
                 if (!this.inWater && !this.justCreated) {
                     float f = MathHelper.sqrt(this.motX * this.motX * 0.20000000298023224D + this.motY * this.motY + this.motZ * this.motZ * 0.20000000298023224D) * 0.2F;
@@ -889,7 +885,6 @@ public abstract class Entity {
             } else {
                 this.inWater = false;
             }
-        }
 
         return this.inWater;
     }
