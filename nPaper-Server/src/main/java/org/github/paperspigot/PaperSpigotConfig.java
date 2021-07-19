@@ -220,4 +220,19 @@ public class PaperSpigotConfig
             e.printStackTrace();
         }
     }
+
+    public static boolean fixEnderPearlGlitch;
+    private void fixEnderPearlGlitch() {
+        fixEnderPearlGlitch = getBoolean("ender-pearl.fix-glitch", false);
+    }
+
+    public static boolean enderPearlCollision;
+    private void enderPearlCollision() {
+        enderPearlCollision = getBoolean("ender-pearl.hcf-collisions", false);
+    }
+
+    public static boolean rodCatchPlayersAndItems;
+    private void rodCatchPlayersAndItems() {
+        enderPearlCollision = getBoolean("rod-catch-players-and-items", false);
+    }
 }

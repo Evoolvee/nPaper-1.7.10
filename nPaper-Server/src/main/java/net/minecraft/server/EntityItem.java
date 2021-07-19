@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.bukkit.event.player.PlayerPickupItemEvent; // CraftBukkit
+import org.github.paperspigot.PaperSpigotConfig;
 
 public class EntityItem extends Entity {
 
@@ -41,6 +42,13 @@ public class EntityItem extends Entity {
         // CraftBukkit end
         this.setItemStack(itemstack);
     }
+
+    // nPaper start - rodCatchPlayersAndItems
+    @Override
+    public boolean R() {
+        return PaperSpigotConfig.rodCatchPlayersAndItems ? !this.dead : super.R();
+    }
+    // nPaper end
 
     protected boolean g_() {
         return false;
@@ -223,6 +231,14 @@ public class EntityItem extends Entity {
     }
 
     public boolean damageEntity(DamageSource damagesource, float f) {
+        // nPaper start - rodCatchPlayersAndItems
+        if (PaperSpigotConfig.rodCatchPlayersAndItems
+                && damagesource.getEntity() != null
+                && damagesource.getEntity() instanceof EntityFishingHook) {
+            return true;
+        }
+        // nPaper end
+
         if (this.isInvulnerable()) {
             return false;
         } else if (this.getItemStack() != null && this.getItemStack().getItem() == Items.NETHER_STAR && damagesource.isExplosion()) {

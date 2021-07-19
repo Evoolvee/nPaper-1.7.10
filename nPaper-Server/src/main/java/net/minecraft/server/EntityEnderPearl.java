@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.github.paperspigot.PaperSpigotConfig;
 // CraftBukkit end
 
 public class EntityEnderPearl extends EntityProjectile {
@@ -14,18 +15,18 @@ public class EntityEnderPearl extends EntityProjectile {
 
     public EntityEnderPearl(World world) {
         super(world);
-        this.loadChunks = world.paperSpigotConfig.loadUnloadedEnderPearls; // PaperSpigot
+         this.loadChunks = world.paperSpigotConfig.loadUnloadedEnderPearls; // PaperSpigot
     }
 
     public EntityEnderPearl(World world, EntityLiving entityliving) {
         super(world, entityliving);
         this.loadChunks = world.paperSpigotConfig.loadUnloadedEnderPearls; // PaperSpigot
-        this.lastValidLocation = entityliving.getBukkitEntity().getLocation(); // nPaper - antipearl glitch - fix nullpointer
+        if (PaperSpigotConfig.fixEnderPearlGlitch) this.lastValidLocation = entityliving.getBukkitEntity().getLocation(); // nPaper - antipearl glitch - fix nullpointer
     }
 
     // nPaper start - antipearl glitch
     public void h() {
-        if (this.world.getCubes(this, this.boundingBox.grow(0.25D, 0.25D, 0.25D)).isEmpty()) {
+        if (PaperSpigotConfig.fixEnderPearlGlitch && this.world.getCubes(this, this.boundingBox.grow(0.25D, 0.25D, 0.25D)).isEmpty()) {
             this.lastValidLocation = getBukkitEntity().getLocation();
         }
         super.h();
@@ -55,7 +56,8 @@ public class EntityEnderPearl extends EntityProjectile {
                 if (entityplayer.playerConnection.b().isConnected() && entityplayer.world == this.world) {
                     // CraftBukkit start - Fire PlayerTeleportEvent
                     CraftPlayer player = entityplayer.getBukkitEntity();
-                    Location location = this.lastValidLocation.clone(); // snHose - antipearl glitch
+
+                    Location location = PaperSpigotConfig.fixEnderPearlGlitch ? this.lastValidLocation.clone() : getBukkitEntity().getLocation(); // snHose - antipearl glitch
                     location.setPitch(player.getLocation().getPitch());
                     location.setYaw(player.getLocation().getYaw());
 

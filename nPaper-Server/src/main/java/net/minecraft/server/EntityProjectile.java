@@ -1,6 +1,7 @@
 package net.minecraft.server;
 
 import org.apache.logging.log4j.core.helpers.UUIDUtil;
+import org.github.paperspigot.PaperSpigotConfig;
 
 import java.util.Iterator;
 import java.util.List;
@@ -163,7 +164,17 @@ public abstract class EntityProjectile extends Entity implements IProjectile {
         }
         // PaperSpigot end
 
-        if (movingobjectposition != null) {
+        collide: if (movingobjectposition != null) {
+             if (this instanceof EntityEnderPearl && PaperSpigotConfig.enderPearlCollision) {
+                Block thisBlock = this.world.getType(movingobjectposition.b, movingobjectposition.c, movingobjectposition.d);
+                if (thisBlock == Blocks.FENCE_GATE) {
+                    if (BlockFenceGate.b(this.world.getData(movingobjectposition.b, movingobjectposition.c, movingobjectposition.d)))
+                        break collide;
+                } else if (thisBlock == Blocks.WEB || thisBlock == Blocks.TRIPWIRE) {
+                    break collide;
+                }
+            }
+
             if (movingobjectposition.type == EnumMovingObjectType.BLOCK && this.world.getType(movingobjectposition.b, movingobjectposition.c, movingobjectposition.d) == Blocks.PORTAL) {
                 this.ah();
             } else {

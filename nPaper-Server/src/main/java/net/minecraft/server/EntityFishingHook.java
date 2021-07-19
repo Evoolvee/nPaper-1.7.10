@@ -9,6 +9,7 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Fish;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.github.paperspigot.PaperSpigotConfig;
 // CraftBukkit end
 
 public class EntityFishingHook extends Entity {
@@ -401,6 +402,10 @@ public class EntityFishingHook extends Entity {
                 this.hooked.motX += d0 * d4;
                 this.hooked.motY += d1 * d4 + (double) MathHelper.sqrt(d3) * 0.08D;
                 this.hooked.motZ += d2 * d4;
+
+                if (PaperSpigotConfig.rodCatchPlayersAndItems && this.hooked instanceof EntityPlayer) {
+                    ((EntityPlayer) this.hooked).playerConnection.sendPacket(new PacketPlayOutEntityVelocity(this.hooked));
+                }
                 b0 = 3;
             } else if (this.ax > 0) {
                 EntityItem entityitem = new EntityItem(this.world, this.locX, this.locY, this.locZ, this.f());
