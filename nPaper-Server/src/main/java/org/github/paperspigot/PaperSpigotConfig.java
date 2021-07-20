@@ -222,17 +222,17 @@ public class PaperSpigotConfig
     }
 
     public static boolean fixEnderPearlGlitch;
-    private void fixEnderPearlGlitch() {
+    private static void fixEnderPearlGlitch() {
         fixEnderPearlGlitch = getBoolean("ender-pearl.fix-glitch", false);
     }
 
     public static boolean enderPearlCollision;
-    private void enderPearlCollision() {
+    private static void enderPearlCollision() {
         enderPearlCollision = getBoolean("ender-pearl.hcf-collisions", false);
     }
 
     public static boolean rodCatchPlayersAndItems;
-    private void rodCatchPlayersAndItems() {
-        enderPearlCollision = getBoolean("rod-catch-players-and-items", false);
+    private static void rodCatchPlayersAndItems() {
+        rodCatchPlayersAndItems = getBoolean("rod-catch-players-and-items", false);
     }
 }
