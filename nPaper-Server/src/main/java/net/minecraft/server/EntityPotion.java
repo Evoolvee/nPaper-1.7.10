@@ -9,6 +9,7 @@ import java.util.HashMap;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.github.paperspigot.PaperSpigotConfig;
 // CraftBukkit end
 
 public class EntityPotion extends EntityProjectile {
@@ -34,15 +35,15 @@ public class EntityPotion extends EntityProjectile {
     }
 
     protected float i() {
-        return 0.05F;
+        return PaperSpigotConfig.potionGravityVelocity;
     }
 
     protected float e() {
-        return 0.5F;
+        return PaperSpigotConfig.potionVelocity;
     }
 
     protected float f() {
-        return -20.0F;
+        return PaperSpigotConfig.potionInaccuracy;
     }
 
     public void setPotionValue(int i) {

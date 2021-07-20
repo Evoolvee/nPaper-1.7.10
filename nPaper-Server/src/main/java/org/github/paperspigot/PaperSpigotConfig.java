@@ -240,4 +240,19 @@ public class PaperSpigotConfig
     private static void rodCatchPlayersAndItems() {
         rodCatchPlayersAndItems = getBoolean("rod-catch-players-and-items", false);
     }
+
+
+    public static float potionGravityVelocity;
+    private static void potionGravityVelocity() {
+        potionGravityVelocity = getFloat("potion.gravity-velocity", 0.05F);
+    }
+
+    public static float potionVelocity;
+    private static void potionVelocity() {
+        potionVelocity = getFloat("potion.velocity", 0.5F);
+    }
+    public static float potionInaccuracy;
+    private static void potionInaccuracy() {
+        potionInaccuracy = getFloat("potion.inaccuracy", -20.0F);
+    }
 }
