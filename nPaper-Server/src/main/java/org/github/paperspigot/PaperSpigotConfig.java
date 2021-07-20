@@ -231,6 +231,11 @@ public class PaperSpigotConfig
         enderPearlCollision = getBoolean("ender-pearl.hcf-collisions", false);
     }
 
+    public static boolean enderPearlCreativeThrow;
+    private static void enderPearlCreativeThrow() {
+        enderPearlCreativeThrow = getBoolean("ender-pearl.creative-throw", false);
+    }
+
     public static boolean rodCatchPlayersAndItems;
     private static void rodCatchPlayersAndItems() {
         rodCatchPlayersAndItems = getBoolean("rod-catch-players-and-items", false);
