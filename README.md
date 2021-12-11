@@ -2,7 +2,7 @@
 <p align="center">
 A fork of Paper 1.7 with changes (optimizations & features).
   <br>
-  <a href="https://travis-ci.com/sathonay/nPaper">
+  <a href="https://app.travis-ci.com/github/sathonay/nPaper">
     <img src="https://img.shields.io/travis/com/sathonay/nPaper?style=flat-square&logo=travis&label=TravisCI">
   </a>
   <a href="https://discord.gg/sjUdv7G9C8">
