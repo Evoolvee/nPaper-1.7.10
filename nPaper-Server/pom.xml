@@ -171,6 +171,7 @@
               <Specification-Title>Bukkit</Specification-Title>
               <Specification-Version>${api.version}</Specification-Version>
               <Specification-Vendor>Bukkit Team</Specification-Vendor>
+	      <Multi-Release>true</Multi-Release>
               <Sealed>true</Sealed>
               <Timestamp>${maven.build.timestamp}</Timestamp>
             </manifestEntries>
