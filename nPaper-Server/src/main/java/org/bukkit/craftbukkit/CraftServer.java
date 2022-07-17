@@ -209,6 +209,7 @@ public final class CraftServer implements Server {
     protected final MinecraftServer console;
     protected final DedicatedPlayerList playerList;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
+    private final Map<UUID, World> worldIdentifier = new LinkedHashMap<>();
     private YamlConfiguration configuration;
     private YamlConfiguration commandsConfiguration;
     private final Yaml yaml = new Yaml(new SafeConstructor());
@@ -1119,7 +1120,7 @@ public final class CraftServer implements Server {
 
     @Override
     public World getWorld(UUID uid) {
-        return worlds.values().stream().filter(world -> world.getUID().equals(uid)).findFirst().orElse(null);
+        return worldIdentifier.get(uid);
     }
 
     public void addWorld(World world) {
@@ -1129,6 +1130,7 @@ public final class CraftServer implements Server {
             return;
         }
         worlds.put(world.getName().toLowerCase(), world);
+        worldIdentifier.put(world.getUID(), world);
     }
 
     @Override
