@@ -29,7 +29,15 @@ public class VersionCommand extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.GRAY + "This server is running " + ChatColor.LIGHT_PURPLE + Bukkit.getName() + ChatColor.GRAY + " version " + ChatColor.LIGHT_PURPLE + Bukkit.getVersion() + ChatColor.GRAY + " (Implementing API version " + ChatColor.LIGHT_PURPLE + Bukkit.getBukkitVersion() + ChatColor.GRAY + ")");
+            //sender.sendMessage(ChatColor.GRAY + "This server is running " + ChatColor.LIGHT_PURPLE + Bukkit.getName() + ChatColor.GRAY + " version " + ChatColor.LIGHT_PURPLE + Bukkit.getVersion() + ChatColor.GRAY + " (Implementing API version " + ChatColor.LIGHT_PURPLE + Bukkit.getBukkitVersion() + ChatColor.GRAY + ")");
+            String[] message = {
+                    ChatColor.GRAY + "This server is running " + ChatColor.LIGHT_PURPLE + Bukkit.getName(),
+                    ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + "------------------------------------------------",
+                    ChatColor.GRAY + "Version: " + ChatColor.LIGHT_PURPLE + Bukkit.getVersion(),
+                    ChatColor.GRAY + "Implementing API version: " + ChatColor.LIGHT_PURPLE + Bukkit.getBukkitVersion(),
+                    ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + "------------------------------------------------"
+            };
+            sender.sendMessage(message);
         } else {
             StringBuilder name = new StringBuilder();
 
