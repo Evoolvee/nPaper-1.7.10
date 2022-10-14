@@ -1078,6 +1078,7 @@ public final class CraftServer implements Server {
         }
 
         worlds.remove(world.getName().toLowerCase());
+        worldIdentifier.remove(world.getUID());
         console.worlds.remove(console.worlds.indexOf(handle));
 
         File parentFolder = world.getWorldFolder().getAbsoluteFile();
