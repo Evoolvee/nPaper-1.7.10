@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
+import org.github.paperspigot.PaperSpigotConfig;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 // CraftBukkit end
 
@@ -205,7 +206,7 @@ public abstract class PlayerList {
         }
 
         // CraftBukkit - Moved from above, added world
-        g.info(entityplayer.getName() + "[" + s1 + "] logged in with entity id " + entityplayer.getId() + " at ([" + entityplayer.world.worldData.getName() + "] " + entityplayer.locX + ", " + entityplayer.locY + ", " + entityplayer.locZ + ")");
+        g.info(entityplayer.getName() + (PaperSpigotConfig.logPlayerIp ? " [" + s1 + "]" : "") + " logged in with entity id (" + entityplayer.getId() + ") at ([" + entityplayer.world.worldData.getName() + "] " + entityplayer.locX + ", " + entityplayer.locY + ", " + entityplayer.locZ + ")");
     }
 
     public void sendScoreboard(ScoreboardServer scoreboardserver, EntityPlayer entityplayer) { // CraftBukkit - protected -> public
@@ -879,23 +880,32 @@ public abstract class PlayerList {
             {
                 currentPing = ( currentPing + 1 ) % this.players.size();
                 EntityPlayer player = (EntityPlayer) this.players.get( currentPing );
-                if ( player.lastPing == -1 || Math.abs( player.ping - player.lastPing ) > 20 )
+                if (player.lastPing == -1 || pingToBar(player.lastPing) != pingToBar(player.ping))
                 {
                     Packet packet = new PacketPlayOutPlayerInfo(player, PacketPlayOutPlayerInfo.PlayerInfo.UPDATE_LATENCY); // Spigot - protocol patch
                     for ( EntityPlayer splayer : (List<EntityPlayer>) this.players )
                     {
                         if ( splayer.getBukkitEntity().canSee( player.getBukkitEntity() ) )
                         {
-                            splayer.playerConnection.sendPacket( packet );
+                            splayer.playerConnection.sendPacket(packet);
                         }
                     }
                     player.lastPing = player.ping;
                 }
             }
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             // Better safe than sorry :)
         }
         // Spigot end
+    }
+
+    private int pingToBar(int ping) {
+        if (ping < 0) return 5;
+        else if (ping < 150) return 0;
+        else if (ping < 300) return 1;
+        else if (ping < 600) return 2;
+        else if (ping < 1000) return 3;
+        else return 4;
     }
 
     public void sendAll(Packet packet) {

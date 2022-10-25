@@ -1,6 +1,5 @@
 package org.github.paperspigot;
 
-import com.google.common.base.Throwables;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -13,6 +12,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.com.google.common.base.Throwables;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -251,8 +251,15 @@ public class PaperSpigotConfig
     private static void potionVelocity() {
         potionVelocity = getFloat("potion.velocity", 0.5F);
     }
+
     public static float potionInaccuracy;
     private static void potionInaccuracy() {
         potionInaccuracy = getFloat("potion.inaccuracy", -20.0F);
+    }
+
+    // Print user ip in the console when he's joining the server
+    public static boolean logPlayerIp;
+    private static void logPlayerIp() {
+        logPlayerIp = getBoolean("log-player-ip", true);
     }
 }
