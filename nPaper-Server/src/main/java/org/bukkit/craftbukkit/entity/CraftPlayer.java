@@ -1,42 +1,49 @@
 package org.bukkit.craftbukkit.entity;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.MapMaker;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.minecraft.server.*;
-
-import net.minecraft.util.com.mojang.authlib.GameProfile;
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.NotImplementedException;
-import org.bukkit.*;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Achievement;
 import org.bukkit.BanList;
-import org.bukkit.Statistic;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Instrument;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.Statistic;
 import org.bukkit.Statistic.Type;
+import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
-import org.bukkit.craftbukkit.block.CraftSign;
-import org.bukkit.craftbukkit.conversations.ConversationTracker;
 import org.bukkit.craftbukkit.CraftEffect;
 import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftSign;
+import org.bukkit.craftbukkit.conversations.ConversationTracker;
 import org.bukkit.craftbukkit.map.CraftMapView;
 import org.bukkit.craftbukkit.map.RenderData;
 import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
@@ -55,6 +62,47 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
+import org.spigotmc.ProtocolInjector.PacketTabHeaderFooter;
+import org.spigotmc.ProtocolInjector.PacketTitle;
+import org.spigotmc.ProtocolInjector.PacketTitle.EnumTitleAction;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.sathonay.npaper.Title;
+
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.minecraft.server.AttributeInstance;
+import net.minecraft.server.AttributeMapServer;
+import net.minecraft.server.AttributeModifiable;
+import net.minecraft.server.AttributeRanged;
+import net.minecraft.server.ChunkCoordinates;
+import net.minecraft.server.Container;
+import net.minecraft.server.Entity;
+import net.minecraft.server.EntityHuman;
+import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.EntityTracker;
+import net.minecraft.server.EntityTrackerEntry;
+import net.minecraft.server.EnumGamemode;
+import net.minecraft.server.IAttribute;
+import net.minecraft.server.IChatBaseComponent;
+import net.minecraft.server.NBTTagCompound;
+import net.minecraft.server.Packet;
+import net.minecraft.server.PacketPlayOutBlockChange;
+import net.minecraft.server.PacketPlayOutChat;
+import net.minecraft.server.PacketPlayOutCustomPayload;
+import net.minecraft.server.PacketPlayOutGameStateChange;
+import net.minecraft.server.PacketPlayOutMap;
+import net.minecraft.server.PacketPlayOutNamedSoundEffect;
+import net.minecraft.server.PacketPlayOutPlayerInfo;
+import net.minecraft.server.PacketPlayOutSpawnPosition;
+import net.minecraft.server.PacketPlayOutUpdateAttributes;
+import net.minecraft.server.PacketPlayOutUpdateHealth;
+import net.minecraft.server.PacketPlayOutUpdateSign;
+import net.minecraft.server.PacketPlayOutWorldEvent;
+import net.minecraft.server.PacketPlayOutWorldParticles;
+import net.minecraft.server.PlayerConnection;
+import net.minecraft.server.WorldServer;
+import net.minecraft.util.com.mojang.authlib.GameProfile;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -152,6 +200,97 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             sendMessage(message);
         }
     }
+    
+    @Override
+	public void setPlayerListHeaderFooter(BaseComponent[] header, BaseComponent[] footer) {
+		if (getHandle().playerConnection.networkManager.getVersion() < 28) {
+			return;
+		}
+		PacketTabHeaderFooter packet = new PacketTabHeaderFooter();
+		packet.header = header;
+		packet.footer = footer;
+		getHandle().playerConnection.sendPacket(packet);
+	}
+      
+    @Override
+	public void setPlayerListHeaderFooter(BaseComponent header, BaseComponent footer) {
+		this.setPlayerListHeaderFooter(header == null ? null : new BaseComponent[]{header}, footer == null ? null : new BaseComponent[]{footer});
+	}
+    
+    @Override
+    public void setTitleTimes(int fadeInTicks, int stayTicks, int fadeOutTicks) {
+    	if (getHandle().playerConnection.networkManager.getVersion() < 28) {
+			return;
+		}
+        getHandle().playerConnection.sendPacket(new PacketTitle(EnumTitleAction.TIMES, (BaseComponent[]) null, fadeInTicks, stayTicks, fadeOutTicks));
+    }
+
+    @Override
+    public void setSubtitle(BaseComponent[] subtitle) {
+    	if (getHandle().playerConnection.networkManager.getVersion() < 28) {
+			return;
+		}
+        getHandle().playerConnection.sendPacket(new PacketTitle(EnumTitleAction.SUBTITLE, subtitle, 0, 0, 0));
+    }
+
+    @Override
+    public void setSubtitle(BaseComponent subtitle) {
+        setSubtitle(new BaseComponent[]{subtitle});
+    }
+
+    @Override
+    public void showTitle(BaseComponent[] title) {
+    	if (getHandle().playerConnection.networkManager.getVersion() < 28) {
+			return;
+		}
+        getHandle().playerConnection.sendPacket(new PacketTitle(EnumTitleAction.TITLE, title, 0, 0, 0));
+    }
+
+    @Override
+    public void showTitle(BaseComponent title) {
+        showTitle(new BaseComponent[]{title});
+    }
+
+    @Override
+    public void showTitle(BaseComponent[] title, BaseComponent[] subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        setTitleTimes(fadeInTicks, stayTicks, fadeOutTicks);
+        setSubtitle(subtitle);
+        showTitle(title);
+    }
+
+    @Override
+    public void showTitle(BaseComponent title, BaseComponent subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        setTitleTimes(fadeInTicks, stayTicks, fadeOutTicks);
+        setSubtitle(subtitle);
+        showTitle(title);
+    }
+
+    @Override
+    public void sendTitle(Title title) {
+        Preconditions.checkNotNull(title, "Title is null");
+        setTitleTimes(title.getFadeIn(), title.getStay(), title.getFadeOut());
+        setSubtitle(title.getSubtitle() == null ? new BaseComponent[0] : title.getSubtitle());
+        showTitle(title.getTitle());
+    }
+
+    @Override
+    public void updateTitle(Title title) {
+        Preconditions.checkNotNull(title, "Title is null");
+        setTitleTimes(title.getFadeIn(), title.getStay(), title.getFadeOut());
+        if (title.getSubtitle() != null) {
+            setSubtitle(title.getSubtitle());
+        }
+        showTitle(title.getTitle());
+    }
+
+    @Override
+    public void hideTitle() {
+    	if (getHandle().playerConnection.networkManager.getVersion() < 28) {
+			return;
+		}
+        getHandle().playerConnection.sendPacket(new PacketTitle(EnumTitleAction.CLEAR, (BaseComponent[]) null, 0, 0, 0));
+    }
+    // Paper end
 
     @Override
     public int getPing() {
@@ -184,10 +323,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (oldName.equals(name)) {
             return;
         }
-
-        if (name.length() > 16) {
+        
+        // Rinny start - dont throw its limited in the packet
+        /*if (name.length() > 16) {
             throw new IllegalArgumentException("Player list names can only be a maximum of 16 characters long");
-        }
+        }*/
+        // Rinny stop 
 
         // Collisions will make for invisible people
         for (int i = 0; i < server.getHandle().players.size(); ++i) {

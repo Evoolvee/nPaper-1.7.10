@@ -1,16 +1,19 @@
 package org.spigotmc;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Map;
+
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.server.ChatSerializer;
 import net.minecraft.server.EnumProtocol;
 import net.minecraft.server.IChatBaseComponent;
 import net.minecraft.server.Packet;
 import net.minecraft.server.PacketDataSerializer;
 import net.minecraft.server.PacketListener;
+import net.minecraft.server.PacketPlayOutListener;
 import net.minecraft.util.com.google.common.collect.BiMap;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Map;
 
 public class ProtocolInjector
 {
@@ -21,7 +24,7 @@ public class ProtocolInjector
             addPacket( EnumProtocol.LOGIN, true, 0x3, PacketLoginCompression.class );
 
             addPacket( EnumProtocol.PLAY, true, 0x45, PacketTitle.class );
-            addPacket( EnumProtocol.PLAY, true, 0x47, PacketTabHeader.class );
+            addPacket( EnumProtocol.PLAY, true, 0x47, PacketTabHeaderFooter.class );
             addPacket( EnumProtocol.PLAY, true, 0x48, PacketPlayResourcePackSend.class );
             addPacket( EnumProtocol.PLAY, false, 0x19, PacketPlayResourcePackStatus.class );
         } catch ( NoSuchFieldException e )
@@ -131,45 +134,60 @@ public class ProtocolInjector
         }
     }
 
-    public static class PacketTabHeader extends Packet
+    // Fully implement 1.8 packets from 1.8 paperspigot
+    public static class PacketTabHeaderFooter extends Packet
     {
+    	public BaseComponent[] header;
+    	public BaseComponent[] footer;
+    	private IChatBaseComponent a;
+    	private IChatBaseComponent b;
 
-        private IChatBaseComponent header;
-        private IChatBaseComponent footer;
-
-        public PacketTabHeader()
+        public PacketTabHeaderFooter()
         {
         }
 
-        public PacketTabHeader(IChatBaseComponent header, IChatBaseComponent footer)
+        public PacketTabHeaderFooter(IChatBaseComponent header, IChatBaseComponent footer)
         {
-            this.header = header;
-            this.footer = footer;
+            this.a = header;
+            this.b = footer;
         }
 
         @Override
         public void a(PacketDataSerializer packetdataserializer) throws IOException
         {
-            this.header = ChatSerializer.a( packetdataserializer.c( 32767 ) );
-            this.footer = ChatSerializer.a( packetdataserializer.c( 32767 ) );
+            this.a = ChatSerializer.a( packetdataserializer.c( 32767 ) );
+            this.b = ChatSerializer.a( packetdataserializer.c( 32767 ) );
         }
 
         @Override
         public void b(PacketDataSerializer packetdataserializer) throws IOException
         {
-            packetdataserializer.a( ChatSerializer.a( this.header ) );
-            packetdataserializer.a( ChatSerializer.a( this.footer ) );
+        	if (header != null) {
+        		packetdataserializer.a(ComponentSerializer.toString(this.header));
+        	} else {
+        		packetdataserializer.a(ChatSerializer.a(this.a));
+        	}
+        	if (footer != null) {
+        		packetdataserializer.a(ComponentSerializer.toString(this.footer));
+        	} else {
+        		packetdataserializer.a(ChatSerializer.a(this.b));
+        	}
+        }	
+        
+        public void a(PacketPlayOutListener packetplayoutlistener) {
+            packetplayoutlistener.a(this);
         }
 
         @Override
         public void handle(PacketListener packetlistener)
         {
+        	this.a((PacketPlayOutListener) packetlistener);
         }
     }
 
     public static class PacketTitle extends Packet
     {
-        private Action action;
+        private EnumTitleAction action;
 
         // TITLE & SUBTITLE
         private IChatBaseComponent text;
@@ -178,44 +196,47 @@ public class ProtocolInjector
         private int fadeIn = -1;
         private int stay = -1;
         private int fadeOut = -1;
+        
+        public BaseComponent[] components;
 
         public PacketTitle() {}
-
-        public PacketTitle(Action action)
-        {
+        
+        public PacketTitle(EnumTitleAction action, BaseComponent[] components, int fadeIn, int stay, int fadeOut) {
             this.action = action;
-        }
-
-        public PacketTitle(Action action, IChatBaseComponent text)
-        {
-            this( action );
-            this.text = text;
-        }
-
-        public PacketTitle(Action action, int fadeIn, int stay, int fadeOut)
-        {
-            this( action );
+            this.components = components;
             this.fadeIn = fadeIn;
             this.stay = stay;
             this.fadeOut = fadeOut;
         }
 
+        public PacketTitle(EnumTitleAction action, IChatBaseComponent text)
+        {
+            this(action, text, -1, -1, -1);
+        }
+        
+        public PacketTitle(int i, int j, int k) {
+        	this(EnumTitleAction.TIMES, (IChatBaseComponent)null, i, j, k);
+        }
+        
+        public PacketTitle(EnumTitleAction action, IChatBaseComponent ichatbasecomponent, int i, int j, int k) {
+        	this.action = action;
+            this.text = ichatbasecomponent;
+            this.fadeIn = i;
+            this.stay = j;
+            this.fadeOut = k;
+        }
 
         @Override
         public void a(PacketDataSerializer packetdataserializer) throws IOException
         {
-            this.action = Action.values()[packetdataserializer.a()];
-            switch ( action )
-            {
-                case TITLE:
-                case SUBTITLE:
-                    this.text = ChatSerializer.a( packetdataserializer.c(32767) );
-                    break;
-                case TIMES:
-                    this.fadeIn = packetdataserializer.readInt();
-                    this.stay = packetdataserializer.readInt();
-                    this.fadeOut = packetdataserializer.readInt();
-                    break;
+            this.action = EnumTitleAction.values()[packetdataserializer.a()];
+            if (this.action == EnumTitleAction.TITLE || this.action == EnumTitleAction.SUBTITLE) {
+            	this.text = ChatSerializer.a( packetdataserializer.c(32767) );
+            }
+            if (this.action == EnumTitleAction.TIMES) {
+            	this.fadeIn = packetdataserializer.readInt();
+                this.stay = packetdataserializer.readInt();
+                this.fadeOut = packetdataserializer.readInt();
             }
         }
 
@@ -223,31 +244,37 @@ public class ProtocolInjector
         public void b(PacketDataSerializer packetdataserializer) throws IOException
         {
             packetdataserializer.b( action.ordinal() );
-            switch ( action )
-            {
-                case TITLE:
-                case SUBTITLE:
-                    packetdataserializer.a( ChatSerializer.a( this.text ) );
-                    break;
-                case TIMES:
-                    packetdataserializer.writeInt( this.fadeIn );
-                    packetdataserializer.writeInt( this.stay );
-                    packetdataserializer.writeInt( this.fadeOut );
-                    break;
+            if (this.action == EnumTitleAction.TITLE || this.action == EnumTitleAction.SUBTITLE) {
+            	if (this.components != null) {
+            		packetdataserializer.a(ComponentSerializer.toString(this.components));
+            	} else {
+            		packetdataserializer.a(ChatSerializer.a(this.text));
+            	}
             }
+            if (this.action == EnumTitleAction.TIMES) {
+            	packetdataserializer.writeInt(this.fadeIn);
+            	packetdataserializer.writeInt(this.stay);
+            	packetdataserializer.writeInt(this.fadeOut);
+            }
+        }
+
+        public void a(PacketPlayOutListener packetplayoutlistener) {
+            packetplayoutlistener.a(this);
         }
 
         @Override
         public void handle(PacketListener packetlistener)
         {
+        	this.a((PacketPlayOutListener) packetlistener);
         }
 
-        public static enum Action {
+        public static enum EnumTitleAction {
             TITLE,
             SUBTITLE,
             TIMES,
             CLEAR,
-            RESET
+            RESET;
         }
     }
+    // implement 1.8 packets from 1.8 paperspigot
 }
