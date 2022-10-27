@@ -530,8 +530,8 @@ public class PlayerConnection implements PacketPlayInListener {
                 double d2 = this.player.locZ - ((double) k + 0.5D);
                 double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 
-                if (d3 > 36.0D) {
-                	if (d3 < (MathHelper.pow2(player.viewDistance) + MathHelper.pow2(player.viewDistance) + MathHelper.pow2(player.viewDistance)) /*nPaper check only in player's view distance*/ && worldserver.isChunkLoaded(i >> 4, k >> 4)) {
+                if (d3 > 6.0D) {
+                	if (d3 < (player.viewDistance * 16) /*nPaper check only in player's view distance*/ && worldserver.isChunkLoaded(i >> 4, k >> 4)) {
                         this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(i, j, k, worldserver)); // Paper - Fix block break desync
                 	}
                     return;
