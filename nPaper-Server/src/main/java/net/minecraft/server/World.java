@@ -613,6 +613,10 @@ public abstract class World implements IBlockAccess {
         // CraftBukkit end
         this.applyPhysics(i, j, k, block);
     }
+    
+	protected boolean isChunkLoaded(int i, int j, boolean flag) {
+		return (this.chunkProvider.isChunkLoaded(i, j) && (flag || !this.chunkProvider.getOrCreateChunk(i, j).isEmpty()));
+	}
 
     public void b(int i, int j, int k, int l) {
         int i1;
