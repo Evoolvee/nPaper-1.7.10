@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger; // PaperSpigot
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.bukkit.Bukkit; // CraftBukkit
 
 public class Chunk {
@@ -132,6 +131,7 @@ public class Chunk {
     }
     // CraftBukkit end
 
+    private final ChunkCoordIntPair chunkCoords; // Rinny - PANDASPIGOT PATCHE - cache chunkCoordIntPair
     public Chunk(World world, int i, int j) {
         this.sections = new ChunkSection[16];
         this.v = new byte[256];
@@ -156,6 +156,7 @@ public class Chunk {
         if (!(this instanceof EmptyChunk)) {
             this.bukkitChunk = new org.bukkit.craftbukkit.CraftChunk(this);
         }
+        this.chunkCoords = new ChunkCoordIntPair(this.locX, this.locZ); // Rinny - PANDASPIGOT PATCHE - cache chunkCoordIntPair
     }
 
     public org.bukkit.Chunk bukkitChunk;
@@ -1074,7 +1075,7 @@ public class Chunk {
     }
 
     public ChunkCoordIntPair l() {
-        return new ChunkCoordIntPair(this.locX, this.locZ);
+        return this.chunkCoords; // Rinny - PANDASPIGOT PATCHE - cache chunkCoordIntPair
     }
 
     public boolean c(int i, int j) {

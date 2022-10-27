@@ -20,13 +20,13 @@ public class EntityTracker {
     }
 
     public void track(Entity entity) {
-        if (entity instanceof EntityPlayer) {
+    	if (entity instanceof EntityPlayer) {
             this.addEntity(entity, 512, 2);
             EntityPlayer entityplayer = (EntityPlayer) entity;
-            Iterator iterator = this.c.iterator();
+            Iterator<EntityTrackerEntry> iterator = this.c.iterator();
 
             while (iterator.hasNext()) {
-                EntityTrackerEntry entitytrackerentry = (EntityTrackerEntry) iterator.next();
+                EntityTrackerEntry entitytrackerentry = iterator.next();
 
                 if (entitytrackerentry.tracker != entityplayer) {
                     entitytrackerentry.updatePlayer(entityplayer);
@@ -36,38 +36,22 @@ public class EntityTracker {
             this.addEntity(entity, 64, 5, true);
         } else if (entity instanceof EntityArrow) {
             this.addEntity(entity, 64, 20, false);
-        } else if (entity instanceof EntitySmallFireball) {
+        } else if (entity instanceof EntitySmallFireball || entity instanceof EntityFireball) {
             this.addEntity(entity, 64, 10, false);
-        } else if (entity instanceof EntityFireball) {
-            this.addEntity(entity, 64, 10, false);
-        } else if (entity instanceof EntitySnowball) {
-            this.addEntity(entity, 64, 10, true);
-        } else if (entity instanceof EntityEnderPearl) {
+        } else if (entity instanceof EntitySnowball || entity instanceof EntityEnderPearl) {
             this.addEntity(entity, 64, 10, true);
         } else if (entity instanceof EntityEnderSignal) {
             this.addEntity(entity, 64, 4, true);
-        } else if (entity instanceof EntityEgg) {
-            this.addEntity(entity, 64, 10, true);
-        } else if (entity instanceof EntityPotion) {
-            this.addEntity(entity, 64, 10, true);
-        } else if (entity instanceof EntityThrownExpBottle) {
-            this.addEntity(entity, 64, 10, true);
-        } else if (entity instanceof EntityFireworks) {
+        } else if (entity instanceof EntityEgg || entity instanceof EntityPotion || entity instanceof EntityThrownExpBottle || entity instanceof EntityFireworks) {
             this.addEntity(entity, 64, 10, true);
         } else if (entity instanceof EntityItem) {
             this.addEntity(entity, 64, 20, true);
-        } else if (entity instanceof EntityMinecartAbstract) {
-            this.addEntity(entity, 80, 3, true);
-        } else if (entity instanceof EntityBoat) {
+        } else if (entity instanceof EntityMinecartAbstract || entity instanceof EntityBoat) {
             this.addEntity(entity, 80, 3, true);
         } else if (entity instanceof EntitySquid) {
             this.addEntity(entity, 64, 3, true);
-        } else if (entity instanceof EntityWither) {
+        } else if (entity instanceof EntityWither || entity instanceof EntityBat || entity instanceof IAnimal) {
             this.addEntity(entity, 80, 3, false);
-        } else if (entity instanceof EntityBat) {
-            this.addEntity(entity, 80, 3, false);
-        } else if (entity instanceof IAnimal) {
-            this.addEntity(entity, 80, 3, true);
         } else if (entity instanceof EntityEnderDragon) {
             this.addEntity(entity, 160, 3, true);
         } else if (entity instanceof EntityTNTPrimed) {

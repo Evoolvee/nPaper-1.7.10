@@ -119,9 +119,13 @@ public abstract class BlockFluids extends Block {
         }
 
         if (iblockaccess.getData(i, j, k) >= 8) {
-            boolean flag = false;
+        	//boolean flag = false;
 
-            if (flag || this.d(iblockaccess, i, j, k - 1, 2)) {
+            if (this.d(iblockaccess, i, j, k - 1, 2) || this.d(iblockaccess, i, j, k + 1, 3) || this.d(iblockaccess, i - 1, j, k, 4) || this.d(iblockaccess, i + 1, j, k, 5) || this.d(iblockaccess, i, j + 1, k - 1, 2) || this.d(iblockaccess, i, j + 1, k + 1, 3) || this.d(iblockaccess, i - 1, j + 1, k, 4) || this.d(iblockaccess, i + 1, j + 1, k, 5)) {
+            	vec3d = vec3d.a().add(0.0D, -6.0D, 0.0D);
+            }
+            
+            /*if (flag || this.d(iblockaccess, i, j, k - 1, 2)) {
                 flag = true;
             }
 
@@ -155,7 +159,7 @@ public abstract class BlockFluids extends Block {
 
             if (flag) {
                 vec3d = vec3d.a().add(0.0D, -6.0D, 0.0D);
-            }
+            }*/
         }
 
         vec3d = vec3d.a();
@@ -185,8 +189,24 @@ public abstract class BlockFluids extends Block {
     private void n(World world, int i, int j, int k) {
         if (world.getType(i, j, k) == this) {
             if (this.material == Material.LAVA) {
-                boolean flag = false;
+            	//boolean flag = false;
 
+                // Rinny start
+                if (world.getType(i, j, k - 1).getMaterial() == Material.WATER || world.getType(i, j, k - 1).getMaterial() == Material.WATER || world.getType(i, j, k + 1).getMaterial() == Material.WATER || world.getType(i - 1, j, k).getMaterial() == Material.WATER || world.getType(i + 1, j, k).getMaterial() == Material.WATER || world.getType(i, j + 1, k).getMaterial() == Material.WATER) {
+                	int l = world.getData(i, j, k);
+
+                    if (l == 0) {
+                        world.setTypeUpdate(i, j, k, Blocks.OBSIDIAN);
+                    } else if (l > 0) { // PaperSpigot
+                        world.setTypeUpdate(i, j, k, Blocks.COBBLESTONE);
+                    }
+
+                    this.fizz(world, i, j, k);
+                }
+                // Rinny stop
+                
+                // OLD PAPERSPIGOT VERSION
+                /*
                 if (flag || world.getType(i, j, k - 1).getMaterial() == Material.WATER) {
                     flag = true;
                 }
@@ -206,7 +226,6 @@ public abstract class BlockFluids extends Block {
                 if (flag || world.getType(i, j + 1, k).getMaterial() == Material.WATER) {
                     flag = true;
                 }
-
                 if (flag) {
                     int l = world.getData(i, j, k);
 
@@ -217,7 +236,7 @@ public abstract class BlockFluids extends Block {
                     }
 
                     this.fizz(world, i, j, k);
-                }
+                }*/
             }
         }
     }

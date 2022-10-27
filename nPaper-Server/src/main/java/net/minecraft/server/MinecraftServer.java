@@ -3,6 +3,8 @@ package net.minecraft.server;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
+// CraftBukkit start
+import java.io.IOException;
 import java.net.Proxy;
 import java.security.KeyPair;
 import java.text.SimpleDateFormat;
@@ -10,13 +12,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.Callable;
+
 import javax.imageio.ImageIO;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bukkit.World.Environment;
+import org.bukkit.craftbukkit.SpigotTimings; // Spigot
+import org.bukkit.craftbukkit.util.Waitable;
+import org.bukkit.event.server.RemoteServerCommandEvent;
+import org.bukkit.event.world.WorldSaveEvent;
+
+import jline.console.ConsoleReader;
+import joptsimple.OptionSet;
 import net.minecraft.util.com.google.common.base.Charsets;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.GameProfileRepository;
@@ -27,20 +38,6 @@ import net.minecraft.util.io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.util.io.netty.buffer.Unpooled;
 import net.minecraft.util.io.netty.handler.codec.base64.Base64;
 import net.minecraft.util.org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-// CraftBukkit start
-import java.io.IOException;
-
-import jline.console.ConsoleReader;
-import joptsimple.OptionSet;
-
-import org.bukkit.World.Environment;
-import org.bukkit.craftbukkit.SpigotTimings; // Spigot
-import org.bukkit.craftbukkit.util.Waitable;
-import org.bukkit.event.server.RemoteServerCommandEvent;
-import org.bukkit.event.world.WorldSaveEvent;
 // CraftBukkit end
 
 public abstract class MinecraftServer implements ICommandListener, Runnable, IMojangStatistics {
@@ -285,14 +282,14 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
     }
 
     protected void g() {
-        boolean flag = true;
+        /*boolean flag = true;
         boolean flag1 = true;
         boolean flag2 = true;
-        boolean flag3 = true;
+        boolean flag3 = true;*/
         int i = 0;
 
         this.b("menu.generatingTerrain");
-        byte b0 = 0;
+        //byte b0 = 0;
 
         // CraftBukkit start - fire WorldLoadEvent and handle whether or not to keep the spawn in memory
         for (int m = 0; m < this.worlds.size(); ++m) {
@@ -358,7 +355,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
         if (!this.M) {
             // CraftBukkit start - fire WorldSaveEvent
             // WorldServer[] aworldserver = this.worldServer;
-            int i = this.worlds.size();
+            //int i = this.worlds.size();
 
             for (WorldServer worldserver : this.worlds) {
 
@@ -492,8 +489,8 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
     public void run() {
         try {
             if (this.init()) {
-                long i = ar();
-                long j = 0L;
+                //long i = ar();
+                //long j = 0L;
 
                 this.q.setMOTD(new ChatComponentText(this.motd));
                 this.q.setServerInfo(new ServerPingServerData("1.7.10", 5));
@@ -546,8 +543,8 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
                         // PaperSpigot end
                     }
                     lastTick = curTime;
-                    this.LAST_TICK_TIME_NANO = System.nanoTime();
-                    this.LAST_TICK_TIME_MILLIS = System.currentTimeMillis();
+                    LAST_TICK_TIME_NANO = System.nanoTime();
+                    LAST_TICK_TIME_MILLIS = System.currentTimeMillis();
 
                     this.u();
                     this.O = true;
@@ -609,8 +606,9 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
             try {
                 BufferedImage bufferedimage = ImageIO.read(file1);
 
-                Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide", new Object[0]);
-                Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high", new Object[0]);
+                Validate.validState(bufferedimage.getWidth() == bufferedimage.getHeight(), "Width must be equals to the height");
+                Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
+                Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
                 ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
 
@@ -690,7 +688,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
         }
 
         this.methodProfiler.b();
-        this.methodProfiler.b();
+        //this.methodProfiler.b();
         org.spigotmc.WatchdogThread.tick(); // Spigot
         SpigotTimings.serverTickTimer.stopTiming(); // Spigot
         org.spigotmc.CustomTimingsHandler.tick(); // Spigot
@@ -717,20 +715,25 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
 
         SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
         // Send time updates to everyone, it will get the right time from the world the player is in.
-        for (final WorldServer world : this.worlds) {
-            final boolean doDaylight = world.getGameRules().getBoolean("doDaylightCycle");
-            final long dayTime = world.getDayTime();
-            long worldTime = world.getTime();
-            final PacketPlayOutUpdateTime worldPacket = new PacketPlayOutUpdateTime(worldTime, dayTime, doDaylight);
-            for (EntityHuman entityhuman : (List<EntityHuman>) world.players) {
-                if (!(entityhuman instanceof EntityPlayer) || (ticks + entityhuman.getId()) % 20 != 0) {
-                    continue;
-                }
-                EntityPlayer entityplayer = (EntityPlayer) entityhuman;
-                long playerTime = entityplayer.getPlayerTime();
-                PacketPlayOutUpdateTime packet = (playerTime == dayTime) ? worldPacket : new PacketPlayOutUpdateTime(worldTime, playerTime, doDaylight);
-                entityplayer.playerConnection.sendPacket(packet); // Add support for per player time
-            }
+        if ((this.ticks % 20) == 0) {
+	        for (final WorldServer world : this.worlds) {
+	            final boolean doDaylight = world.getGameRules().getBoolean("doDaylightCycle");
+	            final long dayTime = world.getDayTime();
+	            long worldTime = world.getTime();
+	            final PacketPlayOutUpdateTime worldPacket = new PacketPlayOutUpdateTime(worldTime, dayTime, doDaylight);
+	            for (EntityHuman entityhuman : (List<EntityHuman>) world.players) {
+	            	if (!(entityhuman instanceof EntityPlayer)) {//|| (ticks + entityhuman.getId()) % 20 != 0
+	                    continue;
+	                }
+	            	if (entityhuman.world != world) {
+	            		continue;
+	            	}
+	                EntityPlayer entityplayer = (EntityPlayer) entityhuman;
+	                long playerTime = entityplayer.getPlayerTime();
+	                PacketPlayOutUpdateTime packet = (playerTime == dayTime) ? worldPacket : new PacketPlayOutUpdateTime(worldTime, playerTime, doDaylight);
+	                entityplayer.playerConnection.sendPacket(packet); // Add support for per player time
+	            }
+	        }
         }
         SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
 
@@ -795,7 +798,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
                 if (u.players.size() > 0) worldserver.getTracker().updatePlayers();
                 worldserver.timings.tracker.stopTiming(); // Spigot
                 this.methodProfiler.b();
-                this.methodProfiler.b();
+                //this.methodProfiler.b();
                 worldserver.explosionDensityCache.clear(); // PaperSpigot - Optimize explosions
             // } // CraftBukkit
 
@@ -1065,13 +1068,13 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
     }
 
     public CrashReport b(CrashReport crashreport) {
-        crashreport.g().a("Profiler Position", (Callable) (new CrashReportProfilerPosition(this)));
+        crashreport.g().a("Profiler Position", new CrashReportProfilerPosition(this));
         if (this.worlds != null && this.worlds.size() > 0 && this.worlds.get(0) != null) { // CraftBukkit
-            crashreport.g().a("Vec3 Pool Size", (Callable) (new CrashReportVec3DPoolSize(this)));
+            crashreport.g().a("Vec3 Pool Size", new CrashReportVec3DPoolSize(this));
         }
 
         if (this.u != null) {
-            crashreport.g().a("Player Count", (Callable) (new CrashReportPlayerCount(this)));
+            crashreport.g().a("Player Count", new CrashReportPlayerCount(this));
         }
 
         return crashreport;

@@ -1,35 +1,37 @@
 package net.minecraft.server;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 
-// CraftBukkit start
-import com.sathonay.npaper.utils.LightRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.TravelAgent;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Vehicle;
-import org.spigotmc.CustomTimingsHandler; // Spigot
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.plugin.PluginManager;
 // CraftBukkit end
+import org.spigotmc.CustomTimingsHandler; // Spigot
+
+// CraftBukkit start
+import com.sathonay.npaper.utils.LightRandom;
 
 public abstract class Entity {
 
@@ -99,7 +101,7 @@ public abstract class Entity {
     public int maxFireTicks;
     public int fireTicks; // CraftBukkit - private -> public
     public boolean inWater; // Spigot - protected -> public
-    public Map<String, Integer> noDamageTicks = new ConcurrentHashMap<>();;
+    public int noDamageTicks = 0;
     private boolean justCreated;
     protected boolean fireProof;
     protected DataWatcher datawatcher;

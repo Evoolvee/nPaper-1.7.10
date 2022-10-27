@@ -50,7 +50,19 @@ public class ItemBucket extends Item {
                     Material material = world.getType(i, j, k).getMaterial();
                     int l = world.getData(i, j, k);
 
-                    if (material == Material.WATER && l == 0) {
+                    if ((material == Material.WATER || material == Material.LAVA) && l == 0) {
+                    	final Item bucketType = (material == Material.LAVA ? Items.LAVA_BUCKET : Items.WATER_BUCKET);
+                        // CraftBukkit start
+                        PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(entityhuman, i, j, k, -1, itemstack, bucketType);
+
+                        if (event.isCancelled()) {
+                            return itemstack;
+                        }
+                        // CraftBukkit end
+                        world.setAir(i, j, k);
+                        return this.a(itemstack, entityhuman, bucketType, event.getItemStack()); // CraftBukkit - added Event stack
+                    }
+                    /*if (material == Material.WATER && l == 0) {
                         // CraftBukkit start
                         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(entityhuman, i, j, k, -1, itemstack, Items.WATER_BUCKET);
 
@@ -72,7 +84,7 @@ public class ItemBucket extends Item {
                         // CraftBukkit end
                         world.setAir(i, j, k);
                         return this.a(itemstack, entityhuman, Items.LAVA_BUCKET, event.getItemStack()); // CraftBukkit - added Event stack
-                    }
+                    }*/
                 } else {
                     if (this.a == Blocks.AIR) {
                         // CraftBukkit start

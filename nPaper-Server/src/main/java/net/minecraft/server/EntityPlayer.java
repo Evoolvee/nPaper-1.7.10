@@ -183,16 +183,12 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         // CraftBukkit end
 
         this.playerInteractManager.a();
-        --this.invulnerableTicks;
+        if (this.invulnerableTicks > 0) {
+        	--this.invulnerableTicks;
+        }
 
-        if (!this.noDamageTicks.isEmpty()) {
-            for (Map.Entry<String, Integer> entry : this.noDamageTicks.entrySet()) {
-                String key = entry.getKey();
-                AtomicInteger value = new AtomicInteger(entry.getValue());
-                if (value.intValue() > 0) {
-                    this.noDamageTicks.replace(key, value.get(), value.decrementAndGet());
-                }
-            }
+        if (this.noDamageTicks > 0) {
+            --this.noDamageTicks;
         }
 
         // PaperSpigot start - Configurable container update tick rate
