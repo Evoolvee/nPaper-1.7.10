@@ -6,6 +6,7 @@ import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.spigotmc.ValidateUtils;
 
 public class PacketPlayOutPlayerInfo extends Packet {
 
@@ -29,7 +30,7 @@ public class PacketPlayOutPlayerInfo extends Packet {
 
     public PacketPlayOutPlayerInfo(EntityPlayer player, PlayerInfo action) {
         this.action = action;
-        this.username = player.listName;
+        this.username = (player.playerConnection.networkManager.getVersion() < 28 ? ValidateUtils.limit(player.listName, 16) : player.listName); // Rinny - dont limit tablist name for 1.8 client
         this.player = player.getProfile();
         switch (action) {
             case ADD_PLAYER:
