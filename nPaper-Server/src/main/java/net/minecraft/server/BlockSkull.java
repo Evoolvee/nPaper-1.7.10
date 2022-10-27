@@ -117,7 +117,7 @@ public class BlockSkull extends BlockContainer {
         if (!world.isStatic) {
             // CraftBukkit start - Drop item in code above, not here
             // if ((l & 8) == 0) {
-            if (false) {
+            /*if (false) {
                 // CraftBukkit end
                 ItemStack itemstack = new ItemStack(Items.SKULL, 1, this.getDropData(world, i, j, k));
                 TileEntitySkull tileentityskull = (TileEntitySkull) world.getTileEntity(i, j, k);
@@ -131,7 +131,7 @@ public class BlockSkull extends BlockContainer {
                 }
 
                 this.a(world, i, j, k, itemstack);
-            }
+            }*/
 
             super.remove(world, i, j, k, block, l);
         }
