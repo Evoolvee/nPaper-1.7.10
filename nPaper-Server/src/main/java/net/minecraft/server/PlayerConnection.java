@@ -630,10 +630,12 @@ public class PlayerConnection implements PacketPlayInListener {
             // Spigot start - skip the event if throttled
             if (!throttled) {
             org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.player, Action.RIGHT_CLICK_AIR, itemstack);
-            if (event.useItemInHand() != Event.Result.DENY) {
+	            if (event.useItemInHand() != Event.Result.DENY) {
+	                this.player.playerInteractManager.useItem(this.player, this.player.world, itemstack);
+	            }
+            } else if (MinecraftServer.currentTick - this.lastDropTick > 1) { // Nacho - Fix eat while running
                 this.player.playerInteractManager.useItem(this.player, this.player.world, itemstack);
-            }
-            }
+            } 
             // Spigot end
 
             // CraftBukkit - notch decrements the counter by 1 in the above method with food,
