@@ -1,11 +1,15 @@
 package net.minecraft.server;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
-// CraftBukkit start
-import com.google.common.base.Function;
+import org.bukkit.craftbukkit.SpigotTimings; // Spigot
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
@@ -13,7 +17,8 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 // CraftBukkit end
 
-import org.bukkit.craftbukkit.SpigotTimings; // Spigot
+// CraftBukkit start
+import com.google.common.base.Function;
 
 public abstract class EntityLiving extends Entity {
 
@@ -213,14 +218,8 @@ public abstract class EntityLiving extends Entity {
             --this.hurtTicks;
         }
 
-        if (!this.noDamageTicks.isEmpty() && !(this instanceof EntityPlayer)) {
-            for (Map.Entry<String, Integer> entry : this.noDamageTicks.entrySet()) {
-                String key = entry.getKey();
-                AtomicInteger value = new AtomicInteger(entry.getValue());
-                if (value.intValue() > 0) {
-                    this.noDamageTicks.replace(key, value.get(), value.decrementAndGet());
-                }
-            }
+        if (this.noDamageTicks > 0 && !(this instanceof EntityPlayer)) {
+        	--this.noDamageTicks;
         }
 
         if (this.getHealth() <= 0.0F) {
@@ -716,15 +715,15 @@ public abstract class EntityLiving extends Entity {
                 return false;
             } else {
                 // CraftBukkit - Moved into d(DamageSource, float)
-                if (false && (damagesource == DamageSource.ANVIL || damagesource == DamageSource.FALLING_BLOCK) && this.getEquipment(4) != null) {
+                /*if (false && (damagesource == DamageSource.ANVIL || damagesource == DamageSource.FALLING_BLOCK) && this.getEquipment(4) != null) {
                     this.getEquipment(4).damage((int) (f * 4.0F + this.random.nextFloat() * f * 2.0F), this);
                     f *= 0.75F;
-                }
+                }*/
 
                 this.aF = 1.5F;
                 boolean flag = true;
 
-                if (this.noDamageTicks.putIfAbsent(damagesource.p(), maxNoDamageTicks) != null && this.noDamageTicks.get(damagesource.p()) > (float) this.maxNoDamageTicks / 2.0F) {
+                if (this.noDamageTicks > (float) this.maxNoDamageTicks / 2.0F) {
                     if (f <= this.lastDamage) return false;
 
                     // CraftBukkit start
@@ -738,7 +737,7 @@ public abstract class EntityLiving extends Entity {
                     if (!this.d(damagesource, f)) return false;
                     this.lastDamage = f;
                     this.aw = previousHealth;
-                    this.noDamageTicks.put(damagesource.p(), maxNoDamageTicks);
+                    this.noDamageTicks = maxNoDamageTicks;
 
                     // CraftBukkit end
                     this.hurtTicks = this.ay = 10;
@@ -989,7 +988,7 @@ public abstract class EntityLiving extends Entity {
             return f;
         } else {
             if (this instanceof EntityZombie) {
-                f = f;
+                f = f; // TODO ????
             }
 
             int i;
@@ -997,12 +996,12 @@ public abstract class EntityLiving extends Entity {
             float f1;
 
             // CraftBukkit - Moved to d(DamageSource, float)
-            if (false && this.hasEffect(MobEffectList.RESISTANCE) && damagesource != DamageSource.OUT_OF_WORLD) {
+            /*if (false && this.hasEffect(MobEffectList.RESISTANCE) && damagesource != DamageSource.OUT_OF_WORLD) {
                 i = (this.getEffect(MobEffectList.RESISTANCE).getAmplifier() + 1) * 5;
                 j = 25 - i;
                 f1 = f * (float) j;
                 f = f1 / 25.0F;
-            }
+            }*/
 
             if (f <= 0.0F) {
                 return 0.0F;

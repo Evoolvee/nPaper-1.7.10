@@ -1354,7 +1354,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public int getNoDamageTicks() {
-        return Math.max(getHandle().invulnerableTicks, Math.max(0, getHandle().noDamageTicks.get("player") - getHandle().maxNoDamageTicks / 2)); // nPaper - Fix incorrect getNoDamageTicks
+        return Math.max(getHandle().invulnerableTicks, Math.max(0, getHandle().noDamageTicks - getHandle().maxNoDamageTicks / 2)); // nPaper - Fix incorrect getNoDamageTicks
     }
 
     public void setFlySpeed(float value) {
