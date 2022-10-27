@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
+import net.minecraft.server.PacketPlayOutPlayerInfo.PlayerInfo;
 import net.minecraft.util.com.google.common.base.Charsets;
 import net.minecraft.util.com.google.common.collect.Lists;
 import net.minecraft.util.com.google.common.collect.Maps;
@@ -43,7 +44,7 @@ public abstract class PlayerList {
     private static final Logger g = LogManager.getLogger();
     private static final SimpleDateFormat h = new SimpleDateFormat("yyyy-MM-dd \'at\' HH:mm:ss z");
     private final MinecraftServer server;
-    public final List players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
+    public final List<EntityPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
     // PaperSpigot start - Player lookup improvements
     public final Map<String, EntityPlayer> playerMap = new java.util.HashMap<String, EntityPlayer>() {
         @Override
@@ -313,41 +314,26 @@ public abstract class PlayerList {
         }
         // CraftBukkit end
 
-        // CraftBukkit start - sendAll above replaced with this loop
-        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(entityplayer, PacketPlayOutPlayerInfo.PlayerInfo.ADD_PLAYER ); // Spigot - protocol patch
-        PacketPlayOutPlayerInfo displayPacket = new  PacketPlayOutPlayerInfo(entityplayer, PacketPlayOutPlayerInfo.PlayerInfo.UPDATE_DISPLAY_NAME); // Spigot - protocol patch
-        for (int i = 0; i < this.players.size(); ++i) {
-            EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
-
-            if (entityplayer1.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
-                entityplayer1.playerConnection.sendPacket(packet);
-                // Spigot start - protocol patch
-                if ( !entityplayer.getName().equals( entityplayer.listName ) && entityplayer1.playerConnection.networkManager.getVersion() > 28 )
-                {
-                    entityplayer1.playerConnection.sendPacket( displayPacket );
-                }
-                // Spigot end
-            }
-        }
-        // CraftBukkit end
-
-        for (int i = 0; i < this.players.size(); ++i) {
-            EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
-
-            // CraftBukkit start
-            if (!entityplayer.getBukkitEntity().canSee(entityplayer1.getBukkitEntity())) {
-                continue;
-            }
+     // Rinny start - do all in a single for loop
+        final PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(entityplayer, PlayerInfo.ADD_PLAYER); // Spigot - protocol patch
+        final PacketPlayOutPlayerInfo displayPacket = new PacketPlayOutPlayerInfo(entityplayer, PlayerInfo.UPDATE_DISPLAY_NAME); // Spigot - protocol patch
+        for (EntityPlayer entityplayer1 : this.players) {
             // .name -> .listName
-            entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(entityplayer1, PacketPlayOutPlayerInfo.PlayerInfo.ADD_PLAYER )); // Spigot - protocol patch
+        	entityplayer1.playerConnection.sendPacket(packet);
+            entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(entityplayer1, PlayerInfo.ADD_PLAYER)); // Spigot - protocol patch
             // Spigot start - protocol patch
-            if ( !entityplayer.getName().equals( entityplayer.listName ) && entityplayer.playerConnection.networkManager.getVersion() > 28 )
-            {
-                entityplayer.playerConnection.sendPacket(new  PacketPlayOutPlayerInfo(entityplayer1, PacketPlayOutPlayerInfo.PlayerInfo.UPDATE_DISPLAY_NAME));
+            if (!entityplayer.getName().equals(entityplayer.listName)) {
+            	if (entityplayer.playerConnection.networkManager.getVersion() > 28) {
+            		entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(entityplayer1, PlayerInfo.UPDATE_DISPLAY_NAME));
+            	}
+            	if (entityplayer1.playerConnection.networkManager.getVersion() > 28) {
+            		entityplayer1.playerConnection.sendPacket(displayPacket);
+            	}
             }
             // Spigot end
             // CraftBukkit end
         }
+        // Rinny stop 
     }
 
     public void d(EntityPlayer entityplayer) {
@@ -396,6 +382,7 @@ public abstract class PlayerList {
         // This removes the scoreboard (and player reference) for the specific player in the manager
         this.cserver.getScoreboardManager().removePlayer(entityplayer.getBukkitEntity());
 
+        entityplayer.r().getTracker().untrackPlayer(entityplayer);// Rinny - untrack player
         return playerQuitEvent.getQuitMessage();
         // CraftBukkit end
     }
