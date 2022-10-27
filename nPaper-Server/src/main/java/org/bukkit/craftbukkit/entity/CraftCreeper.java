@@ -21,7 +21,14 @@ public class CraftCreeper extends CraftMonster implements Creeper {
         CraftServer server = this.server;
         Creeper entity = (Creeper) this.getHandle().getBukkitEntity();
 
-        if (powered) {
+        // Rinny 
+        CreeperPowerEvent event = new CreeperPowerEvent(entity, (powered ? CreeperPowerEvent.PowerCause.SET_ON : CreeperPowerEvent.PowerCause.SET_OFF));
+        server.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            getHandle().setPowered(powered);
+        }
+        /*if (powered) {
             CreeperPowerEvent event = new CreeperPowerEvent(entity, CreeperPowerEvent.PowerCause.SET_ON);
             server.getPluginManager().callEvent(event);
 
@@ -35,7 +42,7 @@ public class CraftCreeper extends CraftMonster implements Creeper {
             if (!event.isCancelled()) {
                 getHandle().setPowered(false);
             }
-        }
+        }*/
     }
 
     @Override
