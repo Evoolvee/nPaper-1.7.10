@@ -375,7 +375,7 @@ public class PlayerConnection implements PacketPlayInListener {
                 double d10 = d7 * d7 + d8 * d8 + d9 * d9;
 
                 // Spigot: make "moved too quickly" limit configurable
-                if (d10 > org.spigotmc.SpigotConfig.movedTooQuicklyThreshold && this.checkMovement && this.player.onGround && (!this.minecraftServer.N() || !this.minecraftServer.M().equals(this.player.getName()))) { // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
+                if (d10 > org.spigotmc.SpigotConfig.movedTooQuicklyThreshold && this.checkMovement && this.player.onGround && !this.minecraftServer.N() || !this.minecraftServer.M().equals(this.player.getName()) && this.player.noDamageTicks == 0) { // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
                     c.warn(this.player.getName() + " moved too quickly! " + d4 + "," + d5 + "," + d6 + " (" + d7 + ", " + d8 + ", " + d9 + ")");
                     this.a(this.y, this.z, this.q, this.player.yaw, this.player.pitch);
                     return;
@@ -404,7 +404,7 @@ public class PlayerConnection implements PacketPlayInListener {
                 boolean flag1 = false;
 
                 // Spigot: make "moved wrongly" limit configurable
-                if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold && this.player.onGround && !this.player.isSleeping() && !this.player.playerInteractManager.isCreative()) {
+                if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold && this.player.onGround && !this.player.isSleeping() && !this.player.playerInteractManager.isCreative() && this.player.noDamageTicks == 0) {
                     flag1 = true;
                     c.warn(this.player.getName() + " moved wrongly!");
                 }
@@ -419,7 +419,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
                 AxisAlignedBB axisalignedbb = this.player.boundingBox.clone().grow((double) f4, (double) f4, (double) f4).a(0.0D, -0.55D, 0.0D);
 
-                if (!this.minecraftServer.getAllowFlight() && !this.player.abilities.canFly && !this.player.onGround && !worldserver.c(axisalignedbb)) { // CraftBukkit - check abilities instead of creative mode
+                if (!this.minecraftServer.getAllowFlight() && !this.player.abilities.canFly && !this.player.onGround && !worldserver.c(axisalignedbb) && this.player.noDamageTicks == 0) { // CraftBukkit - check abilities instead of creative mode
                     if (d11 >= -0.03125D) {
                         ++this.f;
                         if (this.f > 80) {
