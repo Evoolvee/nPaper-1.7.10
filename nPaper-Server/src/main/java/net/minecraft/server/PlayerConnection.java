@@ -71,7 +71,8 @@ public class PlayerConnection implements PacketPlayInListener {
     private long i;
     private static Random j = new Random();
     private long k;
-    private volatile int chatThrottle; private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(PlayerConnection.class, "chatThrottle"); // CraftBukkit - multithreaded field
+    private volatile int chatThrottle; 
+    private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(PlayerConnection.class, "chatThrottle"); // CraftBukkit - multithreaded field
     private int x;
     private IntHashMap n = new IntHashMap();
     private double y;
@@ -443,7 +444,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
     public void a(double d0, double d1, double d2, float f, float f1) {
         // CraftBukkit start - Delegate to teleport(Location)
-        Player player = this.getPlayer();
+        final Player player = this.getPlayer();
         Location from = player.getLocation();
         Location to = new Location(this.getPlayer().getWorld(), d0, d1, d2, f, f1);
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, PlayerTeleportEvent.TeleportCause.UNKNOWN);
@@ -1163,12 +1164,22 @@ public class PlayerConnection implements PacketPlayInListener {
                 ItemStack itemInHand = this.player.inventory.getItemInHand(); // CraftBukkit
                 if (packetplayinuseentity.c() == EnumEntityUseAction.INTERACT) {
                     // CraftBukkit start
-                    boolean triggerTagUpdate = itemInHand != null && itemInHand.getItem() == Items.NAME_TAG && entity instanceof EntityInsentient;
-                    boolean triggerChestUpdate = itemInHand != null && itemInHand.getItem() == Item.getItemOf(Blocks.CHEST) && entity instanceof EntityHorse;
-                    boolean triggerLeashUpdate = itemInHand != null && itemInHand.getItem() == Items.LEASH && entity instanceof EntityInsentient;
                     PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayer(), entity.getBukkitEntity());
                     this.server.getPluginManager().callEvent(event);
-
+                    // Rinny start
+                    if ((event.isCancelled() || this.player.inventory.getItemInHand() == null || (this.player.inventory.getItemInHand().getItem() != Items.LEASH || this.player.inventory.getItemInHand().getItem() != Items.NAME_TAG || this.player.inventory.getItemInHand().getItem() != Item.getItemOf(Blocks.CHEST)))){
+                    	final boolean triggerTagOrChestUpdate = itemInHand != null && (itemInHand.getItem() == Items.NAME_TAG && entity instanceof EntityInsentient || itemInHand.getItem() == Item.getItemOf(Blocks.CHEST) && entity instanceof EntityHorse);
+                        final boolean triggerLeashUpdate = itemInHand != null && itemInHand.getItem() == Items.LEASH && entity instanceof EntityInsentient;
+                        
+                        if (triggerLeashUpdate) {
+                        	this.sendPacket(new PacketPlayOutAttachEntity(1, entity, ((EntityInsentient) entity).getLeashHolder()));
+                        }
+                        if (triggerTagOrChestUpdate) {
+                        	this.sendPacket(new PacketPlayOutEntityMetadata(entity.getId(), entity.datawatcher, true));
+                        }
+                    }
+                    // Rinny end
+                    /*
                     if (triggerLeashUpdate && (event.isCancelled() || this.player.inventory.getItemInHand() == null || this.player.inventory.getItemInHand().getItem() != Items.LEASH)) {
                         // Refresh the current leash state
                         this.sendPacket(new PacketPlayOutAttachEntity(1, entity, ((EntityInsentient) entity).getLeashHolder()));
@@ -1180,7 +1191,7 @@ public class PlayerConnection implements PacketPlayInListener {
                     }
                     if (triggerChestUpdate && (event.isCancelled() || this.player.inventory.getItemInHand() == null || this.player.inventory.getItemInHand().getItem() != Item.getItemOf(Blocks.CHEST))) {
                         this.sendPacket(new PacketPlayOutEntityMetadata(entity.getId(), entity.datawatcher, true));
-                    }
+                    }*/
 
                     if (event.isCancelled()) {
                         return;
@@ -1202,6 +1213,11 @@ public class PlayerConnection implements PacketPlayInListener {
                     }
 
                     this.player.attack(entity);
+                    // wuangg start - fix sword blocking desync
+                    if (this.player.isBlocking()) {
+                    	this.player.bA();
+                    }
+                    // wuangg end
 
                     // CraftBukkit start
                     if (itemInHand != null && itemInHand.count <= -1) {
