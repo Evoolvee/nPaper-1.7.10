@@ -1041,6 +1041,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public void setSaturation(float value) {
         getHandle().getFoodData().saturationLevel = value;
+        getHandle().triggerHealthUpdate(); // Rinny fix saturation desync
     }
 
     public int getFoodLevel() {
