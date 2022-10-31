@@ -38,7 +38,9 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
             // Spigot end
         }
 
-        return RegionFileCache.a(this.e, i, j).chunkExists(i & 31, j & 31);
+        //return RegionFileCache.a(this.e, i, j).chunkExists(i & 31, j & 31);
+        final RegionFile region = RegionFileCache.a(this.e, i, j, false); // PaperSpigot
+        return region != null && region.chunkExists(i & 31, j & 31); // PaperSpigot
     }
     // CraftBukkit end
 
@@ -61,7 +63,7 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
         // CraftBukkit end
         NBTTagCompound nbttagcompound = null;
         ChunkCoordIntPair chunkcoordintpair = new ChunkCoordIntPair(i, j);
-        Object object = this.d;
+        //Object object = this.d;
 
         synchronized (this.d) {
             // Spigot start
@@ -146,7 +148,7 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
     }
 
     protected void a(ChunkCoordIntPair chunkcoordintpair, NBTTagCompound nbttagcompound) {
-        Object object = this.d;
+        //Object object = this.d;
 
         synchronized (this.d) {
             // Spigot start
@@ -160,7 +162,7 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
 
     public boolean c() {
         PendingChunkToSave pendingchunktosave = null;
-        Object object = this.d;
+        //Object object = this.d;
 
         synchronized (this.d) {
             // Spigot start
