@@ -1,22 +1,20 @@
 package net.minecraft.server;
 
 import java.util.UUID;
-
-import net.minecraft.util.com.google.common.collect.Iterables;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
-import net.minecraft.util.com.mojang.authlib.properties.Property;
-
-// Spigot start
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.CacheLoader;
+// Spigot start
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import net.minecraft.util.com.google.common.collect.Iterables;
 import net.minecraft.util.com.mojang.authlib.Agent;
 // Spigot end
+import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.util.com.mojang.authlib.properties.Property;
 
 public class TileEntitySkull extends TileEntity {
 
@@ -29,13 +27,13 @@ public class TileEntitySkull extends TileEntity {
                     .setNameFormat("Head Conversion Thread - %1$d")
                     .build()
     );
-    public static final Cache<String, GameProfile> skinCache = CacheBuilder.newBuilder()
+    public static final Cache<String, GameProfile> skinCache = com.github.benmanes.caffeine.cache.Caffeine.newBuilder()
             .maximumSize( 5000 )
             .expireAfterAccess( 60, TimeUnit.MINUTES )
             .build( new CacheLoader<String, GameProfile>()
             {
                 @Override
-                public GameProfile load(String key) throws Exception
+                public GameProfile load(String key)
                 {
                     GameProfile[] profiles = new GameProfile[1];
                     GameProfileLookup gameProfileLookup = new GameProfileLookup(profiles);
@@ -126,7 +124,7 @@ public class TileEntitySkull extends TileEntity {
                     @Override
                     public void run() {
 
-                        GameProfile profile = skinCache.getUnchecked( name.toLowerCase() );
+                        GameProfile profile = skinCache.getIfPresent( name.toLowerCase() );
 
                         if (profile != null) {
                             final GameProfile finalProfile = profile;
