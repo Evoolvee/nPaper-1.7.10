@@ -376,7 +376,7 @@ public class PlayerConnection implements PacketPlayInListener {
                 double d10 = d7 * d7 + d8 * d8 + d9 * d9;
 
                 // Spigot: make "moved too quickly" limit configurable
-                if (d10 > org.spigotmc.SpigotConfig.movedTooQuicklyThreshold && this.checkMovement && this.player.onGround && !this.minecraftServer.N() || !this.minecraftServer.M().equals(this.player.getName()) && this.player.noDamageTicks == 0) { // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
+                if (d10 > org.spigotmc.SpigotConfig.movedTooQuicklyThreshold && this.checkMovement && this.player.onGround && (!this.minecraftServer.N() || !this.minecraftServer.M().equals(this.player.getName())) && this.player.noDamageTicks == 0) { // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
                     c.warn(this.player.getName() + " moved too quickly! " + d4 + "," + d5 + "," + d6 + " (" + d7 + ", " + d8 + ", " + d9 + ")");
                     this.a(this.y, this.z, this.q, this.player.yaw, this.player.pitch);
                     return;
