@@ -5,8 +5,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 // Spigot start
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -14,6 +14,7 @@ import net.minecraft.util.com.google.common.collect.Iterables;
 import net.minecraft.util.com.mojang.authlib.Agent;
 // Spigot end
 import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.util.com.mojang.authlib.ProfileLookupCallback;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 
 public class TileEntitySkull extends TileEntity {
@@ -27,7 +28,7 @@ public class TileEntitySkull extends TileEntity {
                     .setNameFormat("Head Conversion Thread - %1$d")
                     .build()
     );
-    public static final Cache<String, GameProfile> skinCache = com.github.benmanes.caffeine.cache.Caffeine.newBuilder()
+    public static final LoadingCache<String, GameProfile> skinCache = com.github.benmanes.caffeine.cache.Caffeine.newBuilder() // nPaper - fix skin dont show up
             .maximumSize( 5000 )
             .expireAfterAccess( 60, TimeUnit.MINUTES )
             .build( new CacheLoader<String, GameProfile>()
@@ -36,7 +37,21 @@ public class TileEntitySkull extends TileEntity {
                 public GameProfile load(String key)
                 {
                     GameProfile[] profiles = new GameProfile[1];
-                    GameProfileLookup gameProfileLookup = new GameProfileLookup(profiles);
+                    // nPaper start - fix skin dont show up
+                    //GameProfileLookup gameProfileLookup = new GameProfileLookup(profiles);
+                    ProfileLookupCallback gameProfileLookup = new ProfileLookupCallback() {
+						
+						@Override
+						public void onProfileLookupSucceeded(GameProfile gp) {
+							profiles[0] = gp;
+						}
+						
+						@Override
+						public void onProfileLookupFailed(GameProfile gp, Exception ex) {
+							profiles[0] = gp;
+						}
+					};
+					// nPaper end
 
                     MinecraftServer.getServer().getGameProfileRepository().findProfilesByNames(new String[] { key }, Agent.MINECRAFT, gameProfileLookup);
 
@@ -124,7 +139,7 @@ public class TileEntitySkull extends TileEntity {
                     @Override
                     public void run() {
 
-                        GameProfile profile = skinCache.getIfPresent( name.toLowerCase() );
+                        GameProfile profile = skinCache.get( name.toLowerCase() ); // nPaper - fix skin dont show up
 
                         if (profile != null) {
                             final GameProfile finalProfile = profile;
