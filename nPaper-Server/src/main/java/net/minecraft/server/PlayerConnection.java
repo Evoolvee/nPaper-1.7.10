@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
@@ -503,7 +502,7 @@ public class PlayerConnection implements PacketPlayInListener {
                 // Else we increment the drop count and check the amount.
                 this.dropCount++;
                 if (this.dropCount >= 20) {
-                    this.c.warn(this.player.getName() + " dropped their items too quickly!");
+                    c.warn(this.player.getName() + " dropped their items too quickly!");
                     this.disconnect("You dropped your items too quickly (Hacking?)");
                     return;
                 }
@@ -806,7 +805,7 @@ public class PlayerConnection implements PacketPlayInListener {
             CrashReport crashreport = CrashReport.a(throwable, "Sending packet");
             CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Packet being sent");
 
-            crashreportsystemdetails.a("Packet class", (Callable) (new CrashReportConnectionPacketClass(this, packet)));
+            crashreportsystemdetails.a("Packet class", new CrashReportConnectionPacketClass(this, packet));
             throw new ReportedException(crashreport);
         }
     }
@@ -902,13 +901,13 @@ public class PlayerConnection implements PacketPlayInListener {
 
                 chatmessage.getChatModifier().setColor(EnumChatFormat.RED);
                 this.sendPacket(new PacketPlayOutChat(chatmessage));
-            } else if (true) {
+            } else /*if (true)*/ {
                 this.chat(s, true);
                 // CraftBukkit end - the below is for reference. :)
-            } else {
+            /*} else {
                 ChatMessage chatmessage1 = new ChatMessage("chat.type.text", new Object[] { this.player.getScoreboardDisplayName(), s});
 
-                this.minecraftServer.getPlayerList().sendMessage(chatmessage1, false);
+                this.minecraftServer.getPlayerList().sendMessage(chatmessage1, false);*/
             }
 
             // Spigot - spam exclusions
@@ -1028,7 +1027,7 @@ public class PlayerConnection implements PacketPlayInListener {
         org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.startTiming(); // Spigot
 
         // CraftBukkit start - whole method
-        if ( org.spigotmc.SpigotConfig.logCommands ) this.c.info(this.player.getName() + " issued server command: " + s);
+        if ( org.spigotmc.SpigotConfig.logCommands ) c.info(this.player.getName() + " issued server command: " + s);
 
         CraftPlayer player = this.getPlayer();
 
