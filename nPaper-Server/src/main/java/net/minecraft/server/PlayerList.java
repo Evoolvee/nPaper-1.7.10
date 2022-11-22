@@ -424,7 +424,7 @@ public abstract class PlayerList {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, s);
         } else {
             // return this.players.size() >= this.maxPlayers ? "The server is full!" : null;
-            if (this.players.size() >= this.maxPlayers && (!player.isOp() || !player.hasPermission("bukkit.whitelist.bypass"))) { // Rinny allow to join server even if its full
+            if (this.players.size() >= this.maxPlayers && (!player.isOp() && !player.hasPermission("bukkit.whitelist.bypass"))) { // Rinny allow to join server even if its full
                 event.disallow(PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
             }
         }
