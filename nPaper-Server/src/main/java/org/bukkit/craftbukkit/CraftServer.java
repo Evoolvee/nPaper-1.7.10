@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import net.minecraft.server.ChunkCoordinates;
+import net.minecraft.server.ChunkProviderServer;
+import net.minecraft.server.ChunkRegionLoader;
 import net.minecraft.server.CommandAchievement;
 import net.minecraft.server.CommandBan;
 import net.minecraft.server.CommandBanIp;
@@ -77,6 +79,7 @@ import net.minecraft.server.EntityTracker;
 import net.minecraft.server.EnumDifficulty;
 import net.minecraft.server.EnumGamemode;
 import net.minecraft.server.ExceptionWorldConflict;
+import net.minecraft.server.FileIOThread;
 import net.minecraft.server.Items;
 import net.minecraft.server.JsonListEntry;
 import net.minecraft.server.PlayerList;
@@ -1065,6 +1068,10 @@ public final class CraftServer implements Server {
         if (e.isCancelled()) {
             return false;
         }
+        
+        worlds.remove(world.getName().toLowerCase());
+        worldIdentifier.remove(world.getUID());
+        console.worlds.remove(console.worlds.indexOf(handle));
 
         if (save) {
             try {
@@ -1075,11 +1082,19 @@ public final class CraftServer implements Server {
             } catch (ExceptionWorldConflict ex) {
                 getLogger().log(Level.SEVERE, null, ex);
             }
+        } else { // FlamePaper - Fix chunk memory leak
+        	ChunkProviderServer chunkProviderServer = handle.chunkProviderServer;
+        	ChunkRegionLoader regionLoader = (ChunkRegionLoader) chunkProviderServer.f;
+        	
+        	regionLoader.b.clear();
+        	regionLoader.c.clear();
+        	
+        	FileIOThread.a.a();
+        	chunkProviderServer.unloadChunks(true);            
+        	chunkProviderServer.f = null;
+        	chunkProviderServer.chunkProvider = null;
+        	chunkProviderServer.chunks.clear();
         }
-
-        worlds.remove(world.getName().toLowerCase());
-        worldIdentifier.remove(world.getUID());
-        console.worlds.remove(console.worlds.indexOf(handle));
 
         File parentFolder = world.getWorldFolder().getAbsoluteFile();
 

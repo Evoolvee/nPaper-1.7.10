@@ -189,7 +189,10 @@ public class WorldServer extends World {
         // CraftBukkit end
         timings.doChunkUnload.startTiming(); // Spigot
         this.methodProfiler.c("chunkSource");
-        this.chunkProvider.unloadChunks();
+        // Only unload if chunkProvider isn't null
+        if (this.chunkProvider != null) {
+        	this.chunkProvider.unloadChunks();
+        }
         int j = this.a(1.0F);
 
         if (j != this.j) {

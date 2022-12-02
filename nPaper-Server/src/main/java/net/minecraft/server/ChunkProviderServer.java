@@ -22,7 +22,7 @@ public class ChunkProviderServer implements IChunkProvider {
     public LongHashSet unloadQueue = new LongHashSet(); // LongHashSet
     public Chunk emptyChunk;
     public IChunkProvider chunkProvider;
-    private IChunkLoader f;
+    public IChunkLoader f;
     public boolean forceChunkLoad = false; // true -> false
     public LongObjectHashMap<Chunk> chunks = new LongObjectHashMap<Chunk>();
     public WorldServer world;
@@ -245,7 +245,7 @@ public class ChunkProviderServer implements IChunkProvider {
     }
 
     public void saveChunkNOP(Chunk chunk) { // CraftBukkit - private -> public
-        if (this.f != null) {
+        if (canSave() && this.f != null) {
             try {
                 this.f.b(this.world, chunk);
             } catch (Exception exception) {
@@ -255,7 +255,7 @@ public class ChunkProviderServer implements IChunkProvider {
     }
 
     public void saveChunk(Chunk chunk) { // CraftBukkit - private -> public
-        if (this.f != null) {
+        if (canSave() && this.f != null) {
             try {
                 chunk.lastSaved = this.world.getTime();
                 this.f.a(this.world, chunk);
@@ -338,8 +338,8 @@ public class ChunkProviderServer implements IChunkProvider {
         }
     }
 
-    public boolean unloadChunks() {
-        if (!this.world.savingDisabled) {
+    public boolean unloadChunks(boolean force) {
+        if (!this.world.savingDisabled && (canSave() || force)) {
             // CraftBukkit start
             Server server = this.world.getServer();
             for (int i = 0; i < 100 && !this.unloadQueue.isEmpty(); i++) {
@@ -384,6 +384,10 @@ public class ChunkProviderServer implements IChunkProvider {
         }
 
         return this.chunkProvider.unloadChunks();
+    }
+    
+    public boolean unloadChunks() {
+    	return this.unloadChunks(false);
     }
 
     public boolean canSave() {
