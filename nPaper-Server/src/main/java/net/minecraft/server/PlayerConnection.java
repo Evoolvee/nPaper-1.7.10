@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
@@ -71,7 +70,8 @@ public class PlayerConnection implements PacketPlayInListener {
     private long i;
     private static Random j = new Random();
     private long k;
-    private volatile int chatThrottle; private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(PlayerConnection.class, "chatThrottle"); // CraftBukkit - multithreaded field
+    private volatile int chatThrottle; 
+    private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(PlayerConnection.class, "chatThrottle"); // CraftBukkit - multithreaded field
     private int x;
     private IntHashMap n = new IntHashMap();
     private double y;
@@ -375,7 +375,7 @@ public class PlayerConnection implements PacketPlayInListener {
                 double d10 = d7 * d7 + d8 * d8 + d9 * d9;
 
                 // Spigot: make "moved too quickly" limit configurable
-                if (d10 > org.spigotmc.SpigotConfig.movedTooQuicklyThreshold && this.checkMovement && this.player.onGround && (!this.minecraftServer.N() || !this.minecraftServer.M().equals(this.player.getName()))) { // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
+                if (d10 > org.spigotmc.SpigotConfig.movedTooQuicklyThreshold && this.checkMovement && this.player.onGround && (!this.minecraftServer.N() || !this.minecraftServer.M().equals(this.player.getName())) && this.player.noDamageTicks == 0) { // CraftBukkit - Added this.checkMovement condition to solve this check being triggered by teleports
                     c.warn(this.player.getName() + " moved too quickly! " + d4 + "," + d5 + "," + d6 + " (" + d7 + ", " + d8 + ", " + d9 + ")");
                     this.a(this.y, this.z, this.q, this.player.yaw, this.player.pitch);
                     return;
@@ -404,7 +404,7 @@ public class PlayerConnection implements PacketPlayInListener {
                 boolean flag1 = false;
 
                 // Spigot: make "moved wrongly" limit configurable
-                if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold && this.player.onGround && !this.player.isSleeping() && !this.player.playerInteractManager.isCreative()) {
+                if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold && this.player.onGround && !this.player.isSleeping() && !this.player.playerInteractManager.isCreative() && this.player.noDamageTicks == 0) {
                     flag1 = true;
                     c.warn(this.player.getName() + " moved wrongly!");
                 }
@@ -419,7 +419,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
                 AxisAlignedBB axisalignedbb = this.player.boundingBox.clone().grow((double) f4, (double) f4, (double) f4).a(0.0D, -0.55D, 0.0D);
 
-                if (!this.minecraftServer.getAllowFlight() && !this.player.abilities.canFly && !this.player.onGround && !worldserver.c(axisalignedbb)) { // CraftBukkit - check abilities instead of creative mode
+                if (!this.minecraftServer.getAllowFlight() && !this.player.abilities.canFly && !this.player.onGround && !worldserver.c(axisalignedbb) && this.player.noDamageTicks == 0) { // CraftBukkit - check abilities instead of creative mode
                     if (d11 >= -0.03125D) {
                         ++this.f;
                         if (this.f > 80) {
@@ -443,7 +443,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
     public void a(double d0, double d1, double d2, float f, float f1) {
         // CraftBukkit start - Delegate to teleport(Location)
-        Player player = this.getPlayer();
+        final Player player = this.getPlayer();
         Location from = player.getLocation();
         Location to = new Location(this.getPlayer().getWorld(), d0, d1, d2, f, f1);
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to, PlayerTeleportEvent.TeleportCause.UNKNOWN);
@@ -502,7 +502,7 @@ public class PlayerConnection implements PacketPlayInListener {
                 // Else we increment the drop count and check the amount.
                 this.dropCount++;
                 if (this.dropCount >= 20) {
-                    this.c.warn(this.player.getName() + " dropped their items too quickly!");
+                    c.warn(this.player.getName() + " dropped their items too quickly!");
                     this.disconnect("You dropped your items too quickly (Hacking?)");
                     return;
                 }
@@ -805,7 +805,7 @@ public class PlayerConnection implements PacketPlayInListener {
             CrashReport crashreport = CrashReport.a(throwable, "Sending packet");
             CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Packet being sent");
 
-            crashreportsystemdetails.a("Packet class", (Callable) (new CrashReportConnectionPacketClass(this, packet)));
+            crashreportsystemdetails.a("Packet class", new CrashReportConnectionPacketClass(this, packet));
             throw new ReportedException(crashreport);
         }
     }
@@ -901,13 +901,13 @@ public class PlayerConnection implements PacketPlayInListener {
 
                 chatmessage.getChatModifier().setColor(EnumChatFormat.RED);
                 this.sendPacket(new PacketPlayOutChat(chatmessage));
-            } else if (true) {
+            } else /*if (true)*/ {
                 this.chat(s, true);
                 // CraftBukkit end - the below is for reference. :)
-            } else {
+            /*} else {
                 ChatMessage chatmessage1 = new ChatMessage("chat.type.text", new Object[] { this.player.getScoreboardDisplayName(), s});
 
-                this.minecraftServer.getPlayerList().sendMessage(chatmessage1, false);
+                this.minecraftServer.getPlayerList().sendMessage(chatmessage1, false);*/
             }
 
             // Spigot - spam exclusions
@@ -1027,7 +1027,7 @@ public class PlayerConnection implements PacketPlayInListener {
         org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.startTiming(); // Spigot
 
         // CraftBukkit start - whole method
-        if ( org.spigotmc.SpigotConfig.logCommands ) this.c.info(this.player.getName() + " issued server command: " + s);
+        if ( org.spigotmc.SpigotConfig.logCommands ) c.info(this.player.getName() + " issued server command: " + s);
 
         CraftPlayer player = this.getPlayer();
 
@@ -1163,12 +1163,22 @@ public class PlayerConnection implements PacketPlayInListener {
                 ItemStack itemInHand = this.player.inventory.getItemInHand(); // CraftBukkit
                 if (packetplayinuseentity.c() == EnumEntityUseAction.INTERACT) {
                     // CraftBukkit start
-                    boolean triggerTagUpdate = itemInHand != null && itemInHand.getItem() == Items.NAME_TAG && entity instanceof EntityInsentient;
-                    boolean triggerChestUpdate = itemInHand != null && itemInHand.getItem() == Item.getItemOf(Blocks.CHEST) && entity instanceof EntityHorse;
-                    boolean triggerLeashUpdate = itemInHand != null && itemInHand.getItem() == Items.LEASH && entity instanceof EntityInsentient;
                     PlayerInteractEntityEvent event = new PlayerInteractEntityEvent((Player) this.getPlayer(), entity.getBukkitEntity());
                     this.server.getPluginManager().callEvent(event);
-
+                    // Rinny start
+                    if ((event.isCancelled() || this.player.inventory.getItemInHand() == null || (this.player.inventory.getItemInHand().getItem() != Items.LEASH || this.player.inventory.getItemInHand().getItem() != Items.NAME_TAG || this.player.inventory.getItemInHand().getItem() != Item.getItemOf(Blocks.CHEST)))){
+                    	final boolean triggerTagOrChestUpdate = itemInHand != null && (itemInHand.getItem() == Items.NAME_TAG && entity instanceof EntityInsentient || itemInHand.getItem() == Item.getItemOf(Blocks.CHEST) && entity instanceof EntityHorse);
+                        final boolean triggerLeashUpdate = itemInHand != null && itemInHand.getItem() == Items.LEASH && entity instanceof EntityInsentient;
+                        
+                        if (triggerLeashUpdate) {
+                        	this.sendPacket(new PacketPlayOutAttachEntity(1, entity, ((EntityInsentient) entity).getLeashHolder()));
+                        }
+                        if (triggerTagOrChestUpdate) {
+                        	this.sendPacket(new PacketPlayOutEntityMetadata(entity.getId(), entity.datawatcher, true));
+                        }
+                    }
+                    // Rinny end
+                    /*
                     if (triggerLeashUpdate && (event.isCancelled() || this.player.inventory.getItemInHand() == null || this.player.inventory.getItemInHand().getItem() != Items.LEASH)) {
                         // Refresh the current leash state
                         this.sendPacket(new PacketPlayOutAttachEntity(1, entity, ((EntityInsentient) entity).getLeashHolder()));
@@ -1180,7 +1190,7 @@ public class PlayerConnection implements PacketPlayInListener {
                     }
                     if (triggerChestUpdate && (event.isCancelled() || this.player.inventory.getItemInHand() == null || this.player.inventory.getItemInHand().getItem() != Item.getItemOf(Blocks.CHEST))) {
                         this.sendPacket(new PacketPlayOutEntityMetadata(entity.getId(), entity.datawatcher, true));
-                    }
+                    }*/
 
                     if (event.isCancelled()) {
                         return;
@@ -1202,6 +1212,11 @@ public class PlayerConnection implements PacketPlayInListener {
                     }
 
                     this.player.attack(entity);
+                    // wuangg start - fix sword blocking desync
+                    if (this.player.isBlocking()) {
+                    	this.player.bA();
+                    }
+                    // wuangg end
 
                     // CraftBukkit start
                     if (itemInHand != null && itemInHand.count <= -1) {

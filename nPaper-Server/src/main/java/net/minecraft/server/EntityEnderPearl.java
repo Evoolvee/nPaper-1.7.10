@@ -57,7 +57,7 @@ public class EntityEnderPearl extends EntityProjectile {
                     // CraftBukkit start - Fire PlayerTeleportEvent
                     CraftPlayer player = entityplayer.getBukkitEntity();
 
-                    Location location = PaperSpigotConfig.fixEnderPearlGlitch ? this.lastValidLocation.clone() : getBukkitEntity().getLocation(); // snHose - antipearl glitch
+                    Location location = PaperSpigotConfig.fixEnderPearlGlitch ? (movingobjectposition.entity == null ? this.lastValidLocation.clone() : getBukkitEntity().getLocation()) : getBukkitEntity().getLocation(); // snHose - antipearl glitch
                     location.setPitch(player.getLocation().getPitch());
                     location.setYaw(player.getLocation().getYaw());
 

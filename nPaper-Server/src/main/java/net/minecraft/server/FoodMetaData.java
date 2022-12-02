@@ -9,7 +9,7 @@ public class FoodMetaData {
     public int foodTickTimer;
     private EntityHuman entityhuman;
     // CraftBukkit end
-    private int e = 20;
+    //private int e = 20;
 
     public FoodMetaData() { throw new AssertionError("Whoopsie, we missed the bukkit."); } // CraftBukkit start - throw an error
 
@@ -42,12 +42,15 @@ public class FoodMetaData {
     public void a(EntityHuman entityhuman) {
         EnumDifficulty enumdifficulty = entityhuman.world.difficulty;
 
-        this.e = this.foodLevel;
-        if (this.exhaustionLevel > 4.0F) {
+        //this.e = this.foodLevel;
+        if (enumdifficulty != EnumDifficulty.PEACEFUL && this.exhaustionLevel > 4.0F) {
             this.exhaustionLevel -= 4.0F;
             if (this.saturationLevel > 0.0F) {
                 this.saturationLevel = Math.max(this.saturationLevel - 1.0F, 0.0F);
-            } else if (enumdifficulty != EnumDifficulty.PEACEFUL) {
+                if (entityhuman instanceof EntityPlayer) { // Rinny fix saturation desync
+	            	((EntityPlayer) entityhuman).triggerHealthUpdate();
+	            }
+            } else {
                 // CraftBukkit start
                 org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.foodLevel - 1, 0));
 

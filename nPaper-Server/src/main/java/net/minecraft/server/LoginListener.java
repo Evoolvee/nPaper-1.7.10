@@ -125,7 +125,8 @@ public class LoginListener implements PacketLoginInListener {
     }
 
     public String getName() {
-        return this.i != null ? this.i.toString() + " (" + this.networkManager.getSocketAddress().toString() + ")" : String.valueOf(this.networkManager.getSocketAddress());
+    	String socketAddress = networkManager == null ? null : (networkManager.getSocketAddress() == null ? null : networkManager.getSocketAddress().toString()); // Paper - Fix NPE
+    	return this.i != null ? this.i.toString() + " (" + socketAddress + ")" : socketAddress;
     }
 
     public void a(EnumProtocol enumprotocol, EnumProtocol enumprotocol1) {

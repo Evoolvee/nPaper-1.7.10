@@ -275,7 +275,7 @@ public class PlayerInteractManager {
             }
         }
 
-        if (false && this.gamemode.isAdventure() && !this.player.d(i, j, k)) { // Never trigger
+        /*if (false && this.gamemode.isAdventure() && !this.player.d(i, j, k)) { // Never trigger
             // CraftBukkit end
             return false;
         } else if (false && this.gamemode.d() && this.player.be() != null && this.player.be().getItem() instanceof ItemSword) { // CraftBukkit - never trigger
@@ -320,7 +320,46 @@ public class PlayerInteractManager {
             // CraftBukkit end
 
             return flag;
-        }
+        }*/
+        Block block = this.world.getType(i, j, k);
+		if (block == Blocks.AIR) return false; // CraftBukkit - A plugin set block to air without cancelling
+		int l = this.world.getData(i, j, k);
+
+		// CraftBukkit start - Special case skulls, their item data comes from a tile entity
+		if (block == Blocks.SKULL && !this.isCreative()) {
+		    block.dropNaturally(world, i, j, k, l, 1.0F, 0);
+		    return this.d(i, j, k);
+		}
+		// CraftBukkit end
+
+		this.world.a(this.player, 2001, i, j, k, Block.getId(block) + (this.world.getData(i, j, k) << 12));
+		boolean flag = this.d(i, j, k);
+
+		if (this.isCreative()) {
+		    this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(i, j, k, this.world));
+		} else {
+		    ItemStack itemstack = this.player.bF();
+		    boolean flag1 = this.player.a(block);
+
+		    if (itemstack != null) {
+		        itemstack.a(this.world, block, i, j, k, this.player);
+		        if (itemstack.count == 0) {
+		            this.player.bG();
+		        }
+		    }
+
+		    if (flag && flag1) {
+		        block.a(this.world, this.player, i, j, k, l);
+		    }
+		}
+
+		// CraftBukkit start - Drop event experience
+		if (flag && event != null) {
+		    block.dropExperience(this.world, i, j, k, event.getExpToDrop());
+		}
+		// CraftBukkit end
+
+		return flag;
     }
 
     public boolean useItem(EntityHuman entityhuman, World world, ItemStack itemstack) {
@@ -379,6 +418,9 @@ public class PlayerInteractManager {
         Block block = world.getType(i, j, k);
         boolean result = false;
         if (block != Blocks.AIR) {
+        	if ((block == Blocks.FENCE || block == Blocks.NETHER_FENCE || block == Blocks.CAULDRON) && itemstack != null && itemstack.getName().toLowerCase().contains("sword")) { // Rinny - fix being stuck in blocking "exploit"
+        		return false; 
+        	}
             PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(entityhuman, Action.RIGHT_CLICK_BLOCK, i, j, k, l, itemstack);
             if (event.useInteractedBlock() == Event.Result.DENY) {
                 // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
