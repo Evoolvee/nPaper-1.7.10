@@ -40,6 +40,10 @@ public class LoginListener implements PacketLoginInListener {
     }
 
     public void a() {
+    	if (!MinecraftServer.getServer().isRunning()) {
+            this.disconnect(org.spigotmc.SpigotConfig.restartMessage);
+            return;
+        }
         if (this.g == EnumProtocolState.READY_TO_ACCEPT) {
             this.c();
         }
@@ -64,22 +68,12 @@ public class LoginListener implements PacketLoginInListener {
     // Spigot start
     public void initUUID()
     {
-        UUID uuid;
-        if ( networkManager.spoofedUUID != null )
-        {
-            uuid = networkManager.spoofedUUID;
-        } else
-        {
-            uuid = UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + this.i.getName() ).getBytes( Charsets.UTF_8 ) );
-        }
+    	UUID uuid = (networkManager.spoofedUUID != null ? networkManager.spoofedUUID : UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.i.getName()).getBytes(Charsets.UTF_8)));
+        this.i = new GameProfile(uuid, this.i.getName());
 
-        this.i = new GameProfile( uuid, this.i.getName() );
-
-        if (networkManager.spoofedProfile != null)
-        {
-            for ( Property property : networkManager.spoofedProfile )
-            {
-                this.i.getProperties().put( property.getName(), property );
+        if (networkManager.spoofedProfile != null) {
+            for (Property property : networkManager.spoofedProfile) {
+                this.i.getProperties().put(property.getName(), property);
             }
         }
     }
