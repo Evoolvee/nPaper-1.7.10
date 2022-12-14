@@ -1859,10 +1859,14 @@ public class PlayerConnection implements PacketPlayInListener {
                     }
 
                     if (itemstack.getItem() == Items.WRITTEN_BOOK && itemstack1.getItem() == Items.BOOK_AND_QUILL) {
-                        itemstack1 = new ItemStack(Items.WRITTEN_BOOK);
-                        itemstack1.a("author", (new NBTTagString(this.player.getName())));
-                        itemstack1.a("title", (NBTBase) (new NBTTagString(itemstack.getTag().getString("title"))));
-                        itemstack1.a("pages", (NBTBase) itemstack.getTag().getList("pages", 8));
+                    	itemstack1 = new ItemStack(Items.WRITTEN_BOOK);
+                        itemstack1.a("author", (NBTBase) (new NBTTagString(this.player.getName())));
+                        itemstack1.a("title", (NBTBase) (new NBTTagString(itemstack.getTag().getString("title").replace("\u00A7", ""))));
+                        NBTTagList pages = new NBTTagList();
+                        for (int i = 0; i < itemstack.getTag().getList("pages", 8).size(); i++) {
+                            pages.add(new NBTTagString(itemstack.getTag().getList("pages", 8).getString(i).replace("\u00A7", "")));
+                        }
+                        itemstack1.a("pages", (NBTBase) pages);
                         itemstack1.setItem(Items.WRITTEN_BOOK);
                         CraftEventFactory.handleEditBookEvent(player, itemstack1); // CraftBukkit
                     }
