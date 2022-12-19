@@ -612,7 +612,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
                 ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
                 ByteBuf bytebuf1 = Base64.encode(bytebuf);
 
-                serverping.setFavicon("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8));
+                serverping.setFavicon("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8).replace("\n", "")); // Paper - Fix encoding for 1.13+ clients, still compat w/ 1.12 clients
             } catch (Exception exception) {
                 i.error("Couldn\'t load server icon", exception);
             } finally {
