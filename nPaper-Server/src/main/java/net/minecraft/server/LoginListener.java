@@ -4,8 +4,17 @@ import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import javax.crypto.SecretKey;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import net.minecraft.util.com.google.common.base.Charsets;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
@@ -13,12 +22,9 @@ import net.minecraft.util.com.mojang.authlib.properties.Property;
 import net.minecraft.util.io.netty.util.concurrent.Future;
 import net.minecraft.util.io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.util.org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class LoginListener implements PacketLoginInListener {
 
-    private static final AtomicInteger b = new AtomicInteger(0);
     private static final Logger c = LogManager.getLogger();
     private static final Random random = new Random();
     private final byte[] e = new byte[4];
@@ -30,6 +36,14 @@ public class LoginListener implements PacketLoginInListener {
     private String j;
     private SecretKey loginKey;
     public String hostname = ""; // CraftBukkit - add field
+    
+    // PaperSpigot start
+	private static final ExecutorService POOL = new ThreadPoolExecutor(2, 
+			Runtime.getRuntime().availableProcessors() * 2, 
+			60, TimeUnit.SECONDS, 
+			new LinkedBlockingQueue<>(),
+			new ThreadFactoryBuilder().setNameFormat("User Authenticator #%d").build());
+	// PaperSpigot end
 
     public LoginListener(MinecraftServer minecraftserver, NetworkManager networkmanager) {
         this.g = EnumProtocolState.HELLO;
@@ -135,7 +149,8 @@ public class LoginListener implements PacketLoginInListener {
             this.g = EnumProtocolState.KEY;
             this.networkManager.handle(new PacketLoginOutEncryptionBegin(this.j, this.server.K().getPublic(), this.e), new GenericFutureListener[0]);
         } else {
-            (new ThreadPlayerLookupUUID(this, "User Authenticator #" + b.incrementAndGet())).start(); // Spigot
+            //(new ThreadPlayerLookupUUID(this, "User Authenticator #" + b.incrementAndGet())).start(); // Spigot
+        	POOL.execute(new ThreadPlayerLookupUUID(this)); // PaperSpigot
         }
     }
 
@@ -149,7 +164,8 @@ public class LoginListener implements PacketLoginInListener {
             this.loginKey = packetlogininencryptionbegin.a(privatekey);
             this.g = EnumProtocolState.AUTHENTICATING;
             this.networkManager.a(this.loginKey);
-            (new ThreadPlayerLookupUUID(this, "User Authenticator #" + b.incrementAndGet())).start();
+            //(new ThreadPlayerLookupUUID(this, "User Authenticator #" + b.incrementAndGet())).start();
+            POOL.execute(new ThreadPlayerLookupUUID(this)); // PaperSpigot
         }
     }
 

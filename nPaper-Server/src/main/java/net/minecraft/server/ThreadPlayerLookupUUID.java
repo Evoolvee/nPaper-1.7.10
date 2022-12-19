@@ -3,21 +3,19 @@ package net.minecraft.server;
 import java.math.BigInteger;
 import java.util.UUID;
 
-import net.minecraft.util.com.mojang.authlib.GameProfile;
-import net.minecraft.util.com.mojang.authlib.exceptions.AuthenticationUnavailableException;
-
 // CraftBukkit start
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 // CraftBukkit end
 
-class ThreadPlayerLookupUUID extends Thread {
+import net.minecraft.util.com.mojang.authlib.GameProfile;
+import net.minecraft.util.com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+
+class ThreadPlayerLookupUUID implements Runnable {
 
     final LoginListener a;
-
-    ThreadPlayerLookupUUID(LoginListener loginlistener, String s) {
-        super(s);
+    ThreadPlayerLookupUUID(LoginListener loginlistener) {
         this.a = loginlistener;
     }
 
