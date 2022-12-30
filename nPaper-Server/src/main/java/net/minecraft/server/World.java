@@ -882,13 +882,13 @@ public abstract class World implements IBlockAccess {
     public MovingObjectPosition rayTrace(Vec3D vec3d, Vec3D vec3d1, boolean flag, boolean flag1, boolean flag2) {
         if (!Double.isNaN(vec3d.a) && !Double.isNaN(vec3d.b) && !Double.isNaN(vec3d.c)) {
             if (!Double.isNaN(vec3d1.a) && !Double.isNaN(vec3d1.b) && !Double.isNaN(vec3d1.c)) {
-                int i = MathHelper.floor(vec3d1.a);
-                int j = MathHelper.floor(vec3d1.b);
-                int k = MathHelper.floor(vec3d1.c);
+                final int i = MathHelper.floor(vec3d1.a);
+                final int j = MathHelper.floor(vec3d1.b);
+                final int k = MathHelper.floor(vec3d1.c);
                 int l = MathHelper.floor(vec3d.a);
                 int i1 = MathHelper.floor(vec3d.b);
                 int j1 = MathHelper.floor(vec3d.c);
-                Block block = this.getType(l, i1, j1);
+                final Block block = this.getType(l, i1, j1);
                 int k1 = this.getData(l, i1, j1);
 
                 if ((!flag1 || block.a(this, l, i1, j1) != null) && block.a(k1, flag)) {
@@ -915,7 +915,7 @@ public abstract class World implements IBlockAccess {
                     boolean flag3 = true;
                     boolean flag4 = true;
                     boolean flag5 = true;
-                    double d0 = 999.0D;
+                    /*double d0 = 999.0D;
                     double d1 = 999.0D;
                     double d2 = 999.0D;
 
@@ -941,14 +941,28 @@ public abstract class World implements IBlockAccess {
                         d2 = (double) j1 + 0.0D;
                     } else {
                         flag5 = false;
+                    }*/
+                    // Rinny start - optimize rayTrace
+                    final double d0 = i > l ? l + 1.0 : (i < l ? l : l + 0.0);
+                    final double d1 = j > i1 ? i1 + 1.0 : (j < i1 ? i1 : i1 + 0.0);
+                    final double d2 = k > j1 ? j1 + 1.0 : (k < j1 ? j1 : j1 + 0.0);
+                    
+                    if (i == l) {
+                    	flag3 = false;
+                    }
+                    if (j == i1) {
+                    	flag4 = false;
+                    }
+                    if (k == j1) {
+                    	flag5 = false;
                     }
 
                     double d3 = 999.0D;
                     double d4 = 999.0D;
                     double d5 = 999.0D;
-                    double d6 = vec3d1.a - vec3d.a;
-                    double d7 = vec3d1.b - vec3d.b;
-                    double d8 = vec3d1.c - vec3d.c;
+                    final double d6 = vec3d1.a - vec3d.a;
+                    final double d7 = vec3d1.b - vec3d.b;
+                    final double d8 = vec3d1.c - vec3d.c;
 
                     if (flag3) {
                         d3 = (d0 - vec3d.a) / d6;
@@ -961,8 +975,14 @@ public abstract class World implements IBlockAccess {
                     if (flag5) {
                         d5 = (d2 - vec3d.c) / d8;
                     }
+                    
+                    // Avoid calculating useless stuff
+                    if (block.a(this, l, i1, j1, vec3d, vec3d1) == null) {
+                    	continue;
+                    }
+                    // Rinny end
 
-                    boolean flag6 = false;
+                    //boolean flag6 = false;
                     byte b0;
 
                     if (d3 < d4 && d3 < d5) {
@@ -997,7 +1017,7 @@ public abstract class World implements IBlockAccess {
                         vec3d.c = d2;
                     }
 
-                    Vec3D vec3d2 = Vec3D.a(vec3d.a, vec3d.b, vec3d.c);
+                    final Vec3D vec3d2 = Vec3D.a(vec3d.a, vec3d.b, vec3d.c);
 
                     l = (int) (vec3d2.a = (double) MathHelper.floor(vec3d.a));
                     if (b0 == 5) {
@@ -1017,8 +1037,8 @@ public abstract class World implements IBlockAccess {
                         ++vec3d2.c;
                     }
 
-                    Block block1 = this.getType(l, i1, j1);
-                    int l1 = this.getData(l, i1, j1);
+                    final Block block1 = this.getType(l, i1, j1);
+                    final int l1 = this.getData(l, i1, j1);
 
                     if (!flag1 || block1.a(this, l, i1, j1) != null) {
                         if (block1.a(l1, flag)) {
