@@ -29,7 +29,7 @@ public class Chunk {
     public final int locZ;
     private boolean w;
     public Map tileEntities;
-    public List[] entitySlices;
+    public List<net.minecraft.server.Entity>[] entitySlices;
     public boolean done;
     public boolean lit;
     public boolean m;
@@ -886,7 +886,7 @@ public class Chunk {
 
         for (int i = 0; i < this.entitySlices.length; ++i) {
             // CraftBukkit start
-            java.util.Iterator<Object> iter = this.entitySlices[i].iterator();
+            java.util.Iterator<Entity> iter = this.entitySlices[i].iterator();
             while (iter.hasNext()) {
                 Entity entity = (Entity) iter.next();
                 // Spigot Start
