@@ -341,7 +341,7 @@ public class CraftChunk implements Chunk {
             if (includeBiomeTempRain) {
                 biomeTemp = new double[256];
                 biomeRain = new double[256];
-                float[] dat = getTemperatures(null, x << 4, z << 4);
+                float[] dat = getTemperatures(wcm, x << 4, z << 4);
 
                 for (int i = 0; i < 256; i++) {
                     biomeTemp[i] = dat[i];
