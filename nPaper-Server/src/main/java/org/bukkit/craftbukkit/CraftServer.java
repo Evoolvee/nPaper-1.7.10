@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -190,10 +192,6 @@ import net.minecraft.server.WorldSettings;
 import net.minecraft.server.WorldType;
 import net.minecraft.util.com.google.common.base.Charsets;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
-import net.minecraft.util.io.netty.buffer.ByteBuf;
-import net.minecraft.util.io.netty.buffer.ByteBufOutputStream;
-import net.minecraft.util.io.netty.buffer.Unpooled;
-import net.minecraft.util.io.netty.handler.codec.base64.Base64;
 
 public final class CraftServer implements Server {
     private static final Player[] EMPTY_PLAYER_ARRAY = new Player[0];
@@ -693,9 +691,8 @@ public final class CraftServer implements Server {
         // Spigot Start - Automatically set connection throttle for bungee configurations
         if (org.spigotmc.SpigotConfig.bungee) {
             return -1;
-        } else {
-            return this.configuration.getInt("settings.connection-throttle");
         }
+        return this.configuration.getInt("settings.connection-throttle");
         // Spigot End
     }
 
@@ -949,23 +946,20 @@ public final class CraftServer implements Server {
         Validate.notNull(creator, "Creator may not be null");
 
         String name = creator.name();
-        ChunkGenerator generator = creator.generator();
-        File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
-        WorldType type = WorldType.getType(creator.type().getName());
-        boolean generateStructures = creator.generateStructures();
-
         if (world != null) {
             return world;
         }
-
+        File folder = new File(getWorldContainer(), name);
         if ((folder.exists()) && (!folder.isDirectory())) {
             throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
         }
-
+        ChunkGenerator generator = creator.generator();
         if (generator == null) {
             generator = getGenerator(name);
         }
+        WorldType type = WorldType.getType(creator.type().getName());
+        boolean generateStructures = creator.generateStructures();
 
         Convertable converter = new WorldLoaderServer(getWorldContainer());
         if (converter.isConvertable(name)) {
@@ -1810,14 +1804,16 @@ public final class CraftServer implements Server {
     }
 
     static CraftIconCache loadServerIcon0(BufferedImage image) throws Exception {
-        ByteBuf bytebuf = Unpooled.buffer();
-
+    	Validate.isTrue(image.getWidth() == image.getHeight(), "Width must be equals to the height");
         Validate.isTrue(image.getWidth() == 64, "Must be 64 pixels wide");
         Validate.isTrue(image.getHeight() == 64, "Must be 64 pixels high");
-        ImageIO.write(image, "PNG", new ByteBufOutputStream(bytebuf));
-        ByteBuf bytebuf1 = Base64.encode(bytebuf);
 
-        return new CraftIconCache("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8).replace("\n", "")); // Paper - Fix encoding for 1.13+ clients, still compat w/ 1.12 clients
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "PNG", baos);
+        byte[] imageInByte = baos.toByteArray();
+        String imageDataString = Base64.getEncoder().encodeToString(imageInByte);
+
+        return new CraftIconCache("data:image/png;base64," + imageDataString);
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.minecraft.server;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 // CraftBukkit start
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.security.KeyPair;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -28,15 +30,10 @@ import org.bukkit.event.world.WorldSaveEvent;
 
 import jline.console.ConsoleReader;
 import joptsimple.OptionSet;
-import net.minecraft.util.com.google.common.base.Charsets;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.GameProfileRepository;
 import net.minecraft.util.com.mojang.authlib.minecraft.MinecraftSessionService;
 import net.minecraft.util.com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import net.minecraft.util.io.netty.buffer.ByteBuf;
-import net.minecraft.util.io.netty.buffer.ByteBufOutputStream;
-import net.minecraft.util.io.netty.buffer.Unpooled;
-import net.minecraft.util.io.netty.handler.codec.base64.Base64;
 import net.minecraft.util.org.apache.commons.lang3.Validate;
 // CraftBukkit end
 
@@ -601,22 +598,18 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
         File file1 = this.d("server-icon.png");
 
         if (file1.isFile()) {
-            ByteBuf bytebuf = Unpooled.buffer();
-
             try {
-                BufferedImage bufferedimage = ImageIO.read(file1);
-
+            	final BufferedImage bufferedimage = ImageIO.read(file1);
                 Validate.validState(bufferedimage.getWidth() == bufferedimage.getHeight(), "Width must be equals to the height");
                 Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
                 Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
-                ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
-                ByteBuf bytebuf1 = Base64.encode(bytebuf);
-
-                serverping.setFavicon("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8).replace("\n", "")); // Paper - Fix encoding for 1.13+ clients, still compat w/ 1.12 clients
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(bufferedimage, "PNG", baos);
+                byte[] imageInByte = baos.toByteArray();
+                String imageDataString = Base64.getEncoder().encodeToString(imageInByte);
+                serverping.setFavicon("data:image/png;base64," + imageDataString);
             } catch (Exception exception) {
                 i.error("Couldn\'t load server icon", exception);
-            } finally {
-                bytebuf.release();
             }
         }
     }
