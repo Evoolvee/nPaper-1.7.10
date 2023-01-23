@@ -97,11 +97,7 @@ public class ContainerPlayer extends Container {
                 }
 
                 slot.a(itemstack1, itemstack);
-            } else if (i >= 1 && i < 5) {
-                if (!this.a(itemstack1, 9, 45, false)) {
-                    return null;
-                }
-            } else if (i >= 5 && i < 9) {
+            } else if (i >= 1 && i < 5 || i >= 5 && i < 9) {
                 if (!this.a(itemstack1, 9, 45, false)) {
                     return null;
                 }
