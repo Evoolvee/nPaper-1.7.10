@@ -435,7 +435,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
 
     // PaperSpigot start - Further improve tick loop
     private static final int TPS = 20;
-    private static final long SEC_IN_NANO = 1000000000;
+    private static final long SEC_IN_NANO = 1_000_000_000;
     private static final long TICK_TIME = SEC_IN_NANO / TPS;
     private static final long MAX_CATCHUP_BUFFER = TICK_TIME * TPS * 60L;
     private static final int SAMPLE_INTERVAL = 20;
@@ -446,8 +446,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
     public static long START_TIME, LAST_TICK_TIME_NANO, LAST_TICK_TIME_MILLIS;
 
     public static class RollingAverage {
-        private final int size;
-        private long time;
+    	private final int size;
         private double total;
         private int index = 0;
         private final double[] samples;
@@ -455,7 +454,6 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
 
         RollingAverage(int size) {
             this.size = size;
-            this.time = size * SEC_IN_NANO;
             this.total = TPS * SEC_IN_NANO * size;
             this.samples = new double[size];
             this.times = new long[size];
@@ -466,19 +464,19 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
         }
 
         public void add(double x, long t) {
-            time -= times[index];
-            total -= samples[index]*times[index];
+            index = (index + 1) % size;
+            total -= samples[index] * times[index];
             samples[index] = x;
             times[index] = t;
-            time += t;
-            total += x*t;
-            if (++index == size) {
-                index = 0;
-            }
+            total += x * t;
         }
 
         public double getAverage() {
-            return total / time;
+            double avg = total;
+            for (int i = 0; i < size; i++) {
+                avg += samples[i] * (SEC_IN_NANO - times[i]);
+            }
+            return avg / (SEC_IN_NANO * size);
         }
     }
     // PaperSpigot End
