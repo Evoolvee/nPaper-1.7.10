@@ -6,7 +6,7 @@ import java.util.Deque;
 public final class IntCache {
     private static int a = 256;
     private static Deque<int[]> b = new ArrayDeque<int[]>();
-    private static Deque<int[]>c = new ArrayDeque<int[]>();
+    private static Deque<int[]> c = new ArrayDeque<int[]>();
     private static Deque<int[]> d = new ArrayDeque<int[]>();
     private static Deque<int[]> e = new ArrayDeque<int[]>();
 
@@ -14,8 +14,8 @@ public final class IntCache {
         int[] aint;
 
         if (i <= 256) {
-        	aint = (b.isEmpty() ? new int[256] : b.poll());
-        	if (c.size() < org.spigotmc.SpigotConfig.intCacheLimit) c.add(aint);
+        	aint = (b.isEmpty() ? new int[256] : b.removeLast());
+        	if (c.size() < org.spigotmc.SpigotConfig.intCacheLimit) c.offer(aint);
         	return aint;
         }
         if (i > a) {
@@ -23,11 +23,11 @@ public final class IntCache {
             d.clear();
             e.clear();
             aint = new int[a];
-            if (e.size() < org.spigotmc.SpigotConfig.intCacheLimit) e.add(aint);
+            if (e.size() < org.spigotmc.SpigotConfig.intCacheLimit) e.offer(aint);
             return aint;
         }
-        aint = (d.isEmpty() ? new int[a] : d.poll());
-        if (e.size() < org.spigotmc.SpigotConfig.intCacheLimit) e.add(aint);
+        aint = (d.isEmpty() ? new int[a] : d.removeLast());
+        if (e.size() < org.spigotmc.SpigotConfig.intCacheLimit) e.offer(aint);
         return aint;
     }
 
