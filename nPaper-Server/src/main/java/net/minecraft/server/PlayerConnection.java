@@ -229,10 +229,6 @@ public class PlayerConnection implements PacketPlayInListener {
                 to.setYaw(packetplayinflying.yaw);
                 to.setPitch(packetplayinflying.pitch);
             }
-            
-            if (from.equals(to)) {
-        		return;
-        	}
 
             if (this.checkMovement && !this.player.dead) {
             	// Prevent 40 event-calls for less than a single pixel of movement >.>
