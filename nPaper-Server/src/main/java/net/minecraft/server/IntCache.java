@@ -1,53 +1,42 @@
 package net.minecraft.server;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public final class IntCache {
     private static int a = 256;
-    private static List b = new ArrayList();
-    private static List c = new ArrayList();
-    private static List d = new ArrayList();
-    private static List e = new ArrayList();
+    private static Deque<int[]> b = new ArrayDeque<int[]>();
+    private static Deque<int[]>c = new ArrayDeque<int[]>();
+    private static Deque<int[]> d = new ArrayDeque<int[]>();
+    private static Deque<int[]> e = new ArrayDeque<int[]>();
 
     public static synchronized int[] a(int i) {
         int[] aint;
 
         if (i <= 256) {
-            if (b.isEmpty()) {
-                aint = new int[256];
-                if (c.size() < org.spigotmc.SpigotConfig.intCacheLimit) c.add(aint);
-                return aint;
-            } else {
-                aint = (int[]) b.remove(b.size() - 1);
-                if (c.size() < org.spigotmc.SpigotConfig.intCacheLimit) c.add(aint);
-                return aint;
-            }
-        } else if (i > a) {
+        	aint = (b.isEmpty() ? new int[256] : b.poll());
+        	if (c.size() < org.spigotmc.SpigotConfig.intCacheLimit) c.add(aint);
+        	return aint;
+        }
+        if (i > a) {
             a = i;
             d.clear();
             e.clear();
             aint = new int[a];
             if (e.size() < org.spigotmc.SpigotConfig.intCacheLimit) e.add(aint);
             return aint;
-        } else if (d.isEmpty()) {
-            aint = new int[a];
-            if (e.size() < org.spigotmc.SpigotConfig.intCacheLimit) e.add(aint);
-            return aint;
-        } else {
-            aint = (int[]) d.remove(d.size() - 1);
-            if (e.size() < org.spigotmc.SpigotConfig.intCacheLimit) e.add(aint);
-            return aint;
         }
+        aint = (d.isEmpty() ? new int[a] : d.poll());
+        if (e.size() < org.spigotmc.SpigotConfig.intCacheLimit) e.add(aint);
+        return aint;
     }
 
     public static synchronized void a() {
         if (!d.isEmpty()) {
-            d.remove(d.size() - 1);
+            d.removeLast();
         }
-
         if (!b.isEmpty()) {
-            b.remove(b.size() - 1);
+            b.removeLast();
         }
 
         d.addAll(e);
