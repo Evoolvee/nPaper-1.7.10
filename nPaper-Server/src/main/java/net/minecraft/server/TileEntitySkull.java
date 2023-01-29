@@ -139,7 +139,7 @@ public class TileEntitySkull extends TileEntity {
                     @Override
                     public void run() {
 
-                        GameProfile profile = skinCache.get( name.toLowerCase() ); // nPaper - fix skin dont show up
+                        GameProfile profile = skinCache.getIfPresent( name.toLowerCase() ); // nPaper - fix skin dont show up
 
                         if (profile != null) {
                             final GameProfile finalProfile = profile;
