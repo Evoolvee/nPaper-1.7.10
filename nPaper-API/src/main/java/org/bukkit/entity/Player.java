@@ -21,6 +21,9 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import com.sathonay.npaper.Title;
 
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+
 /**
  * Represents a player, connected or not
  */
@@ -901,6 +904,28 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
      * Hide any title that is currently visible to the player
      */
     public void hideTitle();
+    
+    /**
+     * Sends an Action Bar message to the client.
+     *
+     * @param message message to display
+     */
+	default void sendActionBar(String... message) {
+		 BaseComponent[] messageComponents = new BaseComponent[message.length];
+		 int i = 0;
+		 for (String messageLine : message) {
+			 messageComponents[i] = new TextComponent(messageLine);
+			 i++;
+		 }
+		 sendActionBar(messageComponents);
+	}
+	 
+	/**
+	 * Sends an Action Bar message to the client.
+	 *
+	 * @param message message to display
+	 */
+	void sendActionBar(BaseComponent... message);
 
     /**
      * Gets the Location where the player will spawn at their bed, null if
