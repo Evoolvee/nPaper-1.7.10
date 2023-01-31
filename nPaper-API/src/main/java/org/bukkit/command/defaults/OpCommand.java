@@ -58,12 +58,10 @@ public class OpCommand extends VanillaCommand {
                 return ImmutableList.of();
             }
 
-            Player senderPlayer = (Player) sender;
-
             ArrayList<String> matchedPlayers = new ArrayList<String>();
             for (Player player : sender.getServer().getOnlinePlayers()) {
                 String name = player.getName();
-                if (!senderPlayer.canSee(player) || player.isOp()) {
+                if (player.isOp()) {
                     continue;
                 }
                 if (StringUtil.startsWithIgnoreCase(name, lastWord)) {

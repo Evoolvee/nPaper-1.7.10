@@ -31,6 +31,10 @@ public class DeopCommand extends VanillaCommand {
         }
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+        if (!player.isOp()) {
+        	sender.sendMessage("Player's not opped!");
+        	return false;
+        }
         player.setOp(false);
 
         if (player instanceof Player) {
@@ -51,7 +55,7 @@ public class DeopCommand extends VanillaCommand {
             List<String> completions = new ArrayList<String>();
             for (OfflinePlayer player : Bukkit.getOperators()) {
                 String playerName = player.getName();
-                if (StringUtil.startsWithIgnoreCase(playerName, args[0])) {
+                if (StringUtil.startsWithIgnoreCase(playerName, args[0]) && player.isOp()) {
                     completions.add(playerName);
                 }
             }
