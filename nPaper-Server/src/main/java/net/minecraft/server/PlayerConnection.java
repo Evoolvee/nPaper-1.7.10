@@ -8,8 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
@@ -52,7 +53,6 @@ import org.bukkit.util.NumberConversions;
 import org.github.paperspigot.PaperSpigotConfig; // PaperSpigot
 
 import net.minecraft.util.com.google.common.base.Charsets;
-import net.minecraft.util.com.google.common.collect.Lists;
 import net.minecraft.util.io.netty.buffer.Unpooled;
 import net.minecraft.util.io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.util.org.apache.commons.lang3.StringUtils;
@@ -1782,16 +1782,9 @@ public class PlayerConnection implements PacketPlayInListener {
     }
 
     public void a(PacketPlayInTabComplete packetplayintabcomplete) {
-        ArrayList arraylist = Lists.newArrayList();
-        Iterator iterator = this.minecraftServer.a(this.player, packetplayintabcomplete.c()).iterator();
-
-        while (iterator.hasNext()) {
-            String s = (String) iterator.next();
-
-            arraylist.add(s);
-        }
-
-        this.player.playerConnection.sendPacket(new PacketPlayOutTabComplete((String[]) arraylist.toArray(new String[arraylist.size()])));
+    	final Set<String> hashSet = new TreeSet<String>(this.minecraftServer.a(this.player, packetplayintabcomplete.c()));
+        final String[] array = hashSet.toArray(new String[hashSet.size()]);
+        this.player.playerConnection.sendPacket(new PacketPlayOutTabComplete(array));
     }
 
     public void a(PacketPlayInSettings packetplayinsettings) {
@@ -1859,10 +1852,14 @@ public class PlayerConnection implements PacketPlayInListener {
                     }
 
                     if (itemstack.getItem() == Items.WRITTEN_BOOK && itemstack1.getItem() == Items.BOOK_AND_QUILL) {
-                        itemstack1 = new ItemStack(Items.WRITTEN_BOOK);
-                        itemstack1.a("author", (new NBTTagString(this.player.getName())));
-                        itemstack1.a("title", (NBTBase) (new NBTTagString(itemstack.getTag().getString("title"))));
-                        itemstack1.a("pages", (NBTBase) itemstack.getTag().getList("pages", 8));
+                    	itemstack1 = new ItemStack(Items.WRITTEN_BOOK);
+                        itemstack1.a("author", (NBTBase) (new NBTTagString(this.player.getName())));
+                        itemstack1.a("title", (NBTBase) (new NBTTagString(itemstack.getTag().getString("title").replace("\u00A7", ""))));
+                        NBTTagList pages = new NBTTagList();
+                        for (int i = 0; i < itemstack.getTag().getList("pages", 8).size(); i++) {
+                            pages.add(new NBTTagString(itemstack.getTag().getList("pages", 8).getString(i).replace("\u00A7", "")));
+                        }
+                        itemstack1.a("pages", (NBTBase) pages);
                         itemstack1.setItem(Items.WRITTEN_BOOK);
                         CraftEventFactory.handleEditBookEvent(player, itemstack1); // CraftBukkit
                     }

@@ -41,16 +41,16 @@ public class ConversationTracker {
     }
 
     public synchronized void abandonAllConversations() {
-
-        LinkedList<Conversation> oldQueue = conversationQueue;
-        conversationQueue = new LinkedList<Conversation>();
-        for (Conversation conversation : oldQueue) {
+    	// Rinny
+    	for (Conversation conversation : conversationQueue) {
             try {
                 conversation.abandon(new ConversationAbandonedEvent(conversation, new ManuallyAbandonedConversationCanceller()));
             } catch (Throwable t) {
                 Bukkit.getLogger().log(Level.SEVERE, "Unexpected exception while abandoning a conversation", t);
             }
         }
+    	conversationQueue.clear();
+    	// Rinny
     }
 
     public synchronized void acceptConversationInput(String input) {

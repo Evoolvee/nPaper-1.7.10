@@ -122,21 +122,13 @@ public class WhitelistCommand extends VanillaCommand {
 
         if (args.length == 1) {
             return StringUtil.copyPartialMatches(args[0], WHITELIST_SUBCOMMANDS, new ArrayList<String>(WHITELIST_SUBCOMMANDS.size()));
-        } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("add")) {
-                List<String> completions = new ArrayList<String>();
+        }
+        if (args.length == 2) {
+        	if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")) {
+                final List<String> completions = new ArrayList<String>();
                 for (OfflinePlayer player : Bukkit.getOnlinePlayers()) { // Spigot - well maybe sometimes you haven't turned the whitelist on just yet.
-                    String name = player.getName();
-                    if (StringUtil.startsWithIgnoreCase(name, args[1]) && !player.isWhitelisted()) {
-                        completions.add(name);
-                    }
-                }
-                return completions;
-            } else if (args[0].equalsIgnoreCase("remove")) {
-                List<String> completions = new ArrayList<String>();
-                for (OfflinePlayer player : Bukkit.getWhitelistedPlayers()) {
-                    String name = player.getName();
-                    if (StringUtil.startsWithIgnoreCase(name, args[1])) {
+                    final String name = player.getName();
+                    if (StringUtil.startsWithIgnoreCase(name, args[1]) && (args[0].equalsIgnoreCase("add") ? !player.isWhitelisted() : player.isWhitelisted())) {
                         completions.add(name);
                     }
                 }

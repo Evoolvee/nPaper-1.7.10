@@ -26,13 +26,13 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     }
 
     public String getName() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+        //CraftScoreboard scoreboard = checkState();
 
         return objective.getName();
     }
 
     public String getDisplayName() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+        //CraftScoreboard scoreboard = checkState();
 
         return objective.getDisplayName();
     }
@@ -40,19 +40,19 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public void setDisplayName(String displayName) throws IllegalStateException, IllegalArgumentException {
         Validate.notNull(displayName, "Display name cannot be null");
         Validate.isTrue(displayName.length() <= 32, "Display name '" + displayName + "' is longer than the limit of 32 characters");
-        CraftScoreboard scoreboard = checkState();
+        //CraftScoreboard scoreboard = checkState();
 
         objective.setDisplayName(displayName);
     }
 
     public String getCriteria() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+        //CraftScoreboard scoreboard = checkState();
 
         return criteria.bukkitName;
     }
 
     public boolean isModifiable() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+        //CraftScoreboard scoreboard = checkState();
 
         return !criteria.criteria.isReadOnly();
     }
@@ -88,7 +88,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
 
     public Score getScore(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(player, "Player cannot be null");
-        CraftScoreboard scoreboard = checkState();
+        //CraftScoreboard scoreboard = checkState();
 
         return new CraftScore(this, player.getName());
     }
@@ -96,7 +96,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public Score getScore(String entry) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(entry, "Entry cannot be null");
         if (entry.length() > 16) throw new IllegalArgumentException("Entry cannot be longer than 16 characters!"); // Spigot
-        CraftScoreboard scoreboard = checkState();
+        //CraftScoreboard scoreboard = checkState();
 
         return new CraftScore(this, entry);
     }

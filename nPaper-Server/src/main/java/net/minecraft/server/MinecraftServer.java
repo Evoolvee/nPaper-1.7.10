@@ -2,6 +2,7 @@ package net.minecraft.server;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 // CraftBukkit start
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.security.KeyPair;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -28,15 +30,10 @@ import org.bukkit.event.world.WorldSaveEvent;
 
 import jline.console.ConsoleReader;
 import joptsimple.OptionSet;
-import net.minecraft.util.com.google.common.base.Charsets;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.GameProfileRepository;
 import net.minecraft.util.com.mojang.authlib.minecraft.MinecraftSessionService;
 import net.minecraft.util.com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import net.minecraft.util.io.netty.buffer.ByteBuf;
-import net.minecraft.util.io.netty.buffer.ByteBufOutputStream;
-import net.minecraft.util.io.netty.buffer.Unpooled;
-import net.minecraft.util.io.netty.handler.codec.base64.Base64;
 import net.minecraft.util.org.apache.commons.lang3.Validate;
 // CraftBukkit end
 
@@ -438,7 +435,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
 
     // PaperSpigot start - Further improve tick loop
     private static final int TPS = 20;
-    private static final long SEC_IN_NANO = 1000000000;
+    private static final long SEC_IN_NANO = 1_000_000_000;
     private static final long TICK_TIME = SEC_IN_NANO / TPS;
     private static final long MAX_CATCHUP_BUFFER = TICK_TIME * TPS * 60L;
     private static final int SAMPLE_INTERVAL = 20;
@@ -449,8 +446,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
     public static long START_TIME, LAST_TICK_TIME_NANO, LAST_TICK_TIME_MILLIS;
 
     public static class RollingAverage {
-        private final int size;
-        private long time;
+    	private final int size;
         private double total;
         private int index = 0;
         private final double[] samples;
@@ -458,7 +454,6 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
 
         RollingAverage(int size) {
             this.size = size;
-            this.time = size * SEC_IN_NANO;
             this.total = TPS * SEC_IN_NANO * size;
             this.samples = new double[size];
             this.times = new long[size];
@@ -469,19 +464,19 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
         }
 
         public void add(double x, long t) {
-            time -= times[index];
-            total -= samples[index]*times[index];
+            index = (index + 1) % size;
+            total -= samples[index] * times[index];
             samples[index] = x;
             times[index] = t;
-            time += t;
-            total += x*t;
-            if (++index == size) {
-                index = 0;
-            }
+            total += x * t;
         }
 
         public double getAverage() {
-            return total / time;
+            double avg = total;
+            for (int i = 0; i < size; i++) {
+                avg += samples[i] * (SEC_IN_NANO - times[i]);
+            }
+            return avg / (SEC_IN_NANO * size);
         }
     }
     // PaperSpigot End
@@ -601,22 +596,18 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IMo
         File file1 = this.d("server-icon.png");
 
         if (file1.isFile()) {
-            ByteBuf bytebuf = Unpooled.buffer();
-
             try {
-                BufferedImage bufferedimage = ImageIO.read(file1);
-
+            	final BufferedImage bufferedimage = ImageIO.read(file1);
                 Validate.validState(bufferedimage.getWidth() == bufferedimage.getHeight(), "Width must be equals to the height");
                 Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
                 Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
-                ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
-                ByteBuf bytebuf1 = Base64.encode(bytebuf);
-
-                serverping.setFavicon("data:image/png;base64," + bytebuf1.toString(Charsets.UTF_8));
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(bufferedimage, "PNG", baos);
+                byte[] imageInByte = baos.toByteArray();
+                String imageDataString = Base64.getEncoder().encodeToString(imageInByte);
+                serverping.setFavicon("data:image/png;base64," + imageDataString);
             } catch (Exception exception) {
                 i.error("Couldn\'t load server icon", exception);
-            } finally {
-                bytebuf.release();
             }
         }
     }

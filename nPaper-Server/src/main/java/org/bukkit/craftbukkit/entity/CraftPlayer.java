@@ -291,6 +291,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         getHandle().playerConnection.sendPacket(new PacketTitle(EnumTitleAction.CLEAR, (BaseComponent[]) null, 0, 0, 0));
     }
     // Paper end
+    
+    @Override
+	public void sendActionBar(BaseComponent... message) {
+    	if(getHandle().playerConnection == null) return;
+    	if (getHandle().playerConnection.networkManager.getVersion() < 28) {
+			return;
+		}
+    	PacketPlayOutChat packet = new PacketPlayOutChat(null, (byte) 2);
+    	packet.components = message;
+    	getHandle().playerConnection.sendPacket(packet);
+	}
 
     @Override
     public int getPing() {

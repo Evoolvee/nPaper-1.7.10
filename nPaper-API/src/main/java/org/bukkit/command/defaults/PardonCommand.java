@@ -32,6 +32,10 @@ public class PardonCommand extends VanillaCommand {
             return false;
         }
 
+        if (!Bukkit.getBanList(BanList.Type.NAME).isBanned(args[0])) {
+        	sender.sendMessage("Player's not banned!");
+        	return false;
+        }
         Bukkit.getBanList(BanList.Type.NAME).pardon(args[0]);
         Command.broadcastCommandMessage(sender, "Unbanned " + args[0]);
         return true;

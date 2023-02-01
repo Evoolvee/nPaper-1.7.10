@@ -91,6 +91,9 @@ public class CraftProfileBanList implements org.bukkit.BanList {
         Validate.notNull(target, "Target cannot be null");
 
         GameProfile profile = MinecraftServer.getServer().getUserCache().getProfile(target);
+        if (profile == null) {
+        	return;
+        }
         list.remove(profile);
     }
 }

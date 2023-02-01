@@ -66,13 +66,8 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public CraftItemStack getItem(int index) {
-        if (index < getResultInventory().getSize()) {
-            net.minecraft.server.ItemStack item = getResultInventory().getItem(index);
-            return item == null ? null : CraftItemStack.asCraftMirror(item);
-        } else {
-            net.minecraft.server.ItemStack item = getMatrixInventory().getItem(index - getResultInventory().getSize());
-            return item == null ? null : CraftItemStack.asCraftMirror(item);
-        }
+    	net.minecraft.server.ItemStack item = (index < getResultInventory().getSize() ? getResultInventory().getItem(index) : getMatrixInventory().getItem(index - getResultInventory().getSize()));
+    	return item == null ? null : CraftItemStack.asCraftMirror(item);
     }
 
     @Override
